@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-95qbkqtt4(_sm=&$8&#k3in9&j6)exxd&+a8!1dldoi%8a%6r*
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+CORS_ALLOW_CREDENTIALS = True
 
 # Application definition
 
@@ -37,9 +37,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
+    'rest_framework',
+    'jobs',
+    'authApi',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -48,6 +53,12 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',  # React development server
+    'https://your-production-domain.com',  # Your production domain
+]
+
 
 ROOT_URLCONF = 'backend.urls'
 
