@@ -2,7 +2,7 @@ import React from 'react'
 
 const JobCategories = () => {
   return (
-    <div class="main-container">
+    <div class="main-container my-40">
       <div class="grid grid-cols-1 pb-8 text-center">
         <h3 class="mb-4 md:text-[26px] md:leading-normal text-2xl leading-normal font-semibold">
           Popular Categories
