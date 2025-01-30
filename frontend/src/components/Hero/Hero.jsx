@@ -2,7 +2,7 @@ import React from 'react'
 
 const Hero = () => {
   return (
-    <div className='main-container flex flex-col items-center justify-center'>
+    <div id='hero' className='main-container flex flex-col items-center justify-center'>
         <div className="text-center">
             <h1 className='text-7xl'>Join us $ <span className='text-[#007dda]'>Explore </span> <span className='text-[#007dda] block'> Our <span className='text-black'> Jobs.</span></span> </h1>
         </div>

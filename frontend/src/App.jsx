@@ -4,6 +4,8 @@ import Hero from './components/Hero/Hero'
 import JobFilter from './components/JobFilter/JobFilter'
 import Jobs from './components/Jobs/Jobs'
 import JobCategories from './components/JobCategories/JobCategories'
+import Footer from './components/footer/Footer'
+import Contact from './components/contact/Contact'
 
 const App = () => {
   return (
@@ -13,6 +15,8 @@ const App = () => {
       <JobFilter/>
       <Jobs/>
       <JobCategories/>
+      <Contact/>
+      <Footer/>
     </>
   )
 }

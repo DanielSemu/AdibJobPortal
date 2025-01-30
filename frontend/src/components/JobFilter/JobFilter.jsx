@@ -5,7 +5,7 @@ import { BsBriefcaseFill } from "react-icons/bs"; // Job type icon
 
 const JobFilter = () => {
   return (
-    <div className="main-container">
+    <div id="filter_job" className="main-container">
       <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 lg:gap-2 gap-4 w-full items-center justify-between sm:px-16 py-10 bg-white p-4 rounded-lg shadow-md">
         
         {/* Text Input Field with Search Icon */}
