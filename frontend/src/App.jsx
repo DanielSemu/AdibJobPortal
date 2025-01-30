@@ -6,13 +6,15 @@ import Jobs from './components/Jobs/Jobs'
 import JobCategories from './components/JobCategories/JobCategories'
 import Footer from './components/footer/Footer'
 import Contact from './components/contact/Contact'
+import Hero1 from './components/Hero/Hero1'
 
 const App = () => {
   return (
     <>
       <Navbar/>
-      <Hero/>
-      <JobFilter/>
+      <Hero1/>
+      {/* <Hero/> */}
+      {/* <JobFilter/> */}
       <Jobs/>
       <JobCategories/>
       <Contact/>

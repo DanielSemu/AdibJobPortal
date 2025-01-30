@@ -47,8 +47,7 @@ const JobCategories = () => {
           Popular Categories
         </h3>
         <p className="text-slate-400 max-w-xl mx-auto">
-          Search all the open positions on the web. Get your own personalized
-          salary estimate. Read reviews on over 30000+ companies worldwide.
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Animi atque repellendus debitis earum temporibus consectetur!
         </p>
       </div>
       <div className="grid mx-10 lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 mt-8 gap-[30px]">
