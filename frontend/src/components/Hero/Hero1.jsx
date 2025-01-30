@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import { MdCategory } from "react-icons/md";
 import { BsBriefcaseFill } from "react-icons/bs";
 import hero from "../../assets/hero1.jpg";
 
 const Hero1 = () => {
+    const [isResult, setIsResult]=useState(false)
   return (
     <>
       <section
@@ -58,7 +59,7 @@ const Hero1 = () => {
               </div>
 
               {/* Filter Button */}
-              <button className="bg-[#007dda] text-white px-8 py-3 rounded-lg hover:bg-[rgb(0,140,240)] transition">
+              <button className="bg-[#007dda] text-white px-8 py-3 rounded-lg hover:bg-[rgb(0,140,240)] transition" onClick={()=>setIsResult(!isResult)} >
                 Search
               </button>
             </div>
@@ -68,7 +69,17 @@ const Hero1 = () => {
                 <span className="text-white">Popular Searches :</span> Brach
                 Manager, Accountant, It Officer, Accountant, Senior Engineer
               </span>
-              <p>No Search Result...</p>
+              {
+                isResult?(
+                    <>
+                     <h4>Search Result...</h4>
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Assumenda accusamus quisquam, sit eius harum quas obcaecati inventore fugiat sapiente rerum voluptatem maxime iure, dolores commodi quae vitae quia ratione hic!
+                    </>
+                ):(
+                    <p>No Search Result...</p>
+                )
+              }
+              
             </div>
           </div>
         </div>
