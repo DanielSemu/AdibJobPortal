@@ -2,70 +2,17 @@ import React from "react";
 import { FaArrowRight } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
 import logo from "../../assets/Addis_logo.jpg";
+import { Link } from "react-router-dom";
+import { data } from "../../data/jobs";
 
 const Jobs = () => {
-  const data = [
-    {
-      image: logo,
-      postedDate: 1,
-      jobType: "Full Time",
-      jobTitle: "Branch Manager, Grade XI",
-      location: "Addis Abeba",
-      applied: 50,
-      capacity: 100,
-    },
-    {
-      image: logo,
-      postedDate: 2,
-      jobType: "Contract",
-      jobTitle: "Cashier, Grade VIII",
-      location: "Adama",
-      applied: 70,
-      capacity: 100,
-    },
-    {
-      image: logo,
-      postedDate: 3,
-      jobType: "Full Time",
-      jobTitle: "It Trainee, Grade VI",
-      location: "Bahir Dar",
-      applied: 30,
-      capacity: 100,
-    },
-    {
-      image: logo,
-      postedDate: 4,
-      jobType: "Full Time",
-      jobTitle: "Accountant, Grade VII",
-      location: "Mekele",
-      applied: 60,
-      capacity: 100,
-    },
-    {
-      image: logo,
-      postedDate: 5,
-      jobType: "Full Time",
-      jobTitle: "Internal Auditor, Grade XII",
-      location: "Head Office",
-      applied: 20,
-      capacity: 100,
-    },
-    {
-      image: logo,
-      postedDate: 6,
-      jobType: "Part Time",
-      jobTitle: "Electrician, Grade XI",
-      location: "Dire Dewa",
-      applied: 10,
-      capacity: 100,
-    },
-  ];
+  
   return (
     <>
       <div id="jobs" className="main-container ">
         <div className="grid grid-cols-1 text-center">
           <h3 className="mb-4 md:text-[26px] md:leading-normal text-2xl leading-normal font-semibold">
-            Recent Jobs
+            Latest Jobs
           </h3>
           <p className="text-slate-400 max-w-xl mx-auto">
             Search all the open positions on the web. Get your own personalized
@@ -95,12 +42,12 @@ const Jobs = () => {
                 </span>
               </div>
               <div className="mt-6">
-                <a
+                <Link
                   className="text-lg hover:text-[#007dda] font-semibold transition-all duration-500"
-                  href="/job-detail-two/1"
+                  to={`/detail/${job.id}`}
                 >
                   {job.jobTitle}
-                </a>
+                </Link>
                 <h6 className="text-base font-medium flex items-center">
                   <FaLocationDot />
                   {job.location}

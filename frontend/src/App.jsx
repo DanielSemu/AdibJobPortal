@@ -7,17 +7,22 @@ import JobCategories from './components/JobCategories/JobCategories'
 import Footer from './components/footer/Footer'
 import Contact from './components/contact/Contact'
 import Hero1 from './components/Hero/Hero1'
+import { Routes, Route } from 'react-router-dom'
+import Login from './components/Registration/Login'
+import HomePage from './pages/HomePage'
+import Register from './components/Registration/Register'
+import JobDetail from './components/JobDetail/JobDetail'
 
 const App = () => {
   return (
     <>
       <Navbar/>
-      <Hero1/>
-      {/* <Hero/> */}
-      {/* <JobFilter/> */}
-      <Jobs/>
-      <JobCategories/>
-      <Contact/>
+      <Routes>
+        <Route path='/' element={<HomePage/>}/>
+        <Route path='/login' element={<Login/>}/>
+        <Route path='/register' element={<Register/>}/>
+        <Route path='/detail/:id' element={<JobDetail/>}/>
+      </Routes>
       <Footer/>
     </>
   )
