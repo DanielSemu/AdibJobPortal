@@ -12,11 +12,13 @@ import Login from './components/Registration/Login'
 import HomePage from './pages/HomePage'
 import Register from './components/Registration/Register'
 import JobDetail from './components/JobDetail/JobDetail'
+import ScrollToTop from './services/ScrollToTop'
 
 const App = () => {
   return (
     <>
       <Navbar/>
+      <ScrollToTop />
       <Routes>
         <Route path='/' element={<HomePage/>}/>
         <Route path='/login' element={<Login/>}/>

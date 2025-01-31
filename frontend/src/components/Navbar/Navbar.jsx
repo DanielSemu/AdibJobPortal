@@ -2,8 +2,30 @@ import React from "react";
 import { CiMenuBurger } from "react-icons/ci";
 import logo from "../../assets/Addis_logo.jpg";
 import { Link } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const Navbar = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleScrollToSection = (sectionId) => {
+    if (location.pathname !== "/") {
+      // If not on home page, navigate to home first
+      navigate("/", { state: { scrollTo: sectionId } });
+    } else {
+      // If already on home page, scroll to section
+      scrollToSection(sectionId);
+    }
+  };
+
+  const scrollToSection = (sectionId) => {
+    setTimeout(() => {
+      const section = document.getElementById(sectionId);
+      if (section) {
+        section.scrollIntoView({ behavior: "smooth" });
+      }
+    }, 100);
+  };
   return (
     <>
       <nav className="bg-white dark:bg-[#007dda] fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
@@ -13,7 +35,7 @@ const Navbar = () => {
             className="flex items-center space-x-3 rtl:space-x-reverse"
           >
             <img src={logo} className="h-8 rounded-full" alt="Flowbite Logo" />
-            <span className="self-center text-2xl font-bold whitespace-nowrap dark:text-white ">
+            <span onClick={()=>window.scroll(0,0)} className="self-center text-2xl font-bold whitespace-nowrap dark:text-white ">
               Addis Bank S.C
             </span>
           </Link>
@@ -44,6 +66,7 @@ const Navbar = () => {
               <li>
                 <Link
                   to="/"
+                  onClick={() => window.scroll(0,0)}
                   className="block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent  md:p-0 "
                   aria-current="page"
                 >
@@ -53,23 +76,26 @@ const Navbar = () => {
               <li>
                 <a
                   href="#jobs"
+                  onClick={() => handleScrollToSection("jobs")}
                   className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-gray-800 md:p-0 md:dark:hover:text-gray-800 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
                 >
                   Jobs
                 </a>
               </li>
               <li>
-                <a
-                  href="#categories"
+                <Link
+                  to="/#categories"
+                  onClick={() => handleScrollToSection("categories")}
                   className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent text-gray-800-700 md:p-0 md:dark:hover:text-gray-800 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700
                   "
                 >
                   Categories
-                </a>
+                </Link>
               </li>
               <li>
                 <a
                   href="#contact"
+                  onClick={() => handleScrollToSection("contact")}
                   className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent text-gray-800-700 md:p-0 md:dark:hover:text-gray-800 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
                 >
                   Contact
