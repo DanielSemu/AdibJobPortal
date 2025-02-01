@@ -13,6 +13,7 @@ import HomePage from './pages/HomePage'
 import Register from './components/Registration/Register'
 import JobDetail from './components/JobDetail/JobDetail'
 import ScrollToTop from './services/ScrollToTop'
+import ApplyJob from './components/ApplyJob/ApplyJob'
 
 const App = () => {
   return (
@@ -24,6 +25,7 @@ const App = () => {
         <Route path='/login' element={<Login/>}/>
         <Route path='/register' element={<Register/>}/>
         <Route path='/detail/:id' element={<JobDetail/>}/>
+        <Route path='/apply/:id' element={<ApplyJob/>}/>
       </Routes>
       <Footer/>
     </>

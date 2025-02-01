@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FaBriefcase, FaMapMarkerAlt, FaMoneyBillWave } from "react-icons/fa";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { data } from "../../data/jobs";
 
 const JobDetail = () => {
@@ -139,17 +139,17 @@ const JobDetail = () => {
         )}
 
         {/* Apply Button */}
-        <button
-          onClick={handleApply}
-          className={`mt-6 w-full px-6 py-3 text-lg font-semibold text-white rounded-lg transition-all duration-300 ${
+        <Link
+          to={applied ? "#" : `/apply/${detailedData.id}`}
+          className={`mt-6 w-full px-6 py-3 text-lg font-semibold text-white rounded-lg transition-all duration-300 flex items-center justify-center ${
             applied
-              ? "bg-gray-400 cursor-not-allowed"
+              ? "bg-gray-400 cursor-not-allowed pointer-events-none"
               : "bg-blue-600 hover:bg-blue-700 transform hover:scale-105"
           }`}
-          disabled={applied}
+          onClick={applied ? (e) => e.preventDefault() : handleApply}
         >
           {applied ? "Application Submitted" : "Apply Now"}
-        </button>
+        </Link>
       </div>
     </div>
   );
