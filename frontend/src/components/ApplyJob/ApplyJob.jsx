@@ -50,7 +50,7 @@ const ApplyJob = () => {
       </div>
 
       {/* Application Form */}
-      <div className="w-full md:w-2/3 bg-white shadow-xl rounded-lg p-5 md:p-10 md:ml-8 relative">
+      <div className="w-full md:w-2/3 bg-white shadow-xl rounded-lg p-5 pb-12 border-2 border-red-500 md:p-10 md:ml-8 relative">
         <h1 className="text-4xl font-bold text-gray-900 text-center mb-6">Apply for {detailedData.jobTitle}</h1>
 
         {/* Progress Bar */}
@@ -63,7 +63,7 @@ const ApplyJob = () => {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6 border-2 border-red-500">
           {step === 1 && (
             <div>
               <label className="block text-gray-700 font-semibold mb-2">Full Name</label>
@@ -85,6 +85,15 @@ const ApplyJob = () => {
                 type="email"
                 name="email"
                 value={formData.email}
+                onChange={handleChange}
+                required
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400"
+              />
+              <label className="block text-gray-700 font-semibold mt-4 mb-2">Phone Number</label>
+              <input
+                type="tel"
+                name="phone"
+                value={formData.phone}
                 onChange={handleChange}
                 required
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400"
@@ -125,7 +134,7 @@ const ApplyJob = () => {
           )}
 
           {/* Fixed Buttons at the Bottom */}
-          <div className="absolute bottom-5 left-0 right-0 flex justify-between px-5">
+          <div className="absolute bottom-0 left-0 right-0 flex justify-between px-5">
             {step > 1 && (
               <button
                 type="button"
