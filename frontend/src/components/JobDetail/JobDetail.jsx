@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { FaBriefcase, FaMapMarkerAlt, FaMoneyBillWave } from "react-icons/fa";
 import { Link, useParams } from "react-router-dom";
-import { data } from "../../data/jobs";
+import { jobs } from "../../data/jobs";
 
 const JobDetail = () => {
   const [applied, setApplied] = useState(false);
   const { id } = useParams();
 
   // Find the detailed job by matching the `id` with the `Jobs` array
-  const detailedData = data.find((item) => item.id === Number(id));
+  const detailedData = jobs.find((item) => item.id === Number(id));
 
   const handleApply = () => {
     setApplied(true);

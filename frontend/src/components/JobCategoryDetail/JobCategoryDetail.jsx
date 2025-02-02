@@ -1,18 +1,26 @@
-import React from "react";
+import React from 'react'
+import { useParams } from 'react-router-dom'
+import { jobs } from '../../data/jobs'
+import { categories } from '../../data/categories'
+import { Link } from 'react-router-dom'
 import { FaArrowRight } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
-import logo from "../../assets/Addis_logo.jpg";
-import { Link } from "react-router-dom";
-import { jobs } from "../../data/jobs";
 
-const Jobs = () => {
-  
+const JobCategoryDetail = () => {
+    const {id} =useParams()
+    const selectedJobs=jobs.filter((item)=>item.category === parseInt(id))
+    const category=categories.find((item)=>item.id=== parseInt(id))
+    
+
   return (
     <>
+      {
+        selectedJobs &&(
+            <>
       <div id="jobs" className="main-container ">
         <div className="grid grid-cols-1 text-center">
           <h3 className="mb-4 md:text-[26px] md:leading-normal text-2xl leading-normal font-semibold">
-            Latest Jobs
+            Latest Jobs Under Category- {category.categoryName}
           </h3>
           <p className="text-slate-400 max-w-xl mx-auto">
             Search all the open positions on the web. Get your own personalized
@@ -20,7 +28,7 @@ const Jobs = () => {
           </p>
         </div>
         <div className="grid lg:grid-cols-3 md:grid-cols-2   mt-8 gap-[30px]  px-10">
-          {jobs.map((job, index) => (
+          {selectedJobs.map((job, index) => (
             <div key={index} className="group shadow  dark:shadow-gray-700  p-6 rounded-md bg-white ">
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
@@ -86,7 +94,11 @@ const Jobs = () => {
         </div>
       </div>
     </>
-  );
-};
+        )
+      }
+    </>
+  )
+}
 
-export default Jobs;
+export default JobCategoryDetail
+

@@ -14,6 +14,7 @@ import Register from './components/Registration/Register'
 import JobDetail from './components/JobDetail/JobDetail'
 import ScrollToTop from './services/ScrollToTop'
 import ApplyJob from './components/ApplyJob/ApplyJob'
+import JobCategoryDetail from './components/JobCategoryDetail/JobCategoryDetail'
 
 const App = () => {
   return (
@@ -26,6 +27,7 @@ const App = () => {
         <Route path='/register' element={<Register/>}/>
         <Route path='/detail/:id' element={<JobDetail/>}/>
         <Route path='/apply/:id' element={<ApplyJob/>}/>
+        <Route path='/category/:id' element={<JobCategoryDetail/>}/>
       </Routes>
       <Footer/>
     </>

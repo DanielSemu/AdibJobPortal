@@ -35,7 +35,7 @@ const Navbar = () => {
             className="flex items-center space-x-3 rtl:space-x-reverse"
           >
             <img src={logo} className="h-8 rounded-full" alt="Flowbite Logo" />
-            <span onClick={()=>window.scroll(0,0)} className="self-center text-2xl font-bold whitespace-nowrap dark:text-white ">
+            <span onClick={()=>window.scroll(0,0)} className="self-center text-2xl font-bold whitespace-nowrap text-white ">
               Addis Bank S.C
             </span>
           </Link>

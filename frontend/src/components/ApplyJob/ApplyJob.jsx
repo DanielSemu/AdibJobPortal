@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { data } from "../../data/jobs";
+import { jobs } from "../../data/jobs";
 import {
   FaAngleDoubleRight,
   FaAngleDoubleLeft,
@@ -18,7 +18,7 @@ const ApplyJob = () => {
     coverLetter: "",
   });
 
-  const detailedData = data.find((item) => item.id === Number(id));
+  const detailedData = jobs.find((item) => item.id === Number(id));
 
   const handleChange = (e) => {
     const { name, value } = e.target;

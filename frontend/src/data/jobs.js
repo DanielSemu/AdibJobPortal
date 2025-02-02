@@ -1,6 +1,6 @@
 import logo from "../assets/Addis_logo.jpg";
 
-export const data = [
+export const jobs = [
     {
         id: 1,
         jobTitle: "Branch Manager, Grade XI",
@@ -160,7 +160,7 @@ export const data = [
         id: 6,
         jobTitle: "Electrician, Grade XI",
         image: logo,
-        category:3,
+        category:5,
         postedDate: 6,
         company: "Addis Bank S.C",
         location: "Dire Dewa",
