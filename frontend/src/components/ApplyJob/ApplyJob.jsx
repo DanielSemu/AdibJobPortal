@@ -1,27 +1,12 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { jobs } from "../../data/jobs";
-import {
-  FaAngleDoubleRight,
-  FaAngleDoubleLeft,
-  FaCheck,
-} from "react-icons/fa"; // Import Icons
+import { FaAngleDoubleRight, FaAngleDoubleLeft, FaCheck } from "react-icons/fa"; // Import Icons
 
 const ApplyJob = () => {
   const { id } = useParams();
   const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    phone: "",
-    position: "",
-    salary: "",
-    education: "",
-    experience: "",
-    resume: null,
-    coverLetter: "",
-    consent: false,
-  });
+  const [formData, setFormData] = useState({});
 
   const detailedData = jobs.find((item) => item.id === Number(id));
 
@@ -29,7 +14,8 @@ const ApplyJob = () => {
     const { name, value, type, checked, files } = e.target;
     setFormData({
       ...formData,
-      [name]: type === "checkbox" ? checked : type === "file" ? files[0] : value,
+      [name]:
+        type === "checkbox" ? checked : type === "file" ? files[0] : value,
     });
   };
 
@@ -63,197 +49,313 @@ const ApplyJob = () => {
         <div className="mt-2 text-gray-800">
           <strong>🗓️ Dead Line:</strong> {detailedData.deadLine}
         </div>
-        
       </div>
 
       {/* Application Form */}
       <div className="w-full md:w-2/3 bg-white shadow-xl rounded-lg p-5 pb-12 md:p-10 md:ml-8 relative">
-        <h1 className="text-4xl font-bold text-gray-900 text-center mb-6">
-          Apply for {detailedData.jobTitle}
-        </h1>
-
-        {/* Progress Bar */}
-        <div className="relative pt-5 mb-8">
-          <div className="w-full bg-gray-300 rounded-full h-3">
+        {/* Step Indicators */}
+        <div className="flex justify-center space-x-2 mb-4">
+          {[1, 2, 3, 4].map((s) => (
             <div
-              className="bg-[#007dda] h-3  transition-all duration-400"
-              style={{ width: `${(step / 4) * 100}%` }}
-            ></div>
-          </div>
+              key={s}
+              className={`h-3 w-3 rounded-full cursor-pointer transition-all ${
+                step === s ? "bg-blue-500 scale-125" : "bg-gray-300"
+              }`}
+              onClick={() => setStep(s)} // Update step on click
+            />
+          ))}
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6 ">
           {step === 1 && (
             <div>
-               <div>
-            <label className="block text-gray-700 font-semibold mb-2">Full Name</label>
-            <input
-              type="text"
-              name="fullName"
-              value={formData.fullName}
-              onChange={handleChange}
-              className="w-full p-2 border rounded-md focus:outline-blue-500"
-              required
-            />
-          </div>
+              <h1 className="text-center text-3xl mb-2 text-gray-700 font-semibold ">
+                Personal Information
+              </h1>
+              <div>
+                <label className="block text-gray-700 font-semibold mb-2">
+                  Full Name:
+                </label>
+                <input
+                  type="text"
+                  name="fullName"
+                  value={formData.fullName}
+                  onChange={handleChange}
+                  className="w-full p-2 border rounded-md focus:outline-blue-500"
+                  required
+                />
+              </div>
 
               {/* Email */}
-          <div>
-            <label className="block text-gray-700 font-semibold mb-2">Email Address</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full p-2 border rounded-md focus:outline-blue-500"
-              required
-            />
-          </div>
-           {/* Phone Number */}
-           <div>
-            <label className="block text-gray-700 font-semibold mb-2">Phone Number</label>
-            <input
-              type="tel"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              className="w-full p-2 border rounded-md focus:outline-blue-500"
-              required
-            />
-          </div>
-           {/* Education */}
-           <div>
-            <label className="block text-gray-700 font-semibold mb-2">Highest Education</label>
-            <select
-              name="education"
-              value={formData.education}
-              onChange={handleChange}
-              className="w-full p-2 border rounded-md focus:outline-blue-500"
-              required
-            >
-              <option value="">Select</option>
-              <option value="High School">High School</option>
-              <option value="Bachelor’s Degree">Bachelor’s Degree</option>
-              <option value="Master’s Degree">Master’s Degree</option>
-              <option value="PhD">PhD</option>
-            </select>
-          </div>
-
+              <div>
+                <label className="block text-gray-700 font-semibold mb-2">
+                  Email Address:
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="w-full p-2 border rounded-md focus:outline-blue-500"
+                  required
+                />
+              </div>
+              {/* Phone Number */}
+              <div>
+                <label className="block text-gray-700 font-semibold mb-2">
+                  Phone Number:
+                </label>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className="w-full p-2 border rounded-md focus:outline-blue-500"
+                  required
+                />
+              </div>
+              <label className="block text-gray-700 font-semibold mb-2">
+                Gender:
+              </label>
+              <div className="flex space-x-4 mb-4">
+                <label className="flex items-center space-x-2 ">
+                  <input
+                    type="radio"
+                    name="gender"
+                    value="Male"
+                    checked={formData.gender === "Male"}
+                    onChange={handleChange}
+                    className="w-4 h-4"
+                  />
+                  <span>Male</span>
+                </label>
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="radio"
+                    name="gender"
+                    value="Female"
+                    checked={formData.gender === "Female"}
+                    onChange={handleChange}
+                    className="w-4 h-4"
+                  />
+                  <span>Female</span>
+                </label>
+              </div>
             </div>
           )}
           {step === 2 && (
             <div>
-              {/* Work Experience */}
-          <div>
-            <label className="block text-gray-700 font-semibold mb-2">Years of Experience</label>
-            <input
-              type="number"
-              name="experience"
-              value={formData.experience}
-              onChange={handleChange}
-              className="w-full p-2 border rounded-md focus:outline-blue-500"
-              required
-            />
-          </div>
-               {/* Resume Upload */}
-          <div>
-            <label className="block text-gray-700 font-semibold mb-2">Upload Resume (PDF/DOCX)</label>
-            <input
-              type="file"
-              name="resume"
-              accept=".pdf, .doc, .docx"
-              onChange={handleChange}
-              className="w-full p-2 border rounded-md focus:outline-blue-500"
-              required
-            />
-          </div>
-
-          {/* Cover Letter */}
-          <div>
-            <label className="block text-gray-700 font-semibold mb-2">Cover Letter</label>
-            <textarea
-              name="coverLetter"
-              value={formData.coverLetter}
-              onChange={handleChange}
-              className="w-full p-2 border rounded-md focus:outline-blue-500"
-              rows="4"
-            ></textarea>
-          </div>
+              <h1 className="text-center text-3xl mb-2 text-gray-700 font-semibold ">
+                Education Background
+              </h1>
+              {/* Education */}
+              <div>
+                <label className="block text-gray-700 font-semibold mb-2">
+                  Highest Education:
+                </label>
+                <select
+                  name="education"
+                  value={formData.education}
+                  onChange={handleChange}
+                  className="w-full p-2 border rounded-md focus:outline-blue-500"
+                  required
+                >
+                  <option value="">Select</option>
+                  <option value="High School">High School</option>
+                  <option value="Bachelor’s Degree">Bachelor’s Degree</option>
+                  <option value="Master’s Degree">Master’s Degree</option>
+                  <option value="PhD">PhD</option>
+                </select>
+              </div>
+              {/* Field of Study */}
+              <div>
+                <label className="block text-gray-700 font-semibold mb-2">
+                  Field of Study:
+                </label>
+                <input
+                  type="text"
+                  name="fieldStudy"
+                  value={formData.fieldStudy}
+                  onChange={handleChange}
+                  className="w-full p-2 border rounded-md focus:outline-blue-500"
+                  required
+                />
+              </div>
+              {/* Graduation Year */}
+              <div>
+                <label className="block text-gray-700 font-semibold mb-2">
+                  Graduation Year:
+                </label>
+                <input
+                  type="date"
+                  name="graduationYear"
+                  value={formData.graduationYear}
+                  onChange={handleChange}
+                  className="w-full p-2 border rounded-md focus:outline-blue-500"
+                  required
+                />
+              </div>
+              {/* Field of Study */}
+              <div>
+                <label className="block text-gray-700 font-semibold mb-2">
+                  Education Organization:
+                </label>
+                <input
+                  type="text"
+                  name="educationOrganization"
+                  value={formData.educationOrganization}
+                  onChange={handleChange}
+                  className="w-full p-2 border rounded-md focus:outline-blue-500"
+                  required
+                />
+              </div>
             </div>
           )}
 
           {step === 3 && (
             <div>
-              <label className="block text-gray-700 font-semibold mb-2">
-                Email Address
-              </label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400"
-              />
-              <label className="block text-gray-700 font-semibold mt-4 mb-2">
-                Phone Number
-              </label>
-              <input
-                type="tel"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                required
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400"
-              />
-              <label className="block text-gray-700 font-semibold mt-4 mb-2">
-                Phone Number
-              </label>
-              <input
-                type="tel"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                required
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400"
-              />
-              <label className="block text-gray-700 font-semibold mt-4 mb-2">
-                Phone Number
-              </label>
-              <input
-                type="tel"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                required
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400"
-              />
+              <h1 className="text-center text-3xl mb-2 text-gray-700 font-semibold ">
+                Work Experience <span className="text-xl">(Optional)</span>
+              </h1>
+              {/* added Experience */}
+              <div className="flex flex-wrap gap-2 mt-2">
+                <span className="px-3 py-1 bg-gray-200 rounded-lg text-gray-800 text-sm">
+                  It Officer
+                </span>
+                <span className="px-3 py-1 bg-gray-200 rounded-lg text-gray-800 text-sm">
+                  Customer Service Offier
+                </span>
+                <span className="px-3 py-1 bg-gray-200 rounded-lg text-gray-800 text-sm">
+                  Software Developer
+                </span>
+              </div>
+              {/* Previous Job Title */}
+              <div>
+                <label className="block text-gray-700 font-semibold mb-2">
+                  Previous Job Title:
+                </label>
+                <input
+                  type="text"
+                  name="PreviousJobTitle"
+                  value={formData.PreviousJobTitle}
+                  onChange={handleChange}
+                  className="w-full p-2 border rounded-md focus:outline-blue-500"
+                  required
+                />
+              </div>
+              {/* Previous Job Title */}
+              <div>
+                <label className="block text-gray-700 font-semibold mb-2">
+                  Company Name:
+                </label>
+                <input
+                  type="text"
+                  name="companyName"
+                  value={formData.companyName}
+                  onChange={handleChange}
+                  className="w-full p-2 border rounded-md focus:outline-blue-500"
+                  required
+                />
+              </div>
+              {/* Work Experience */}
+              <div>
+                <label className="block text-gray-700 font-semibold mb-2">
+                  Years of Experience:
+                </label>
+                <input
+                  type="number"
+                  name="experience"
+                  value={formData.experience}
+                  onChange={handleChange}
+                  className="w-full p-2 border rounded-md focus:outline-blue-500"
+                  required
+                />
+              </div>
+              {/* add button */}
+              <div className="mb-4">
+                <button
+                  type="button"
+                  // onClick={handleAddExperience}
+                  className=" bg-blue-600 text-white py-2 px-1 my-2 rounded-md font-semibold hover:bg-blue-700 transition-all"
+                >
+                  Add Experience
+                </button>
+              </div>
             </div>
           )}
 
           {step === 4 && (
             <div>
-             
-          {/* Consent Checkbox */}
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              name="consent"
-              checked={formData.consent}
-              onChange={handleChange}
-              className="mr-2"
-              required
-            />
-            <label className="block text-gray-700 font-semibold mb-2">
-              I agree to the <span className="text-blue-600 cursor-pointer">terms and conditions</span>
-            </label>
-          </div>
+              <h1 className="text-center text-3xl mb-2 text-gray-700 font-semibold ">
+                Additional Information
+              </h1>
+              {/* Resume Upload */}
+              <div>
+                <label className="block text-gray-700 font-semibold mb-2">
+                  Upload Resume (PDF/DOCX)
+                </label>
+                <input
+                  type="file"
+                  name="resume"
+                  accept=".pdf, .doc, .docx"
+                  onChange={handleChange}
+                  className="w-full p-2 border rounded-md focus:outline-blue-500"
+                  required
+                />
+              </div>
+              {/* Cover Letter */}
+              <div>
+                <label className="block text-gray-700 font-semibold mb-2">
+                  Cover Letter
+                </label>
+                <textarea
+                  name="coverLetter"
+                  value={formData.coverLetter}
+                  onChange={handleChange}
+                  className="w-full p-2 border rounded-md focus:outline-blue-500"
+                  rows="4"
+                ></textarea>
+              </div>
 
+              {/* Terms and Conditions Checkbox */}
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  name="termsAccepted"
+                  checked={formData.termsAccepted}
+                  onChange={handleChange}
+                  className="mr-2"
+                  required
+                />
+                <label className="block text-gray-700 font-semibold">
+                  I agree to the{" "}
+                  <span className="text-blue-600 cursor-pointer">
+                    Terms and Conditions
+                  </span>
+                  .
+                </label>
+              </div>
+
+              {/* Consent to Contact Checkbox */}
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  name="contactConsent"
+                  checked={formData.contactConsent}
+                  onChange={handleChange}
+                  className="mr-2"
+                  required
+                />
+                <label className="block text-gray-700 font-semibold">
+                  I consent to being contacted by the company for updates
+                  regarding my application.
+                </label>
+              </div>
             </div>
           )}
 
           {/* Fixed Buttons at the Bottom */}
-          <div className="absolute bottom-0 left-0 right-0 flex justify-between px-5 pb-1">
+          <div className="absolute bottom-0 left-0 right-0 flex justify-between px-5 pb-5">
             {step > 1 ? (
               <FaAngleDoubleLeft onClick={prevStep} className="text-3xl" />
             ) : (
