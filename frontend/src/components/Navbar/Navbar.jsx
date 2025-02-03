@@ -63,7 +63,7 @@ const Navbar = () => {
             to="/login"
             className="text-[#007dda] bg-[#ffd91e] border-2 border-transparent hover:bg-[#007dda] hover:text-[#ffd91e] hover:border-[#ffd91e] font-medium rounded-lg text-sm px-4 py-2 transition-all duration-300"
           >
-            Register / Login
+            Sign in 
           </Link>
 
           {/* Mobile Menu Button */}

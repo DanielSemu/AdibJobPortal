@@ -11,22 +11,26 @@ const ApplyJob = () => {
   const { id } = useParams();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
-    name: "",
+    fullName: "",
     email: "",
     phone: "",
+    position: "",
+    salary: "",
+    education: "",
+    experience: "",
     resume: null,
     coverLetter: "",
+    consent: false,
   });
 
   const detailedData = jobs.find((item) => item.id === Number(id));
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleFileChange = (e) => {
-    setFormData({ ...formData, resume: e.target.files[0] });
+    const { name, value, type, checked, files } = e.target;
+    setFormData({
+      ...formData,
+      [name]: type === "checkbox" ? checked : type === "file" ? files[0] : value,
+    });
   };
 
   const nextStep = () => setStep((prev) => prev + 1);
@@ -35,9 +39,8 @@ const ApplyJob = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Form Submitted:", formData);
-    alert("Your application has been submitted successfully!");
+    alert("Application Submitted Successfully!");
   };
-
   return (
     <div className="main-container flex flex-col md:flex-row bg-gray-100 sm:pb-8 gap-1 min-h-screen">
       {/* Sidebar with Job Details */}
@@ -82,54 +85,100 @@ const ApplyJob = () => {
         <form onSubmit={handleSubmit} className="space-y-6 ">
           {step === 1 && (
             <div>
-              <label className="block text-gray-700 font-semibold mb-2">
-                First Name
-              </label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400"
-              />
-              <label className="block text-gray-700 font-semibold mb-2">
-                Last Name
-              </label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400"
-              />
+               <div>
+            <label className="block text-gray-700 font-semibold mb-2">Full Name</label>
+            <input
+              type="text"
+              name="fullName"
+              value={formData.fullName}
+              onChange={handleChange}
+              className="w-full p-2 border rounded-md focus:outline-blue-500"
+              required
+            />
+          </div>
+
+              {/* Email */}
+          <div>
+            <label className="block text-gray-700 font-semibold mb-2">Email Address</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full p-2 border rounded-md focus:outline-blue-500"
+              required
+            />
+          </div>
+           {/* Phone Number */}
+           <div>
+            <label className="block text-gray-700 font-semibold mb-2">Phone Number</label>
+            <input
+              type="tel"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              className="w-full p-2 border rounded-md focus:outline-blue-500"
+              required
+            />
+          </div>
+           {/* Education */}
+           <div>
+            <label className="block text-gray-700 font-semibold mb-2">Highest Education</label>
+            <select
+              name="education"
+              value={formData.education}
+              onChange={handleChange}
+              className="w-full p-2 border rounded-md focus:outline-blue-500"
+              required
+            >
+              <option value="">Select</option>
+              <option value="High School">High School</option>
+              <option value="Bachelor’s Degree">Bachelor’s Degree</option>
+              <option value="Master’s Degree">Master’s Degree</option>
+              <option value="PhD">PhD</option>
+            </select>
+          </div>
+
             </div>
           )}
           {step === 2 && (
             <div>
-              <label className="block text-gray-700 font-semibold mb-2">
-                Age
-              </label>
-              <input
-                type="Number"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400"
-              />
-              <label className="block text-gray-700 font-semibold mb-2">
-                Address
-              </label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400"
-              />
+              {/* Work Experience */}
+          <div>
+            <label className="block text-gray-700 font-semibold mb-2">Years of Experience</label>
+            <input
+              type="number"
+              name="experience"
+              value={formData.experience}
+              onChange={handleChange}
+              className="w-full p-2 border rounded-md focus:outline-blue-500"
+              required
+            />
+          </div>
+               {/* Resume Upload */}
+          <div>
+            <label className="block text-gray-700 font-semibold mb-2">Upload Resume (PDF/DOCX)</label>
+            <input
+              type="file"
+              name="resume"
+              accept=".pdf, .doc, .docx"
+              onChange={handleChange}
+              className="w-full p-2 border rounded-md focus:outline-blue-500"
+              required
+            />
+          </div>
+
+          {/* Cover Letter */}
+          <div>
+            <label className="block text-gray-700 font-semibold mb-2">Cover Letter</label>
+            <textarea
+              name="coverLetter"
+              value={formData.coverLetter}
+              onChange={handleChange}
+              className="w-full p-2 border rounded-md focus:outline-blue-500"
+              rows="4"
+            ></textarea>
+          </div>
             </div>
           )}
 
@@ -184,28 +233,22 @@ const ApplyJob = () => {
 
           {step === 4 && (
             <div>
-              <label className="block text-gray-700 font-semibold mb-2">
-                Upload Resume
-              </label>
-              <input
-                type="file"
-                name="resume"
-                accept=".pdf,.doc,.docx"
-                onChange={handleFileChange}
-                required
-                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400"
-              />
-              <label className="block text-gray-700 font-semibold mt-4 mb-2">
-                Cover Letter
-              </label>
-              <textarea
-                name="coverLetter"
-                value={formData.coverLetter}
-                onChange={handleChange}
-                rows="4"
-                required
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400"
-              ></textarea>
+             
+          {/* Consent Checkbox */}
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              name="consent"
+              checked={formData.consent}
+              onChange={handleChange}
+              className="mr-2"
+              required
+            />
+            <label className="block text-gray-700 font-semibold mb-2">
+              I agree to the <span className="text-blue-600 cursor-pointer">terms and conditions</span>
+            </label>
+          </div>
+
             </div>
           )}
 
