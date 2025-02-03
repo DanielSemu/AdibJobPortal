@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaBriefcase, FaMapMarkerAlt, FaMoneyBillWave } from "react-icons/fa";
+import { FaBriefcase, FaMapMarkerAlt, FaMoneyBillWave, FaRegCalendarTimes  } from "react-icons/fa";
 import { Link, useParams } from "react-router-dom";
 import { jobs } from "../../data/jobs";
 
@@ -54,6 +54,12 @@ const JobDetail = () => {
             <p className="flex items-center gap-2">
               <FaMoneyBillWave className="text-green-500" />{" "}
               <strong>Salary:</strong> {detailedData.salary}
+            </p>
+          )}
+          {detailedData.deadLine && (
+            <p className="flex items-center gap-2">
+              <FaRegCalendarTimes   className="text-red-500" />{" "}
+              <strong>Dead Line:</strong> {detailedData.deadLine}
             </p>
           )}
         </div>

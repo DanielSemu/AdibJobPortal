@@ -15,8 +15,7 @@ const Jobs = () => {
             Latest Jobs
           </h3>
           <p className="text-slate-400 max-w-xl mx-auto">
-            Search all the open positions on the web. Get your own personalized
-            salary estimate. Read reviews on over 30000+ companies worldwide.
+            Search all the open positions on the web. Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusamus commodi aliquam expedita nesciunt, rerum veniam?
           </p>
         </div>
         <div className="grid lg:grid-cols-3 md:grid-cols-2   mt-8 gap-[30px]  px-10">

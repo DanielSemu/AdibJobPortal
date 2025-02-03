@@ -57,6 +57,10 @@ const ApplyJob = () => {
         <div className="mt-2 text-gray-800">
           <strong>💰 Salary:</strong> {detailedData.salary}
         </div>
+        <div className="mt-2 text-gray-800">
+          <strong>🗓️ Dead Line:</strong> {detailedData.deadLine}
+        </div>
+        
       </div>
 
       {/* Application Form */}
