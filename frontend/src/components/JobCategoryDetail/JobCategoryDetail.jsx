@@ -29,10 +29,11 @@ const JobCategoryDetail = () => {
         </div>
         <div className="grid lg:grid-cols-3 md:grid-cols-2   mt-8 gap-[30px]  px-10">
           {selectedJobs.map((job, index) => (
-            <div key={index} className="group shadow  dark:shadow-gray-700  p-6 rounded-md bg-white ">
+            <div key={index} className="group shadow  shadow-gray-700  p-6 rounded-md bg-white ">
+              <Link to={`/detail/${job.id}`}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
-                  <div className="size-14 flex items-center justify-center bg-white  shadow dark:shadow-gray-700 rounded-md">
+                  <div className="size-14 flex items-center justify-center bg-white  shadow shadow-gray-700 rounded-md">
                     <img src={job.image} className="size-8" alt="" />
                   </div>
                   <div className="ms-3">
@@ -78,6 +79,7 @@ const JobCategoryDetail = () => {
                   </span>
                 </div>
               </div>
+              </Link>
             </div>
           ))}
         </div>

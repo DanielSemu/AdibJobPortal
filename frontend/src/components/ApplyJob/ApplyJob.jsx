@@ -11,55 +11,72 @@ const ApplyJob = () => {
     email: "",
     phone: "",
     gender: "",
-    education: "",
+    educations: [],
     fieldStudy: "",
     graduationYear: "",
     educationOrganization: "",
-    experiences: [], // Array to store multiple experiences
+    experiences: [], 
+    certifications:[]
   });
 
   // Temporary state to hold current experience input
   const [currentExperience, setCurrentExperience] = useState({
     jobTitle: "",
     companyName: "",
-    yearsOfExperience: "",
+    from: "",
+    to: "",
+  });
+  const [currentEducation, setCurrentEducation] = useState({
+    educationLevel: "",
+    fieldofStudy: "",
+    graduationYear: "",
+    educationOrganization: "",
+  });
+  const [currentCertification, setCurrentCertification] = useState({
+    certificate: "",
+    awardingCompany: "",
+    date: "",
+    expireDate: "",
   });
 
-  // Handle input change for new experience entry
-  const handleExperienceChange = (e) => {
+  const handleInputChange = (section, e) => {
     const { name, value } = e.target;
-    setCurrentExperience({
-      ...currentExperience,
-      [name]: value,
-    });
-  };
-
-  // Add a new experience to the list
-  const addExperience = () => {
-    if (
-      currentExperience.jobTitle &&
-      currentExperience.companyName &&
-      currentExperience.yearsOfExperience
-    ) {
-      setFormData((prevData) => ({
-        ...prevData,
-        experiences: [...prevData.experiences, currentExperience],
-      }));
-      setCurrentExperience({
-        jobTitle: "",
-        companyName: "",
-        yearsOfExperience: "",
-      });
+    switch (section) {
+      case "experience":
+        setCurrentExperience((prev) => ({ ...prev, [name]: value }));
+        break;
+      case "education":
+        setCurrentEducation((prev) => ({ ...prev, [name]: value }));
+        break;
+      case "certification":
+        setCurrentCertification((prev) => ({ ...prev, [name]: value }));
+        break;
+      default:
+        break;
     }
   };
+  
 
-  // Remove an experience from the list
-  const removeExperience = (index) => {
+  const addEntry = (section, entry, setEntry) => {
+    if (Object.values(entry).some((val) => val === "")) return; // Ensure all fields are filled
+  
     setFormData((prevData) => ({
       ...prevData,
-      experiences: prevData.experiences.filter((_, i) => i !== index),
+      [section]: [...prevData[section], entry],
+    }));
+  
+    // Reset the corresponding input state
+    setEntry(Object.fromEntries(Object.keys(entry).map((key) => [key, ""])));
+  };
+  
+
+  const removeEntry = (section, index) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [section]: prevData[section].filter((_, i) => i !== index),
     }));
   };
+  
 
   const detailedData = jobs.find((item) => item.id === Number(id));
 
@@ -108,7 +125,7 @@ const ApplyJob = () => {
       <div className="w-full md:w-2/3 bg-white shadow-xl rounded-lg p-5 pb-12 md:p-10 md:ml-8 relative">
         {/* Step Indicators */}
         <div className="flex justify-center space-x-2 mb-4">
-          {[1, 2, 3, 4].map((s) => (
+          {[1, 2, 3, 4,5].map((s) => (
             <div
               key={s}
               className={`h-3 w-3 rounded-full cursor-pointer transition-all ${
@@ -199,17 +216,26 @@ const ApplyJob = () => {
           {step === 2 && (
             <div>
               <h1 className="text-center text-3xl mb-2 text-gray-700 font-semibold ">
-                Education Background
+                Educational Background
               </h1>
+              {/* Display Added Education */}
+              <div className="flex flex-wrap gap-2 mt-2">
+                {formData.educations.map((edu, index) => (
+                <span key={index}  className="px-3 py-1 bg-gray-200 rounded-lg text-gray-800 text-sm">
+                {edu.jobTitle} <span onClick={() => removeEntry("education", index)}  className="float-end text-red-600 cursor-pointer">x</span>
+                <br /> {edu.educationLevel} - {edu.fieldofStudy} {" to "}{edu.graduationYear} years 
+                </span>
+                ))}
+              </div>
               {/* Education */}
               <div>
                 <label className="block text-gray-700 font-semibold mb-2">
                   Highest Education:
                 </label>
                 <select
-                  name="education"
-                  value={formData.education}
-                  onChange={handleChange}
+                  name="educationLevel"
+                  value={currentEducation.educationLevel}
+                  onChange={(e) => handleInputChange("education", e)}
                   className="w-full p-2 border rounded-md focus:outline-blue-500"
                   required
                 >
@@ -227,9 +253,9 @@ const ApplyJob = () => {
                 </label>
                 <input
                   type="text"
-                  name="fieldStudy"
-                  value={formData.fieldStudy}
-                  onChange={handleChange}
+                  name="fieldofStudy"
+                  value={currentEducation.fieldofStudy}
+                  onChange={(e) => handleInputChange("education", e)}
                   className="w-full p-2 border rounded-md focus:outline-blue-500"
                   required
                 />
@@ -242,8 +268,8 @@ const ApplyJob = () => {
                 <input
                   type="date"
                   name="graduationYear"
-                  value={formData.graduationYear}
-                  onChange={handleChange}
+                  value={currentEducation.graduationYear}
+                  onChange={(e) => handleInputChange("education", e)}
                   className="w-full p-2 border rounded-md focus:outline-blue-500"
                   required
                 />
@@ -256,11 +282,18 @@ const ApplyJob = () => {
                 <input
                   type="text"
                   name="educationOrganization"
-                  value={formData.educationOrganization}
-                  onChange={handleChange}
+                  value={currentEducation.educationOrganization}
+                  onChange={(e) => handleInputChange("education", e)}
                   className="w-full p-2 border rounded-md focus:outline-blue-500"
                   required
                 />
+                <button
+                  type="button"
+                  onClick={() => addEntry("education", currentEducation, setCurrentEducation)}
+                  className="mt-3 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-700"
+                >
+                  Add Education
+                </button>
               </div>
             </div>
           )}
@@ -274,9 +307,90 @@ const ApplyJob = () => {
               {/* Display Added Experiences */}
               <div className="flex flex-wrap gap-2 mt-2">
                 {formData.experiences.map((exp, index) => (
+                <span key={index}  className="px-3 py-1 bg-gray-200 rounded-lg text-gray-800 text-sm">
+                {exp.jobTitle} <span onClick={() => removeEntry("experiences", index)}  className="float-end text-red-600 cursor-pointer">x</span>
+                <br /> {exp.companyName} - {exp.from} {" to "}{exp.to} years 
+                </span>
+                ))}
+              </div>
+
+              {/* Input Fields for New Experience */}
+              <div className="mt-4">
+                <label className="block text-gray-700 font-semibold mb-2">
+                  Job Title:
+                </label>
+                <input
+                  type="text"
+                  name="jobTitle"
+                  value={currentExperience.jobTitle}
+                  onChange={(e) => handleInputChange("experience", e)}
+                  className="w-full p-2 border rounded-md focus:outline-blue-500"
+                />
+
+                <label className="block text-gray-700 font-semibold mt-3 mb-2">
+                  Company Name:
+                </label>
+                <input
+                  type="text"
+                  name="companyName"
+                  value={currentExperience.companyName}
+                  onChange={(e) => handleInputChange("experience", e)}
+                  className="w-full p-2 border rounded-md focus:outline-blue-500"
+                />
+
+                <label className="block text-gray-700 font-semibold mt-3 mb-2">
+                  Years of Experience:
+                </label>
+                <div className="grid sm:grid-cols-2 gap-2">
+                <div className="flex">
+                <label className="block text-gray-700 font-semibold mt-3 mb-2">
+                  From:
+                </label>
+                  <input
+                  type="date"
+                  name="from"
+                  value={currentExperience.from}
+                  onChange={(e) => handleInputChange("experience", e)}
+                  className="w-full p-2 border rounded-md focus:outline-blue-500"
+                />
+                </div>
+                <div className="flex">
+                <label className="block text-gray-700 font-semibold mt-3 mb-2">
+                  To:
+                </label>
+                  <input
+                  type="date"
+                  name="to"
+                  value={currentExperience.to}
+                  onChange={(e) => handleInputChange("experience", e)}
+                  className="w-full p-2 border rounded-md focus:outline-blue-500"
+                />
+                </div>
+                </div>
+                
+
+                <button
+                  type="button"
+                  onClick={() => addEntry("experiences", currentExperience, setCurrentExperience)}
+                  className="mt-3 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-700"
+                >
+                  Add Experience
+                </button>
+              </div>
+            </div>
+          )}
+          {step === 4 && (
+            <div>
+              <h1 className="text-center text-3xl mb-2 text-gray-700 font-semibold">
+                Certification/Recognition <span className="text-xl">(Optional)</span>
+              </h1>
+
+              {/* Display Added Experiences */}
+              <div className="flex flex-wrap gap-2 mt-2">
+                {formData.experiences.map((exp, index) => (
                 <span className="px-3 py-1 bg-gray-200 rounded-lg text-gray-800 text-sm">
                 {exp.jobTitle} <span onClick={() => removeExperience(index)}  className="float-end text-red-600 cursor-pointer">x</span>
-                <br /> {exp.companyName} - {exp.yearsOfExperience} years 
+                <br /> {exp.companyName} - {exp.from} {" to "}{exp.to} years 
                 </span>
                 ))}
               </div>
@@ -308,13 +422,33 @@ const ApplyJob = () => {
                 <label className="block text-gray-700 font-semibold mt-3 mb-2">
                   Years of Experience:
                 </label>
-                <input
-                  type="number"
-                  name="yearsOfExperience"
-                  value={currentExperience.yearsOfExperience}
+                <div className="grid sm:grid-cols-2 gap-2">
+                <div className="flex">
+                <label className="block text-gray-700 font-semibold mt-3 mb-2">
+                  From:
+                </label>
+                  <input
+                  type="date"
+                  name="from"
+                  value={currentExperience.from}
                   onChange={handleExperienceChange}
                   className="w-full p-2 border rounded-md focus:outline-blue-500"
                 />
+                </div>
+                <div className="flex">
+                <label className="block text-gray-700 font-semibold mt-3 mb-2">
+                  To:
+                </label>
+                  <input
+                  type="date"
+                  name="to"
+                  value={currentExperience.to}
+                  onChange={handleExperienceChange}
+                  className="w-full p-2 border rounded-md focus:outline-blue-500"
+                />
+                </div>
+                </div>
+                
 
                 <button
                   type="button"
@@ -327,7 +461,7 @@ const ApplyJob = () => {
             </div>
           )}
 
-          {step === 4 && (
+          {step === 5 && (
             <div>
               <h1 className="text-center text-3xl mb-2 text-gray-700 font-semibold ">
                 Additional Information
@@ -407,11 +541,11 @@ const ApplyJob = () => {
               </div>
             )}
 
-            {step > 1 && step < 4 && (
+            {step > 1 && step < 5 && (
               <FaAngleDoubleRight onClick={nextStep} className="text-3xl" />
             )}
 
-            {step === 4 && (
+            {step === 5 && (
               <button
                 type="submit"
                 className="px-4 py-1 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 flex items-center transition duration-200 ml-auto"

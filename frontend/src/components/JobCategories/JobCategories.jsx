@@ -4,6 +4,7 @@ import { MdOutlineMenuBook } from "react-icons/md";
 import { FaChalkboardUser ,FaLaptopCode} from "react-icons/fa6";
 import { Link } from 'react-router-dom';
 import { categories } from '../../data/categories';
+import { jobs } from '../../data/jobs';
 
 const iconMap = {
   AiFillSketchSquare: AiFillSketchSquare,
@@ -30,6 +31,7 @@ const JobCategories = () => {
         {
           categories.map((item,index)=>{
             const IconComponent = iconMap[item.iconName];
+            const jobCount = jobs.filter((job) => job.category === item.id).length;
             return (
               <div key={index} className="group px-3 py-10 rounded-md shadow dark:shadow-gray-700 hover:shadow-emerald-600/10 dark:hover:shadow-emerald-600/10 text-center bg-white  hover:bg-emerald-600/5 dark:hover:bg-emerald-600/5 transition duration-500">
           <div className="size-16 bg-emerald-600/5 group-hover:bg-[#007dda] text-[#007dda] group-hover:text-white rounded-md text-2xl flex align-middle justify-center items-center shadow-sm dark:shadow-gray-700 transition duration-500 mx-auto">
@@ -42,7 +44,7 @@ const JobCategories = () => {
             >
               {item.categoryName}
             </Link>
-            <p className="text-slate-400 mt-3">{item.job} Jobs</p>
+            <p className="text-slate-400 mt-3">{jobCount} Jobs</p>
           </div>
         </div>
             )

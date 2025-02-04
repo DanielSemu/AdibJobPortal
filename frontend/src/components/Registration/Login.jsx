@@ -4,10 +4,8 @@ import { Link } from 'react-router-dom'
 const Login = () => {
   return (
     <section className="main-container bg-gray-50 ">
-  <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-      {/* <a href="#" className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
-          Register Here    
-      </a> */}
+  <div className="flex flex-col items-center  px-6 py-8 mx-auto md:h-screen lg:py-0">
+      <h1 className='text-2xl text-gray-600'>Login Here to Track Your Applications</h1>
       <div className="w-full bg-gray-200 rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 ">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl ">

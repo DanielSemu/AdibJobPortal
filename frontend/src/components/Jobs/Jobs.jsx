@@ -20,16 +20,17 @@ const Jobs = () => {
         </div>
         <div className="grid lg:grid-cols-3 md:grid-cols-2   mt-8 gap-[30px]  px-10">
           {jobs.map((job, index) => (
-            <div key={index} className="group shadow  dark:shadow-gray-700  p-6 rounded-md bg-white ">
+            <div key={index} className="group shadow   shadow-gray-700  p-6 rounded-md bg-white ">
+              <Link to={`/detail/${job.id}`}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
-                  <div className="size-14 flex items-center justify-center bg-white  shadow dark:shadow-gray-700 rounded-md">
+                  <div className="size-14 flex items-center justify-center bg-white  shadow shadow-gray-700 rounded-md">
                     <img src={job.image} className="size-8" alt="" />
                   </div>
                   <div className="ms-3">
                     <a
                       className="block text-[16px] font-semibold hover:text-[#007dda] transition-all duration-500"
-                      href="/employer-detail/1"
+                      href="/#"
                     >
                       Addis Bank S.C
                     </a>
@@ -41,12 +42,12 @@ const Jobs = () => {
                 </span>
               </div>
               <div className="mt-6">
-                <Link
+                <p
                   className="text-lg hover:text-[#007dda] font-semibold transition-all duration-500"
                   to={`/detail/${job.id}`}
                 >
                   {job.jobTitle}
-                </Link>
+                </p>
                 <h6 className="text-base font-medium flex items-center">
                   <FaLocationDot />
                   {job.location}
@@ -63,12 +64,13 @@ const Jobs = () => {
                 <div className="mt-2">
                   <span className="text-slate-400 text-sm">
                     <span className="text-slate-900 font-semibold inline-block">
-                      {job.applied} applied
-                    </span>
+                     {job.applied} applied
+                    </span> {" "}
                     of {job.capacity} vacancy
                   </span>
                 </div>
               </div>
+              </Link>
             </div>
           ))}
         </div>
