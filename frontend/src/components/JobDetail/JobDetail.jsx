@@ -154,7 +154,7 @@ const JobDetail = () => {
           }`}
           onClick={applied ? (e) => e.preventDefault() : handleApply}
         >
-          {applied ? "Application Submitted" : "Apply Now"}
+          Apply Now
         </Link>
       </div>
     </div>

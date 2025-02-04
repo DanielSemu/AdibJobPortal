@@ -1,12 +1,65 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { jobs } from "../../data/jobs";
-import { FaAngleDoubleRight, FaAngleDoubleLeft, FaCheck } from "react-icons/fa"; // Import Icons
+import { FaAngleDoubleRight, FaAngleDoubleLeft, FaCheck, FaCross } from "react-icons/fa"; // Import Icons
 
 const ApplyJob = () => {
   const { id } = useParams();
   const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    gender: "",
+    education: "",
+    fieldStudy: "",
+    graduationYear: "",
+    educationOrganization: "",
+    experiences: [], // Array to store multiple experiences
+  });
+
+  // Temporary state to hold current experience input
+  const [currentExperience, setCurrentExperience] = useState({
+    jobTitle: "",
+    companyName: "",
+    yearsOfExperience: "",
+  });
+
+  // Handle input change for new experience entry
+  const handleExperienceChange = (e) => {
+    const { name, value } = e.target;
+    setCurrentExperience({
+      ...currentExperience,
+      [name]: value,
+    });
+  };
+
+  // Add a new experience to the list
+  const addExperience = () => {
+    if (
+      currentExperience.jobTitle &&
+      currentExperience.companyName &&
+      currentExperience.yearsOfExperience
+    ) {
+      setFormData((prevData) => ({
+        ...prevData,
+        experiences: [...prevData.experiences, currentExperience],
+      }));
+      setCurrentExperience({
+        jobTitle: "",
+        companyName: "",
+        yearsOfExperience: "",
+      });
+    }
+  };
+
+  // Remove an experience from the list
+  const removeExperience = (index) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      experiences: prevData.experiences.filter((_, i) => i !== index),
+    }));
+  };
 
   const detailedData = jobs.find((item) => item.id === Number(id));
 
@@ -214,69 +267,59 @@ const ApplyJob = () => {
 
           {step === 3 && (
             <div>
-              <h1 className="text-center text-3xl mb-2 text-gray-700 font-semibold ">
+              <h1 className="text-center text-3xl mb-2 text-gray-700 font-semibold">
                 Work Experience <span className="text-xl">(Optional)</span>
               </h1>
-              {/* added Experience */}
+
+              {/* Display Added Experiences */}
               <div className="flex flex-wrap gap-2 mt-2">
+                {formData.experiences.map((exp, index) => (
                 <span className="px-3 py-1 bg-gray-200 rounded-lg text-gray-800 text-sm">
-                  It Officer
+                {exp.jobTitle} <span onClick={() => removeExperience(index)}  className="float-end text-red-600 cursor-pointer">x</span>
+                <br /> {exp.companyName} - {exp.yearsOfExperience} years 
                 </span>
-                <span className="px-3 py-1 bg-gray-200 rounded-lg text-gray-800 text-sm">
-                  Customer Service Offier
-                </span>
-                <span className="px-3 py-1 bg-gray-200 rounded-lg text-gray-800 text-sm">
-                  Software Developer
-                </span>
+                ))}
               </div>
-              {/* Previous Job Title */}
-              <div>
+
+              {/* Input Fields for New Experience */}
+              <div className="mt-4">
                 <label className="block text-gray-700 font-semibold mb-2">
-                  Previous Job Title:
+                  Job Title:
                 </label>
                 <input
                   type="text"
-                  name="PreviousJobTitle"
-                  value={formData.PreviousJobTitle}
-                  onChange={handleChange}
+                  name="jobTitle"
+                  value={currentExperience.jobTitle}
+                  onChange={handleExperienceChange}
                   className="w-full p-2 border rounded-md focus:outline-blue-500"
-                  required
                 />
-              </div>
-              {/* Previous Job Title */}
-              <div>
-                <label className="block text-gray-700 font-semibold mb-2">
+
+                <label className="block text-gray-700 font-semibold mt-3 mb-2">
                   Company Name:
                 </label>
                 <input
                   type="text"
                   name="companyName"
-                  value={formData.companyName}
-                  onChange={handleChange}
+                  value={currentExperience.companyName}
+                  onChange={handleExperienceChange}
                   className="w-full p-2 border rounded-md focus:outline-blue-500"
-                  required
                 />
-              </div>
-              {/* Work Experience */}
-              <div>
-                <label className="block text-gray-700 font-semibold mb-2">
+
+                <label className="block text-gray-700 font-semibold mt-3 mb-2">
                   Years of Experience:
                 </label>
                 <input
                   type="number"
-                  name="experience"
-                  value={formData.experience}
-                  onChange={handleChange}
+                  name="yearsOfExperience"
+                  value={currentExperience.yearsOfExperience}
+                  onChange={handleExperienceChange}
                   className="w-full p-2 border rounded-md focus:outline-blue-500"
-                  required
                 />
-              </div>
-              {/* add button */}
-              <div className="mb-4">
+
                 <button
                   type="button"
-                  // onClick={handleAddExperience}
-                  className=" bg-blue-600 text-white py-2 px-1 my-2 rounded-md font-semibold hover:bg-blue-700 transition-all"
+                  onClick={addExperience}
+                  className="mt-3 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-700"
                 >
                   Add Experience
                 </button>
