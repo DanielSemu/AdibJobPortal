@@ -11,6 +11,7 @@ const ApplyJob = () => {
     email: "",
     phone: "",
     gender: "",
+    birthDate: "",
     educations: [],
     fieldStudy: "",
     graduationYear: "",
@@ -28,15 +29,15 @@ const ApplyJob = () => {
   });
   const [currentEducation, setCurrentEducation] = useState({
     educationLevel: "",
-    fieldofStudy: "",
+    fieldOfStudy: "",
     graduationYear: "",
     educationOrganization: "",
   });
   const [currentCertification, setCurrentCertification] = useState({
-    certificate: "",
+    certificateTitle: "",
     awardingCompany: "",
-    date: "",
-    expireDate: "",
+    awardedDate: "",
+    certificate: "",
   });
 
   const handleInputChange = (section, e) => {
@@ -138,92 +139,107 @@ const ApplyJob = () => {
 
         <form onSubmit={handleSubmit} className="space-y-6 ">
           {step === 1 && (
-            <div>
-              <h1 className="text-center text-3xl mb-2 text-gray-700 font-semibold ">
-                Personal Information
-              </h1>
-              <div>
-                <label className="block text-gray-700 font-semibold mb-2">
-                  Full Name:
-                </label>
+          <div>
+          <h1 className="text-center text-3xl mb-2 text-gray-700 font-semibold">
+            Personal Information
+          </h1>
+          
+          {/* Full Name */}
+          <div>
+            <label className="block text-gray-700 font-semibold mb-2">Full Name:</label>
+            <input
+              type="text"
+              name="fullName"
+              value={formData.fullName}
+              onChange={handleChange}
+              className="w-full p-2 border rounded-md focus:outline-blue-500"
+              required
+            />
+          </div>
+        
+          {/* Email */}
+          <div>
+            <label className="block text-gray-700 font-semibold mb-2">Email Address:</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full p-2 border rounded-md focus:outline-blue-500"
+              required
+            />
+          </div>
+        
+          {/* Phone Number */}
+          <div>
+            <label className="block text-gray-700 font-semibold mb-2">Phone Number:</label>
+            <input
+              type="tel"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              className="w-full p-2 border rounded-md focus:outline-blue-500"
+              required
+            />
+          </div>
+        
+          {/* Gender and Age in One Line, Responsive */}
+          <div className="flex flex-col md:flex-row md:space-x-6 items-center mt-3 mb-4">
+            {/* Gender */}
+            <div className="flex space-x-4 md:w-auto w-full mb-2 md:mb-0">
+              <span className="font-semibold text-gray-700">Gender:</span>
+              <label className="flex items-center space-x-2">
                 <input
-                  type="text"
-                  name="fullName"
-                  value={formData.fullName}
+                  type="radio"
+                  name="gender"
+                  value="Male"
+                  checked={formData.gender === "Male"}
                   onChange={handleChange}
-                  className="w-full p-2 border rounded-md focus:outline-blue-500"
-                  required
+                  className="w-4 h-4"
                 />
-              </div>
-
-              {/* Email */}
-              <div>
-                <label className="block text-gray-700 font-semibold mb-2">
-                  Email Address:
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded-md focus:outline-blue-500"
-                  required
-                />
-              </div>
-              {/* Phone Number */}
-              <div>
-                <label className="block text-gray-700 font-semibold mb-2">
-                  Phone Number:
-                </label>
-                <input
-                  type="tel"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded-md focus:outline-blue-500"
-                  required
-                />
-              </div>
-              <label className="block text-gray-700 font-semibold mb-2">
-                Gender:
+                <span>Male</span>
               </label>
-              <div className="flex space-x-4 mb-4">
-                <label className="flex items-center space-x-2 ">
-                  <input
-                    type="radio"
-                    name="gender"
-                    value="Male"
-                    checked={formData.gender === "Male"}
-                    onChange={handleChange}
-                    className="w-4 h-4"
-                  />
-                  <span>Male</span>
-                </label>
-                <label className="flex items-center space-x-2">
-                  <input
-                    type="radio"
-                    name="gender"
-                    value="Female"
-                    checked={formData.gender === "Female"}
-                    onChange={handleChange}
-                    className="w-4 h-4"
-                  />
-                  <span>Female</span>
-                </label>
-              </div>
+              <label className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  name="gender"
+                  value="Female"
+                  checked={formData.gender === "Female"}
+                  onChange={handleChange}
+                  className="w-4 h-4"
+                />
+                <span>Female</span>
+              </label>
             </div>
+        
+            {/* Age */}
+            <div className="flex items-center w-full md:w-auto">
+              <label className="text-gray-700 font-semibold mr-2">Birthdate:</label>
+              <input
+                type="date"
+                name="birthDate"
+                value={formData.birthDate}
+                onChange={handleChange}
+                className="p-2 border rounded-md focus:outline-blue-500 flex-grow md:flex-none"
+                required
+              />
+            </div>
+          </div>
+        </div>
+        
+         
           )}
           {step === 2 && (
             <div>
               <h1 className="text-center text-3xl mb-2 text-gray-700 font-semibold ">
                 Educational Background
               </h1>
-              {/* Display Added Education */}
-              <div className="flex flex-wrap gap-2 mt-2">
+             {/* Display Added Educations */}
+             <div className="flex flex-wrap gap-2 mt-2">
                 {formData.educations.map((edu, index) => (
                 <span key={index}  className="px-3 py-1 bg-gray-200 rounded-lg text-gray-800 text-sm">
-                {edu.jobTitle} <span onClick={() => removeEntry("education", index)}  className="float-end text-red-600 cursor-pointer">x</span>
-                <br /> {edu.educationLevel} - {edu.fieldofStudy} {" to "}{edu.graduationYear} years 
+                {edu.educationLevel}{" in "}{edu.fieldOfStudy}  <span onClick={() => removeEntry("educations", index)}  className="float-end ml-1 text-xl text-red-600 cursor-pointer">x</span>
+                <br /> {" from "} {edu.educationOrganization} 
                 </span>
                 ))}
               </div>
@@ -253,8 +269,8 @@ const ApplyJob = () => {
                 </label>
                 <input
                   type="text"
-                  name="fieldofStudy"
-                  value={currentEducation.fieldofStudy}
+                  name="fieldOfStudy"
+                  value={currentEducation.fieldOfStudy}
                   onChange={(e) => handleInputChange("education", e)}
                   className="w-full p-2 border rounded-md focus:outline-blue-500"
                   required
@@ -289,7 +305,7 @@ const ApplyJob = () => {
                 />
                 <button
                   type="button"
-                  onClick={() => addEntry("education", currentEducation, setCurrentEducation)}
+                  onClick={() => addEntry("educations", currentEducation, setCurrentEducation)}
                   className="mt-3 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-700"
                 >
                   Add Education
@@ -379,86 +395,76 @@ const ApplyJob = () => {
               </div>
             </div>
           )}
+
           {step === 4 && (
-            <div>
-              <h1 className="text-center text-3xl mb-2 text-gray-700 font-semibold">
-                Certification/Recognition <span className="text-xl">(Optional)</span>
-              </h1>
+             <div>
+             <h1 className="text-center text-3xl mb-2 text-gray-700 font-semibold">
+               Certifications/Recognitions <span className="text-xl">(Optional)</span>
+             </h1>
 
-              {/* Display Added Experiences */}
-              <div className="flex flex-wrap gap-2 mt-2">
-                {formData.experiences.map((exp, index) => (
-                <span className="px-3 py-1 bg-gray-200 rounded-lg text-gray-800 text-sm">
-                {exp.jobTitle} <span onClick={() => removeExperience(index)}  className="float-end text-red-600 cursor-pointer">x</span>
-                <br /> {exp.companyName} - {exp.from} {" to "}{exp.to} years 
-                </span>
-                ))}
-              </div>
+             {/* Display Added Experiences */}
+             <div className="flex flex-wrap gap-2 mt-2">
+               {formData.certifications.map((cert, index) => (
+               <span key={index}  className="px-3 py-1 bg-gray-200 rounded-lg text-gray-800 text-sm">
+               {cert.certificateTitle} <span onClick={() => removeEntry("certifications", index)}  className="float-end text-red-600 cursor-pointer">x</span>
+               <br />{" by "} {cert.awardingCompany} {" in "}{cert.awardedDate} 
+               </span>
+               ))}
+             </div>
 
-              {/* Input Fields for New Experience */}
-              <div className="mt-4">
-                <label className="block text-gray-700 font-semibold mb-2">
-                  Job Title:
+             {/* Input Fields for New Experience */}
+             <div className="mt-4">
+               <label className="block text-gray-700 font-semibold mb-1">
+                 Certificate Title:
+               </label>
+               <input
+                 type="text"
+                 name="certificateTitle"
+                 value={currentCertification.certificateTitle}
+                 onChange={(e) => handleInputChange("certification", e)}
+                 className="w-full p-2 border rounded-md focus:outline-blue-500"
+               />
+
+               <label className="block text-gray-700 font-semibold mt-1 mb-1">
+                 Awarding Company:
+               </label>
+               <input
+                 type="text"
+                 name="awardingCompany"
+                 value={currentCertification.awardingCompany}
+                 onChange={(e) => handleInputChange("certification", e)}
+                 className="w-full p-2 border rounded-md focus:outline-blue-500"
+               />
+               <label className="block text-gray-700 font-semibold mt-1 mb-1">
+                 Awarding Date:
+               </label>
+               <input
+                 type="date"
+                 name="awardedDate"
+                 value={currentCertification.awardedDate}
+                 onChange={(e) => handleInputChange("certification", e)}
+                 className="w-full p-2 border rounded-md focus:outline-blue-500"
+               />
+               <label className="block text-gray-700 font-semibold mb-2">
+                  Upload Certificate (PDF/DOCX)
                 </label>
                 <input
-                  type="text"
-                  name="jobTitle"
-                  value={currentExperience.jobTitle}
-                  onChange={handleExperienceChange}
+                  type="file"
+                  name="certificate"
+                  accept=".pdf, .doc, .docx"
+                  onChange={(e) => handleInputChange("certification", e)}
                   className="w-full p-2 border rounded-md focus:outline-blue-500"
+                  required
                 />
-
-                <label className="block text-gray-700 font-semibold mt-3 mb-2">
-                  Company Name:
-                </label>
-                <input
-                  type="text"
-                  name="companyName"
-                  value={currentExperience.companyName}
-                  onChange={handleExperienceChange}
-                  className="w-full p-2 border rounded-md focus:outline-blue-500"
-                />
-
-                <label className="block text-gray-700 font-semibold mt-3 mb-2">
-                  Years of Experience:
-                </label>
-                <div className="grid sm:grid-cols-2 gap-2">
-                <div className="flex">
-                <label className="block text-gray-700 font-semibold mt-3 mb-2">
-                  From:
-                </label>
-                  <input
-                  type="date"
-                  name="from"
-                  value={currentExperience.from}
-                  onChange={handleExperienceChange}
-                  className="w-full p-2 border rounded-md focus:outline-blue-500"
-                />
-                </div>
-                <div className="flex">
-                <label className="block text-gray-700 font-semibold mt-3 mb-2">
-                  To:
-                </label>
-                  <input
-                  type="date"
-                  name="to"
-                  value={currentExperience.to}
-                  onChange={handleExperienceChange}
-                  className="w-full p-2 border rounded-md focus:outline-blue-500"
-                />
-                </div>
-                </div>
-                
-
-                <button
-                  type="button"
-                  onClick={addExperience}
-                  className="mt-3 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-700"
-                >
-                  Add Experience
-                </button>
-              </div>
-            </div>
+               <button
+                 type="button"
+                 onClick={() => addEntry("certifications", currentCertification, setCurrentCertification)}
+                 className="mt-1 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-700"
+               >
+                 Add Certificate
+               </button>
+             </div>
+           </div>
           )}
 
           {step === 5 && (
