@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { jobs } from "../../data/jobs";
-import { FaAngleDoubleRight, FaAngleDoubleLeft, FaCheck, FaCross } from "react-icons/fa"; // Import Icons
+import { FaAngleDoubleRight, FaAngleDoubleLeft, FaCheck } from "react-icons/fa"; 
 
 const ApplyJob = () => {
   const { id } = useParams();
@@ -19,6 +19,7 @@ const ApplyJob = () => {
     experiences: [], 
     certifications:[]
   });
+  const [errors, setErrors] = useState({});
 
   // Temporary state to hold current experience input
   const [currentExperience, setCurrentExperience] = useState({
@@ -77,6 +78,22 @@ const ApplyJob = () => {
       [section]: prevData[section].filter((_, i) => i !== index),
     }));
   };
+
+  const validateForm = () => {
+    let newErrors = {};
+  
+    if (!formData.fullName.trim()) newErrors.fullName = "Full Name is required";
+    if (!formData.email.trim()) newErrors.email = "Email is required";
+    if (!formData.phone.trim()) newErrors.phone = "Phone number is required";
+    if (!formData.gender) newErrors.gender = "Gender is required";
+    if (!formData.birthDate) newErrors.birthDate = "Birthdate is required";
+  
+    if (formData.educations.length === 0) newErrors.educations = "Education is required";
+
+  
+    return newErrors;
+  };
+  
   
 
   const detailedData = jobs.find((item) => item.id === Number(id));
@@ -95,8 +112,22 @@ const ApplyJob = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const newErrors = validateForm();
+
+  if (Object.keys(newErrors).length > 0) {
+    setErrors(newErrors);
+
+    // Redirect to first page with error
+    if (newErrors.fullName || newErrors.email || newErrors.phone|| newErrors.birthDate) {
+      setStep(1);
+    } else if (newErrors.educations || newErrors.experiences) {
+      setStep(2);
+    }
+
+  } else {
     console.log("Form Submitted:", formData);
-    alert("Application Submitted Successfully!");
+    alert("Form Submitted Successfully!");
+  }
   };
   return (
     <div className="main-container flex flex-col md:flex-row bg-gray-100 sm:pb-8 gap-1 min-h-screen">
@@ -155,6 +186,7 @@ const ApplyJob = () => {
               className="w-full p-2 border rounded-md focus:outline-blue-500"
               required
             />
+            {errors.fullName && <p className="text-red-500">{errors.fullName}</p>}
           </div>
         
           {/* Email */}
@@ -168,6 +200,7 @@ const ApplyJob = () => {
               className="w-full p-2 border rounded-md focus:outline-blue-500"
               required
             />
+            {errors.email && <p className="text-red-500">{errors.email}</p>}
           </div>
         
           {/* Phone Number */}
@@ -181,6 +214,7 @@ const ApplyJob = () => {
               className="w-full p-2 border rounded-md focus:outline-blue-500"
               required
             />
+            {errors.phone && <p className="text-red-500">{errors.phone}</p>}
           </div>
         
           {/* Gender and Age in One Line, Responsive */}
@@ -211,7 +245,7 @@ const ApplyJob = () => {
                 <span>Female</span>
               </label>
             </div>
-        
+            
             {/* Age */}
             <div className="flex items-center w-full md:w-auto">
               <label className="text-gray-700 font-semibold mr-2">Birthdate:</label>
@@ -223,8 +257,11 @@ const ApplyJob = () => {
                 className="p-2 border rounded-md focus:outline-blue-500 flex-grow md:flex-none"
                 required
               />
+              
             </div>
           </div>
+          {errors.gender && <p className="text-red-500">{errors.gender}</p>}
+          {errors.birthDate && <p className="text-red-500">{errors.birthDate}</p>}
         </div>
         
          
@@ -245,6 +282,7 @@ const ApplyJob = () => {
               </div>
               {/* Education */}
               <div>
+              {errors.educations && <p className="text-red-500">{errors.educations}</p>}
                 <label className="block text-gray-700 font-semibold mb-2">
                   Highest Education:
                 </label>
@@ -536,7 +574,6 @@ const ApplyJob = () => {
               </div>
             </div>
           )}
-
           {/* Fixed Buttons at the Bottom */}
           <div className="absolute bottom-0 left-0 right-0 flex justify-between px-5 pb-5">
             {step > 1 ? (
