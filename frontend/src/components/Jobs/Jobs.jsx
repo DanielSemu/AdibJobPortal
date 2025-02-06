@@ -1,12 +1,21 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FaArrowRight } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
 import logo from "../../assets/Addis_logo.jpg";
 import { Link } from "react-router-dom";
-import { jobs } from "../../data/jobs";
+// import { jobs } from "../../data/jobs";
+import { getJobs } from "../../services/jobsService";
 
 const Jobs = () => {
-  
+  const [jobs, setJobs]=useState([])
+  useEffect(()=>{
+    const fetchJobs= async ()=>{
+      const response=await getJobs()
+      setJobs(response)
+    }
+
+    fetchJobs()
+  },[])
   return (
     <>
       <div id="jobs" className="main-container ">
@@ -25,7 +34,7 @@ const Jobs = () => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
                   <div className="size-14 flex items-center justify-center bg-white  shadow shadow-gray-700 rounded-md">
-                    <img src={job.image} className="size-8" alt="" />
+                    <img src={logo} className="size-8" alt="" />
                   </div>
                   <div className="ms-3">
                     <a
@@ -34,11 +43,11 @@ const Jobs = () => {
                     >
                       Addis Bank S.C
                     </a>
-                    <span className="block text-sm text-slate-400">{job.postedDate} days ago</span>
+                    <span className="block text-sm text-slate-400">{1} days ago</span>
                   </div>
                 </div>
                 <span className="bg-emerald-600/10 group-hover:bg-[#007dda] inline-block text-[#007dda] group-hover:text-white text-xs px-2.5 py-0.5 font-semibold rounded-full transition-all duration-500">
-                  {job.jobType}
+                  {job.type}
                 </span>
               </div>
               <div className="mt-6">
@@ -46,7 +55,7 @@ const Jobs = () => {
                   className="text-lg hover:text-[#007dda] font-semibold transition-all duration-500"
                   to={`/detail/${job.id}`}
                 >
-                  {job.jobTitle}
+                  {job.title}
                 </p>
                 <h6 className="text-base font-medium flex items-center">
                   <FaLocationDot />
@@ -64,9 +73,9 @@ const Jobs = () => {
                 <div className="mt-2">
                   <span className="text-slate-400 text-sm">
                     <span className="text-slate-900 font-semibold inline-block">
-                     {job.applied} applied
+                     {2} applied
                     </span> {" "}
-                    of {job.capacity} vacancy
+                     
                   </span>
                 </div>
               </div>

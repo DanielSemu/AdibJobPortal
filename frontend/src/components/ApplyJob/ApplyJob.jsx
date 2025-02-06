@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { jobs } from "../../data/jobs";
 import { FaAngleDoubleRight, FaAngleDoubleLeft, FaCheck } from "react-icons/fa"; 
@@ -7,10 +7,12 @@ import Step2 from "./Step2";
 import Step3 from "./Step3";
 import Step4 from "./Step4";
 import Step5 from "./Step5";
+import { getSingleJob } from "../../services/jobsService";
 
 const ApplyJob = () => {
   const { id } = useParams();
   const [step, setStep] = useState(1);
+  const [detailedData, setDetailedData] = useState([]);
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -45,6 +47,18 @@ const ApplyJob = () => {
     awardedDate: "",
     certificate: "",
   });
+
+    useEffect(() => {
+      const fetchJob = async () => {
+        try {
+          const response = await getSingleJob(parseInt(id));
+          setDetailedData(response);
+        } catch (error) {
+          console.error("Error fetching job:", error);
+        }
+      };
+      fetchJob();
+    }, [id]);
 
   const handleInputChange = (section, e) => {
     const { name, value } = e.target;
@@ -100,7 +114,7 @@ const ApplyJob = () => {
   
   
 
-  const detailedData = jobs.find((item) => item.id === Number(id));
+
 
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
@@ -138,7 +152,7 @@ const ApplyJob = () => {
       {/* Sidebar with Job Details */}
       <div className="w-full md:w-1/3 bg-white shadow-lg rounded-lg p-8">
         <h2 className="text-3xl font-bold text-gray-900">
-          {detailedData.jobTitle}
+          {detailedData.title}
         </h2>
         <p className="text-lg text-gray-600 mt-2 font-medium">
           {detailedData.company}
@@ -153,7 +167,7 @@ const ApplyJob = () => {
           <strong>💰 Salary:</strong> {detailedData.salary}
         </div>
         <div className="mt-2 text-gray-800">
-          <strong>🗓️ Dead Line:</strong> {detailedData.deadLine}
+          <strong>🗓️ Dead Line:</strong> {detailedData.application_deadline}
         </div>
       </div>
 

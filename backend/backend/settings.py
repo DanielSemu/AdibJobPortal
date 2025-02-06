@@ -55,7 +55,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',  # React development server
+    'http://localhost:5173',  # React development server
     'https://your-production-domain.com',  # Your production domain
 ]
 

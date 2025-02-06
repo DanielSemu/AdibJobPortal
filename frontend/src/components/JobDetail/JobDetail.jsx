@@ -1,35 +1,44 @@
-import { useState } from "react";
-import { FaBriefcase, FaMapMarkerAlt, FaMoneyBillWave, FaRegCalendarTimes  } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import {
+  FaBriefcase,
+  FaMapMarkerAlt,
+  FaMoneyBillWave,
+  FaRegCalendarTimes,
+} from "react-icons/fa";
 import { Link, useParams } from "react-router-dom";
-import { jobs } from "../../data/jobs";
+import { getSingleJob } from "../../services/jobsService";
 
 const JobDetail = () => {
   const [applied, setApplied] = useState(false);
   const { id } = useParams();
+  const [detailedData, setDetailedData] = useState([]);
 
-  // Find the detailed job by matching the `id` with the `Jobs` array
-  const detailedData = jobs.find((item) => item.id === Number(id));
+  useEffect(() => {
+    const fetchJob = async () => {
+      try {
+        const response = await getSingleJob(parseInt(id));
+        setDetailedData(response);
+      } catch (error) {
+        console.error("Error fetching job:", error);
+      }
+    };
+    fetchJob();
+  }, [id]); // Ensure dependency array includes `id`
 
   const handleApply = () => {
     setApplied(true);
     // Add logic for navigation or API request
   };
   if (!detailedData) {
-    return (
-      <div className="main-container flex justify-center items-center min-h-screen bg-gray-100 p-6">
-        <div className="w-full max-w-3xl bg-white shadow-xl rounded-lg p-8">
-          <p className="text-xl font-semibold text-gray-600">Job not found</p>
-        </div>
-      </div>
-    );
+    return <div>Loading...</div>;
   }
   return (
     <div className="main-container flex justify-center items-center min-h-screen bg-gray-100 p-6">
       <div className="w-full max-w-3xl bg-white shadow-xl rounded-lg p-8">
         {/* Job Title and Company */}
-        {detailedData.jobTitle && (
+        {detailedData.title && (
           <h1 className="text-4xl font-bold text-gray-900">
-            {detailedData.jobTitle}
+            {detailedData.title}
           </h1>
         )}
         {detailedData.company && (
@@ -38,10 +47,10 @@ const JobDetail = () => {
 
         {/* Job Details */}
         <div className="flex flex-wrap gap-4 mt-4 text-gray-700">
-          {detailedData.jobType && (
+          {detailedData.type && (
             <p className="flex items-center gap-2">
               <FaBriefcase className="text-blue-500" />{" "}
-              <strong>Job Type:</strong> {detailedData.jobType}
+              <strong>Job Type:</strong> {detailedData.type}
             </p>
           )}
           {detailedData.location && (
@@ -56,10 +65,10 @@ const JobDetail = () => {
               <strong>Salary:</strong> {detailedData.salary}
             </p>
           )}
-          {detailedData.deadLine && (
+          {detailedData.application_deadline && (
             <p className="flex items-center gap-2">
-              <FaRegCalendarTimes   className="text-red-500" />{" "}
-              <strong>Dead Line:</strong> {detailedData.deadLine}
+              <FaRegCalendarTimes className="text-red-500" />{" "}
+              <strong>Dead Line:</strong> {detailedData.application_deadline}
             </p>
           )}
         </div>
@@ -85,7 +94,7 @@ const JobDetail = () => {
             <h2 className="text-xl font-semibold mt-6">Key Responsibilities</h2>
             <ul className="list-disc ml-6 text-gray-600 mt-2 space-y-1">
               {detailedData.responsibilities.map((task, index) => (
-                <li key={index}>{task}</li>
+                <li key={index}>{task.responsibility}</li> // Extract "responsibility"
               ))}
             </ul>
           </>
@@ -99,7 +108,7 @@ const JobDetail = () => {
             </h2>
             <ul className="list-disc ml-6 text-gray-600 mt-2 space-y-1">
               {detailedData.qualifications.map((qual, index) => (
-                <li key={index}>{qual}</li>
+                <li key={index}>{qual.qualification}</li> // Extract "qualification"
               ))}
             </ul>
           </>
@@ -108,38 +117,33 @@ const JobDetail = () => {
         {/* Skills */}
         {detailedData.skills && (
           <>
-            <h2 className="text-xl font-semibold mt-6">Skills & Experience</h2>
-            <div className="flex flex-wrap gap-2 mt-2">
+            <h2 className="text-xl font-semibold mt-6">Skills</h2>
+            <ul className="list-disc ml-6 text-gray-600 mt-2 space-y-1">
               {detailedData.skills.map((skill, index) => (
-                <span
-                  key={index}
-                  className="px-3 py-1 bg-gray-200 rounded-lg text-gray-800 text-sm"
-                >
-                  {skill}
-                </span>
+                <li key={index}>{skill.skill}</li> // Extract "skill"
               ))}
-            </div>
+            </ul>
           </>
         )}
 
         {/* Benefits */}
         {detailedData.benefits && (
           <>
-            <h2 className="text-xl font-semibold mt-6">Benefits & Perks</h2>
+            <h2 className="text-xl font-semibold mt-6">Benefits</h2>
             <ul className="list-disc ml-6 text-gray-600 mt-2 space-y-1">
               {detailedData.benefits.map((benefit, index) => (
-                <li key={index}>{benefit}</li>
+                <li key={index}>{benefit.benefit}</li> // Extract "benefit"
               ))}
             </ul>
           </>
         )}
 
         {/* Application Process */}
-        {detailedData.applicationProcess && (
+        {detailedData.how_to_apply && (
           <>
             <h2 className="text-xl font-semibold mt-6">How to Apply</h2>
             <p className="text-gray-600 mt-2">
-              {detailedData.applicationProcess}
+              {detailedData.how_to_apply}
             </p>
           </>
         )}
