@@ -117,12 +117,17 @@ const JobDetail = () => {
         {/* Skills */}
         {detailedData.skills && (
           <>
-            <h2 className="text-xl font-semibold mt-6">Skills</h2>
-            <ul className="list-disc ml-6 text-gray-600 mt-2 space-y-1">
+            <h2 className="text-xl font-semibold mt-6">Skills & Experience</h2>
+            <div className="flex flex-wrap gap-2 mt-2">
               {detailedData.skills.map((skill, index) => (
-                <li key={index}>{skill.skill}</li> // Extract "skill"
+                <span
+                  key={index}
+                  className="px-3 py-1 bg-gray-200 rounded-lg text-gray-800 text-sm"
+                >
+                  {skill.skill}
+                </span>
               ))}
-            </ul>
+            </div>
           </>
         )}
 
@@ -142,9 +147,7 @@ const JobDetail = () => {
         {detailedData.how_to_apply && (
           <>
             <h2 className="text-xl font-semibold mt-6">How to Apply</h2>
-            <p className="text-gray-600 mt-2">
-              {detailedData.how_to_apply}
-            </p>
+            <p className="text-gray-600 mt-2">{detailedData.how_to_apply}</p>
           </>
         )}
 
