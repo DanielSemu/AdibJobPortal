@@ -5,3 +5,23 @@
 .main-container{
     margin-top: 70px;
 }
+
+
+.table-container {
+    position: relative;
+    overflow-x: auto;
+  }
+  
+  .table-container .rdt_TableHeader {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10;
+  }
+  
+  .table-container .rdt_TableCol:last-child {
+    position: sticky !important;
+    right: 0 !important;
+    background-color: white;
+    z-index: 5;
+  }
+  

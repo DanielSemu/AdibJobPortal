@@ -25,10 +25,10 @@ const Jobs = () => {
         { header: "Salary", accessor: "salary" },
        
         {
-          header: "Manage",
+          header: "Actions",
           accessor: "actions",
           cell: (row) => (
-            <div className="actions">
+            <div className="flex gap-2">
               <button onClick={() => handleDetailStore(row)} className="btn">
                 <FiEye />
               </button>
@@ -42,7 +42,7 @@ const Jobs = () => {
       ];
 
   return (
-    <div className="p-4">
+    <div>
        <ReusableTable
         columns={columns}
         records={data}

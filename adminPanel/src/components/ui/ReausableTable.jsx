@@ -15,7 +15,7 @@ const ReusableTable = ({ columns, records, title, addAddress }) => {
   return (
     <div className="table-container p-3 shadow-sm bg-white rounded" style={{ overflowX: 'auto' }}>
       <div className="d-flex align-items-center justify-content-between mb-3">
-        <h2 style={{ color: "--primary-color" }} className="mb-0">{title}AA</h2>
+        <h2 style={{ color: "--primary-color" }} className="mb-0">{title}</h2>
         {addAddress && (
           <Link to={addAddress} className="btn btn-outline-primary">
             Add {title}
