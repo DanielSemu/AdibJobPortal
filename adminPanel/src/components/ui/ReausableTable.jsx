@@ -14,10 +14,10 @@ const ReusableTable = ({ columns, records, title, addAddress }) => {
 
   return (
     <div className="table-container p-3 shadow-sm bg-white rounded" style={{ overflowX: 'auto' }}>
-      <div className="d-flex align-items-center justify-content-between mb-3">
-        <h2 style={{ color: "--primary-color" }} className="mb-0">{title}</h2>
+      <div className="flex items-center justify-between mb-3">
+        <h2  className="text-2xl  ">{title}</h2>
         {addAddress && (
-          <Link to={addAddress} className="btn btn-outline-primary">
+          <Link to={addAddress} type='button' className="bg-blue-600 text-white rounded-md p-2 ">
             Add {title}
           </Link>
         )}
@@ -35,7 +35,7 @@ const ReusableTable = ({ columns, records, title, addAddress }) => {
             headCells: {
               style: {
                 backgroundColor: 'rgb(212, 212, 212)',
-                fontWeight: 'bold',
+                fontWeight: 'semiBold',
                 fontSize: '1rem',
                 color: '#2674b6',
                 position: 'sticky',
