@@ -13,6 +13,7 @@ class Job(models.Model):
     salary = models.CharField(max_length=255, default="As per Companies Salary Scale")
     description = models.TextField()
     application_deadline = models.DateField()
+    status=models.CharField(max_length=50, choices=[("Active","Active"),("InActive","InActive"),("Closed","Closed")], default="InActive")
     how_to_apply=models.TextField(default="To apply, please fill out the application form below and upload your CV. Ensure all fields are completed before submitting your application. Application deadline:")
 
     def __str__(self):
@@ -35,7 +36,7 @@ class Qualification(models.Model):
 class Skill(models.Model):
     job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name="skills")
     skill = models.CharField(max_length=100)
-
+    
     def __str__(self):
         return f"{self.job.title} - {self.skill}"
 

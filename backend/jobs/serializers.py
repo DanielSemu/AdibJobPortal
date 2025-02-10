@@ -32,7 +32,7 @@ class JobSerializer(serializers.ModelSerializer):
         model = Job
         fields = [
             "id", "title", "company", "category", "location", "type",
-            "salary", "description", "application_deadline",
+            "salary", "description", "application_deadline","status",
             "responsibilities", "qualifications", "skills", "benefits","how_to_apply"
         ]
 

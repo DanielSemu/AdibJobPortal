@@ -7,6 +7,7 @@ import {
 } from "react-icons/fa";
 import { Link, useParams } from "react-router-dom";
 import { getSingleJob } from "../services/jobsService";
+import { FaHourglassStart } from "react-icons/fa6";
 
 const JobDetail = () => {
   const [applied, setApplied] = useState(false);
@@ -69,6 +70,12 @@ const JobDetail = () => {
             <p className="flex items-center gap-2">
               <FaRegCalendarTimes className="text-red-500" />{" "}
               <strong>Dead Line:</strong> {detailedData.application_deadline}
+            </p>
+          )}
+          {detailedData.application_deadline && (
+            <p className="flex items-center gap-2">
+              <FaHourglassStart  className="text-red-500" />{" "}
+              <strong>Status:</strong> {detailedData.status}
             </p>
           )}
         </div>

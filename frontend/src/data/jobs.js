@@ -313,7 +313,7 @@ const modified=
       {"responsibility": "Troubleshoot electrical issues and resolve them promptly."},
       {"responsibility": "Ensure compliance with safety regulations and procedures."},
       {"responsibility": "Install and maintain electrical systems and equipment."},
-      {"responsibility": "Assist with upgrading electrical systems as needed."}
+      {"responsibility": "Install and maintain electrical systems and equipment."}
     ],
     "qualifications": [
       {"qualification": "High school diploma or equivalent."},
