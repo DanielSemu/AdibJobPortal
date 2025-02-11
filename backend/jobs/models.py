@@ -49,52 +49,48 @@ class Benefit(models.Model):
     
     
     
-    
-#     # Job Application
 
-# class JobApplication(models.Model):
-#     GENDER_CHOICES = [
-#         ('Male', 'Male'),
-#         ('Female', 'Female'),
-#         ('Other', 'Other'),
-#     ]
-    
-#     full_name = models.CharField(max_length=255)
-#     email = models.EmailField(unique=True)
-#     phone = models.CharField(max_length=20)
-#     gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
-#     birth_date = models.DateField()
+class Applicant(models.Model):
+    full_name = models.CharField(max_length=255)
+    email = models.EmailField(unique=True)
+    phone = models.CharField(max_length=15)
+    gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female')])
+    birth_date = models.DateField()
+    contact_consent = models.BooleanField(default=False)
+    cover_letter = models.TextField(blank=True)
+    resume = models.FileField(upload_to='resumes/')
+    terms_accepted = models.BooleanField(default=False)
 
-#     def __str__(self):
-#         return f"Job Application - {self.full_name}"
+    def __str__(self):
+        return self.full_name
 
-# class Education(models.Model):
-#     job_application = models.ForeignKey(JobApplication, on_delete=models.CASCADE, related_name="educations")
-#     education_level = models.CharField(max_length=255)
-#     field_of_study = models.CharField(max_length=255)
-#     graduation_year = models.IntegerField()
-#     education_organization = models.CharField(max_length=255)
+class Education(models.Model):
+    applicant = models.ForeignKey(Applicant, on_delete=models.CASCADE, related_name='educations')
+    education_level = models.CharField(max_length=100)
+    field_of_study = models.CharField(max_length=100)
+    education_organization = models.CharField(max_length=255)
+    graduation_year = models.DateField()
 
-#     def __str__(self):
-#         return f"{self.education_level} - {self.field_of_study} ({self.education_organization})"
+    def __str__(self):
+        return f"{self.education_level} - {self.education_organization}"
 
-# class Experience(models.Model):
-#     job_application = models.ForeignKey(JobApplication, on_delete=models.CASCADE, related_name="experiences")
-#     job_title = models.CharField(max_length=255)
-#     company_name = models.CharField(max_length=255)
-#     from_date = models.DateField()
-#     to_date = models.DateField(null=True, blank=True)  # Allows ongoing jobs
+class Experience(models.Model):
+    applicant = models.ForeignKey(Applicant, on_delete=models.CASCADE, related_name='experiences')
+    job_title = models.CharField(max_length=100)
+    company_name = models.CharField(max_length=255)
+    from_date = models.DateField()
+    to_date = models.DateField()
+    banking_experience=models.BooleanField(default=True)
 
-#     def __str__(self):
-#         return f"{self.job_title} at {self.company_name}"
+    def __str__(self):
+        return f"{self.job_title} at {self.company_name}"
 
-# class Certification(models.Model):
-#     job_application = models.ForeignKey(JobApplication, on_delete=models.CASCADE, related_name="certifications")
-#     certificate_title = models.CharField(max_length=255)
-#     awarding_company = models.CharField(max_length=255)
-#     awarded_date = models.DateField()
-#     certificate = models.FileField(upload_to='certifications/', null=True, blank=True)
+class Certification(models.Model):
+    applicant = models.ForeignKey(Applicant, on_delete=models.CASCADE, related_name='certifications')
+    certificate_title = models.CharField(max_length=100)
+    awarding_company = models.CharField(max_length=255)
+    awarded_date = models.DateField()
+    certificate_file = models.FileField(upload_to='certificates/')
 
-#     def __str__(self):
-#         return self.certificate_title
-
+    def __str__(self):
+        return self.certificate_title

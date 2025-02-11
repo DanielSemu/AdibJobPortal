@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Job, Responsibility, Qualification, Skill, Benefit, JobCategory
+from .models import Job, Responsibility, Qualification, Skill, Benefit, JobCategory,Applicant, Education, Experience, Certification
 
 class ResponsibilitySerializer(serializers.ModelSerializer):
     class Meta:
@@ -91,3 +91,61 @@ class JobSerializer(serializers.ModelSerializer):
             Benefit.objects.create(job=instance, **benefit_data)
 
         return instance
+
+
+
+
+
+
+class EducationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Education
+        fields = '__all__'
+        extra_kwargs = {"applicant": {"read_only": True}}
+
+class ExperienceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Experience
+        fields = '__all__'
+        extra_kwargs = {"applicant": {"read_only": True}}
+
+class CertificationSerializer(serializers.ModelSerializer):
+    certificate_file = serializers.FileField(required=False)
+
+    class Meta:
+        model = Certification
+        fields = '__all__'
+        extra_kwargs = {"applicant": {"read_only": True}}
+
+class ApplicantSerializer(serializers.ModelSerializer):
+    educations = EducationSerializer(many=True)
+    experiences = ExperienceSerializer(many=True)
+    certifications = CertificationSerializer(many=True, required=False)
+    resume = serializers.FileField(required=False)
+
+    class Meta:
+        model = Applicant
+        fields = '__all__'
+
+    def validate_email(self, value):
+        if Applicant.objects.filter(email=value).exists():
+            raise serializers.ValidationError("An applicant with this email already exists.")
+        return value
+
+    def create(self, validated_data):
+        educations_data = validated_data.pop('educations', [])
+        experiences_data = validated_data.pop('experiences', [])
+        certifications_data = validated_data.pop('certifications', [])
+
+        applicant = Applicant.objects.create(**validated_data)
+
+        for education in educations_data:
+            Education.objects.create(applicant=applicant, **education)
+
+        for experience in experiences_data:
+            Experience.objects.create(applicant=applicant, **experience)
+
+        for certification in certifications_data:
+            Certification.objects.create(applicant=applicant, **certification)
+
+        return applicant

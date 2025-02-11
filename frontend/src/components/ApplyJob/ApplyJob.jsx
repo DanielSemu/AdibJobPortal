@@ -8,6 +8,7 @@ import Step3 from "./Step3";
 import Step4 from "./Step4";
 import Step5 from "./Step5";
 import { getSingleJob } from "../../services/jobsService";
+import axiosInstance from "../../services/axiosInstance";
 
 const ApplyJob = () => {
   const { id } = useParams();
@@ -128,7 +129,7 @@ const ApplyJob = () => {
   const nextStep = () => setStep((prev) => prev + 1);
   const prevStep = () => setStep((prev) => prev - 1);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     const newErrors = validateForm();
 
@@ -144,6 +145,13 @@ const ApplyJob = () => {
 
   } else {
     console.log("Form Submitted:", formData);
+    const response = await axiosInstance.post('/applicants/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    console.log(response);
+    
     alert("Form Submitted Successfully!");
   }
   };

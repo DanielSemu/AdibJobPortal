@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import JobView, ResponsibilityView, QualificationView, SkillView, BenefitView
+from .views import ApplicantAPIView, JobView, ResponsibilityView, QualificationView, SkillView, BenefitView
 
 urlpatterns = [
     # Job CRUD operations
@@ -17,4 +17,5 @@ urlpatterns = [
     
     # Benefit CRUD operations (requires job_id)
     path('jobs/<int:job_id>/benefits/', BenefitView.as_view(), name='benefit-list-create'),
+    path('applicants/', ApplicantAPIView.as_view(), name='applicants_api'),
 ]

@@ -4,8 +4,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.exceptions import NotFound
 from django.shortcuts import get_object_or_404
-from .serializers import JobSerializer, ResponsibilitySerializer, QualificationSerializer, SkillSerializer, BenefitSerializer
-from .models import Job, Responsibility, Qualification, Skill, Benefit
+from .serializers import ApplicantSerializer, JobSerializer, ResponsibilitySerializer, QualificationSerializer, SkillSerializer, BenefitSerializer
+from .models import Applicant, Job, Responsibility, Qualification, Skill, Benefit
 
 
 class JobView(APIView):
@@ -112,3 +112,20 @@ class BenefitView(APIView):
             serializer.save(job_id=job_id)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+class ApplicantAPIView(APIView):
+    def post(self, request, *args, **kwargs):
+        print(request.data)
+        serializer = ApplicantSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Applicant created successfully", "data": serializer.data}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request):
+        applicants = Applicant.objects.all()
+        serializer = ApplicantSerializer(applicants, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
