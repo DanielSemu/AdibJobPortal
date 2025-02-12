@@ -12,13 +12,13 @@ const Step1 = ({formData,errors,handleChange}) => {
             <label className="block text-gray-700 font-semibold mb-2">Full Name:</label>
             <input
               type="text"
-              name="fullName"
-              value={formData.fullName}
+              name="full_name"
+              value={formData.full_name}
               onChange={handleChange}
               className="w-full p-2 border rounded-md focus:outline-blue-500"
               required
             />
-            {errors.fullName && <p className="text-red-500">{errors.fullName}</p>}
+            {errors.full_name && <p className="text-red-500">{errors.full_name}</p>}
           </div>
         
           {/* Email */}
@@ -83,8 +83,8 @@ const Step1 = ({formData,errors,handleChange}) => {
               <label className="text-gray-700 font-semibold mr-2">Birthdate:</label>
               <input
                 type="date"
-                name="birthDate"
-                value={formData.birthDate}
+                name="birth_date"
+                value={formData.birth_date}
                 onChange={handleChange}
                 className="p-2 border rounded-md focus:outline-blue-500 flex-grow md:flex-none"
                 required
@@ -93,7 +93,7 @@ const Step1 = ({formData,errors,handleChange}) => {
             </div>
           </div>
           {errors.gender && <p className="text-red-500">{errors.gender}</p>}
-          {errors.birthDate && <p className="text-red-500">{errors.birthDate}</p>}
+          {errors.birth_date && <p className="text-red-500">{errors.birth_date}</p>}
         </div>
   )
 }

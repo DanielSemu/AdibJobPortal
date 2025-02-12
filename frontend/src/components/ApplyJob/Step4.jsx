@@ -11,8 +11,8 @@ const Step4 = ({handleInputChange,currentCertification,formData,addEntry,removeE
              <div className="flex flex-wrap gap-2 mt-2">
                {formData.certifications.map((cert, index) => (
                <span key={index}  className="px-3 py-1 bg-gray-200 rounded-lg text-gray-800 text-sm">
-               {cert.certificateTitle} <span onClick={() => removeEntry("certifications", index)}  className="float-end text-red-600 cursor-pointer">x</span>
-               <br />{" by "} {cert.awardingCompany} {" in "}{cert.awardedDate} 
+               {cert.certificate_title} <span onClick={() => removeEntry("certifications", index)}  className="float-end text-red-600 cursor-pointer">x</span>
+               <br />{" by "} {cert.awarding_company} {" in "}{cert.awarded_date} 
                </span>
                ))}
              </div>
@@ -24,8 +24,8 @@ const Step4 = ({handleInputChange,currentCertification,formData,addEntry,removeE
                </label>
                <input
                  type="text"
-                 name="certificateTitle"
-                 value={currentCertification.certificateTitle}
+                 name="certificate_title"
+                 value={currentCertification.certificate_title}
                  onChange={(e) => handleInputChange("certification", e)}
                  className="w-full p-2 border rounded-md focus:outline-blue-500"
                />
@@ -35,8 +35,8 @@ const Step4 = ({handleInputChange,currentCertification,formData,addEntry,removeE
                </label>
                <input
                  type="text"
-                 name="awardingCompany"
-                 value={currentCertification.awardingCompany}
+                 name="awarding_company"
+                 value={currentCertification.awarding_company}
                  onChange={(e) => handleInputChange("certification", e)}
                  className="w-full p-2 border rounded-md focus:outline-blue-500"
                />
@@ -45,8 +45,8 @@ const Step4 = ({handleInputChange,currentCertification,formData,addEntry,removeE
                </label>
                <input
                  type="date"
-                 name="awardedDate"
-                 value={currentCertification.awardedDate}
+                 name="awarded_date"
+                 value={currentCertification.awarded_date}
                  onChange={(e) => handleInputChange("certification", e)}
                  className="w-full p-2 border rounded-md focus:outline-blue-500"
                />
@@ -55,11 +55,11 @@ const Step4 = ({handleInputChange,currentCertification,formData,addEntry,removeE
                 </label>
                 <input
                   type="file"
-                  name="certificate"
+                  name="certificate_file"
                   accept=".pdf, .doc, .docx"
                   onChange={(e) => handleInputChange("certification", e)}
                   className="w-full p-2 border rounded-md focus:outline-blue-500"
-                  required
+                  // required
                 />
                <button
                  type="button"

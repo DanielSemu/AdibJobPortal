@@ -1,7 +1,7 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { jobs } from "../../data/jobs";
-import { FaAngleDoubleRight, FaAngleDoubleLeft, FaCheck } from "react-icons/fa"; 
+import { FaAngleDoubleRight, FaAngleDoubleLeft, FaCheck } from "react-icons/fa";
 import Step1 from "./Step1";
 import Step2 from "./Step2";
 import Step3 from "./Step3";
@@ -9,57 +9,59 @@ import Step4 from "./Step4";
 import Step5 from "./Step5";
 import { getSingleJob } from "../../services/jobsService";
 import axiosInstance from "../../services/axiosInstance";
+import axios from "axios";
 
 const ApplyJob = () => {
   const { id } = useParams();
   const [step, setStep] = useState(1);
   const [detailedData, setDetailedData] = useState([]);
   const [formData, setFormData] = useState({
-    fullName: "",
+    full_name: "",
     email: "",
     phone: "",
     gender: "",
-    birthDate: "",
+    birth_date: "",
+    contact_consent: false,
+    cover_letter: "",
+    resume: null,
+    terms_accepted: false,
     educations: [],
-    fieldStudy: "",
-    graduationYear: "",
-    educationOrganization: "",
-    experiences: [], 
-    certifications:[]
+    experiences: [],
+    certifications: [],
   });
   const [errors, setErrors] = useState({});
 
   // Temporary state to hold current experience input
   const [currentExperience, setCurrentExperience] = useState({
-    jobTitle: "",
-    companyName: "",
-    from: "",
-    to: "",
+    job_title: "",
+    company_name: "",
+    from_date: "",
+    to_date: "",
   });
   const [currentEducation, setCurrentEducation] = useState({
-    educationLevel: "",
-    fieldOfStudy: "",
-    graduationYear: "",
-    educationOrganization: "",
+    education_level: "",
+    field_of_study: "",
+    education_organization: "",
+    graduation_year: "",
   });
   const [currentCertification, setCurrentCertification] = useState({
-    certificateTitle: "",
-    awardingCompany: "",
-    awardedDate: "",
-    certificate: "",
+    certificate_title: "",
+    awarding_company: "",
+    awarded_date: "",
+    certificate_file: "",
   });
 
-    useEffect(() => {
-      const fetchJob = async () => {
-        try {
-          const response = await getSingleJob(parseInt(id));
-          setDetailedData(response);
-        } catch (error) {
-          console.error("Error fetching job:", error);
-        }
-      };
-      fetchJob();
-    }, [id]);
+  useEffect(() => {
+    const fetchJob = async () => {
+      try {
+        const response = await getSingleJob(parseInt(id));
+        setDetailedData(response);
+      } catch (error) {
+        console.error("Error fetching job:", error);
+      }
+    };
+    fetchJob();
+  }, [id]);
 
   const handleInputChange = (section, e) => {
     const { name, value } = e.target;
@@ -77,19 +79,16 @@ const ApplyJob = () => {
         break;
     }
   };
-  
   const addEntry = (section, entry, setEntry) => {
     if (Object.values(entry).some((val) => val === "")) return; // Ensure all fields are filled
-  
+
     setFormData((prevData) => ({
       ...prevData,
       [section]: [...prevData[section], entry],
     }));
-  
-    // Reset the corresponding input state
+
     setEntry(Object.fromEntries(Object.keys(entry).map((key) => [key, ""])));
   };
-  
 
   const removeEntry = (section, index) => {
     setFormData((prevData) => ({
@@ -100,61 +99,81 @@ const ApplyJob = () => {
 
   const validateForm = () => {
     let newErrors = {};
-  
-    if (!formData.fullName.trim()) newErrors.fullName = "Full Name is required";
+
+    if (!formData.full_name.trim())
+      newErrors.full_name = "Full Name is required";
     if (!formData.email.trim()) newErrors.email = "Email is required";
     if (!formData.phone.trim()) newErrors.phone = "Phone number is required";
     if (!formData.gender) newErrors.gender = "Gender is required";
-    if (!formData.birthDate) newErrors.birthDate = "Birthdate is required";
-  
-    if (formData.educations.length === 0) newErrors.educations = "Education is required";
+    if (!formData.birth_date) newErrors.birth_date = "birth_date is required";
 
-  
+    if (formData.educations.length === 0)
+      newErrors.educations = "Education is required";
+
     return newErrors;
   };
-  
-  
-
-
 
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
-    setFormData({
-      ...formData,
-      [name]:
-        type === "checkbox" ? checked : type === "file" ? files[0] : value,
-    });
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "file" ? files[0] : type === "checkbox" ? checked : value,
+    }));  
   };
 
   const nextStep = () => setStep((prev) => prev + 1);
   const prevStep = () => setStep((prev) => prev - 1);
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = validateForm();
 
-  if (Object.keys(newErrors).length > 0) {
-    setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
 
-    // Redirect to first page with error
-    if (newErrors.fullName || newErrors.email || newErrors.phone|| newErrors.birthDate) {
-      setStep(1);
-    } else if (newErrors.educations || newErrors.experiences) {
-      setStep(2);
-    }
-
-  } else {
-    console.log("Form Submitted:", formData);
-    const response = await axiosInstance.post('/applicants/', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
+      // Redirect to first page with error
+      if (
+        newErrors.full_name ||
+        newErrors.email ||
+        newErrors.phone ||
+        newErrors.birth_date
+      ) {
+        setStep(1);
+      } else if (newErrors.educations || newErrors.experiences) {
+        setStep(2);
+      }
+    } else {
+       const formDataToSend = new FormData();
+    Object.keys(formData).forEach((key) => {
+      formDataToSend.append(key, formData[key]);
     });
-    console.log(response);
-    
-    alert("Form Submitted Successfully!");
-  }
+
+    try {
+      const response = await axios.post("http://127.0.0.1:8000/api/applicants/", formDataToSend, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+        console.log(response);
+
+        const jsonString = JSON.stringify(formData, null, 2);
+        const blob = new Blob([jsonString], { type: "application/json" });
+
+        // Create a download link
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "applicant_data.json";
+
+        // Trigger download
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        alert("Form data has been exported as JSON file!");
+      } catch (error) {
+        console.error("Error exporting JSON:", error);
+      }
+    }
   };
+
   return (
     <div className="main-container flex flex-col md:flex-row bg-gray-100 sm:pb-8 gap-1 min-h-screen">
       {/* Sidebar with Job Details */}
@@ -183,7 +202,7 @@ const ApplyJob = () => {
       <div className="w-full md:w-2/3 bg-white shadow-xl rounded-lg p-5 pb-12 md:p-10 md:ml-8 relative">
         {/* Step Indicators */}
         <div className="flex justify-center space-x-2 mb-4">
-          {[1, 2, 3, 4,5].map((s) => (
+          {[1, 2, 3, 4, 5].map((s) => (
             <div
               key={s}
               className={`h-3 w-3 rounded-full cursor-pointer transition-all ${
@@ -196,48 +215,45 @@ const ApplyJob = () => {
 
         <form onSubmit={handleSubmit} className="space-y-6 ">
           {step === 1 && (
-          <Step1
-          formData={formData}
-          errors={errors}
-          handleChange={handleChange}
-          /> 
+            <Step1
+              formData={formData}
+              errors={errors}
+              handleChange={handleChange}
+            />
           )}
           {step === 2 && (
             <Step2
-            currentEducation={currentEducation}
-            handleInputChange={handleInputChange}
-            formData={formData}
-            errors={errors}
-            addEntry={addEntry}
-            removeEntry={removeEntry}
-            setCurrentEducation={setCurrentEducation}
+              currentEducation={currentEducation}
+              handleInputChange={handleInputChange}
+              formData={formData}
+              errors={errors}
+              addEntry={addEntry}
+              removeEntry={removeEntry}
+              setCurrentEducation={setCurrentEducation}
             />
           )}
           {step === 3 && (
             <Step3
-            currentExperience={currentExperience}
-            handleInputChange={handleInputChange}
-            formData={formData}
-            addEntry={addEntry}
-            removeEntry={removeEntry}
-            setCurrentExperience={setCurrentExperience}
+              currentExperience={currentExperience}
+              handleInputChange={handleInputChange}
+              formData={formData}
+              addEntry={addEntry}
+              removeEntry={removeEntry}
+              setCurrentExperience={setCurrentExperience}
             />
           )}
           {step === 4 && (
-             <Step4
-             currentCertification={currentCertification}
-            handleInputChange={handleInputChange}
-            formData={formData}
-            addEntry={addEntry}
-            removeEntry={removeEntry}
-            setCurrentCertification={setCurrentCertification}
-             />
+            <Step4
+              currentCertification={currentCertification}
+              handleInputChange={handleInputChange}
+              formData={formData}
+              addEntry={addEntry}
+              removeEntry={removeEntry}
+              setCurrentCertification={setCurrentCertification}
+            />
           )}
           {step === 5 && (
-            <Step5
-            formData={formData}
-            handleChange={handleChange}
-            />
+            <Step5 formData={formData} handleInputChange={handleInputChange} />
           )}
           {/* Fixed Buttons at the Bottom */}
           <div className="absolute bottom-0 left-0 right-0 flex justify-between px-5 pb-5">

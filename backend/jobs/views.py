@@ -118,7 +118,6 @@ class BenefitView(APIView):
 
 class ApplicantAPIView(APIView):
     def post(self, request, *args, **kwargs):
-        print(request.data)
         serializer = ApplicantSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()

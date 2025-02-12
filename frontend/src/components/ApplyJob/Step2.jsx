@@ -10,8 +10,8 @@ const Step2 = ({handleInputChange,currentEducation,formData,errors,addEntry,remo
              <div className="flex flex-wrap gap-2 mt-2">
                 {formData.educations.map((edu, index) => (
                 <span key={index}  className="px-3 py-1 bg-gray-200 rounded-lg text-gray-800 text-sm">
-                {edu.educationLevel}{" in "}{edu.fieldOfStudy}  <span onClick={() => removeEntry("educations", index)}  className="float-end ml-1 text-xl text-red-600 cursor-pointer">x</span>
-                <br /> {" from "} {edu.educationOrganization} 
+                {edu.education_level}{" in "}{edu.field_of_study}  <span onClick={() => removeEntry("educations", index)}  className="float-end ml-1 text-xl text-red-600 cursor-pointer">x</span>
+                <br /> {" from "} {edu.education_organization} 
                 </span>
                 ))}
               </div>
@@ -22,8 +22,8 @@ const Step2 = ({handleInputChange,currentEducation,formData,errors,addEntry,remo
                   Highest Education:
                 </label>
                 <select
-                  name="educationLevel"
-                  value={currentEducation.educationLevel}
+                  name="education_level"
+                  value={currentEducation.education_level}
                   onChange={(e) => handleInputChange("education", e)}
                   className="w-full p-2 border rounded-md focus:outline-blue-500"
                   required
@@ -42,8 +42,8 @@ const Step2 = ({handleInputChange,currentEducation,formData,errors,addEntry,remo
                 </label>
                 <input
                   type="text"
-                  name="fieldOfStudy"
-                  value={currentEducation.fieldOfStudy}
+                  name="field_of_study"
+                  value={currentEducation.field_of_study}
                   onChange={(e) => handleInputChange("education", e)}
                   className="w-full p-2 border rounded-md focus:outline-blue-500"
                   required
@@ -56,8 +56,8 @@ const Step2 = ({handleInputChange,currentEducation,formData,errors,addEntry,remo
                 </label>
                 <input
                   type="date"
-                  name="graduationYear"
-                  value={currentEducation.graduationYear}
+                  name="graduation_year"
+                  value={currentEducation.graduation_year}
                   onChange={(e) => handleInputChange("education", e)}
                   className="w-full p-2 border rounded-md focus:outline-blue-500"
                   required
@@ -70,8 +70,8 @@ const Step2 = ({handleInputChange,currentEducation,formData,errors,addEntry,remo
                 </label>
                 <input
                   type="text"
-                  name="educationOrganization"
-                  value={currentEducation.educationOrganization}
+                  name="education_organization"
+                  value={currentEducation.education_organization}
                   onChange={(e) => handleInputChange("education", e)}
                   className="w-full p-2 border rounded-md focus:outline-blue-500"
                   required

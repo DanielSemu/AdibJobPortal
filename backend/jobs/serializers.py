@@ -110,18 +110,24 @@ class ExperienceSerializer(serializers.ModelSerializer):
         extra_kwargs = {"applicant": {"read_only": True}}
 
 class CertificationSerializer(serializers.ModelSerializer):
-    certificate_file = serializers.FileField(required=False)
+    certificate_file = serializers.FileField(required=False, allow_null=True)
 
     class Meta:
         model = Certification
         fields = '__all__'
         extra_kwargs = {"applicant": {"read_only": True}}
+        
+        
+        
+        
+        
+        
 
 class ApplicantSerializer(serializers.ModelSerializer):
     educations = EducationSerializer(many=True)
     experiences = ExperienceSerializer(many=True)
     certifications = CertificationSerializer(many=True, required=False)
-    resume = serializers.FileField(required=False)
+    resume = serializers.FileField(required=False,  allow_null=True)
 
     class Meta:
         model = Applicant

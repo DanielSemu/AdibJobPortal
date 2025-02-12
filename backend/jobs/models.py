@@ -58,7 +58,7 @@ class Applicant(models.Model):
     birth_date = models.DateField()
     contact_consent = models.BooleanField(default=False)
     cover_letter = models.TextField(blank=True)
-    resume = models.FileField(upload_to='resumes/')
+    resume = models.FileField(upload_to='resumes/',blank=True ,null=True  )
     terms_accepted = models.BooleanField(default=False)
 
     def __str__(self):
@@ -90,7 +90,7 @@ class Certification(models.Model):
     certificate_title = models.CharField(max_length=100)
     awarding_company = models.CharField(max_length=255)
     awarded_date = models.DateField()
-    certificate_file = models.FileField(upload_to='certificates/')
+    certificate_file = models.FileField(upload_to='certificates/',null=True,blank=True)
 
     def __str__(self):
         return self.certificate_title

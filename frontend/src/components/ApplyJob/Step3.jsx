@@ -11,8 +11,8 @@ const Step3 = ({handleInputChange,currentExperience,formData,addEntry,removeEntr
               <div className="flex flex-wrap gap-2 mt-2">
                 {formData.experiences.map((exp, index) => (
                 <span key={index}  className="px-3 py-1 bg-gray-200 rounded-lg text-gray-800 text-sm">
-                {exp.jobTitle} <span onClick={() => removeEntry("experiences", index)}  className="float-end text-red-600 cursor-pointer">x</span>
-                <br /> {exp.companyName} - {exp.from} {" to "}{exp.to} years 
+                {exp.job_title} <span onClick={() => removeEntry("experiences", index)}  className="float-end text-red-600 cursor-pointer">x</span>
+                <br /> {exp.company_name} - {exp.from_date} {" to "}{exp.to_date} years 
                 </span>
                 ))}
               </div>
@@ -24,8 +24,8 @@ const Step3 = ({handleInputChange,currentExperience,formData,addEntry,removeEntr
                 </label>
                 <input
                   type="text"
-                  name="jobTitle"
-                  value={currentExperience.jobTitle}
+                  name="job_title"
+                  value={currentExperience.job_title}
                   onChange={(e) => handleInputChange("experience", e)}
                   className="w-full p-2 border rounded-md focus:outline-blue-500"
                 />
@@ -35,8 +35,8 @@ const Step3 = ({handleInputChange,currentExperience,formData,addEntry,removeEntr
                 </label>
                 <input
                   type="text"
-                  name="companyName"
-                  value={currentExperience.companyName}
+                  name="company_name"
+                  value={currentExperience.company_name}
                   onChange={(e) => handleInputChange("experience", e)}
                   className="w-full p-2 border rounded-md focus:outline-blue-500"
                 />
@@ -47,12 +47,12 @@ const Step3 = ({handleInputChange,currentExperience,formData,addEntry,removeEntr
                 <div className="grid sm:grid-cols-2 gap-2">
                 <div className="flex">
                 <label className="block text-gray-700 font-semibold mt-3 mb-2">
-                  From:
+                  from_date:
                 </label>
                   <input
                   type="date"
-                  name="from"
-                  value={currentExperience.from}
+                  name="from_date"
+                  value={currentExperience.from_date}
                   onChange={(e) => handleInputChange("experience", e)}
                   className="w-full p-2 border rounded-md focus:outline-blue-500"
                 />
@@ -63,8 +63,8 @@ const Step3 = ({handleInputChange,currentExperience,formData,addEntry,removeEntr
                 </label>
                   <input
                   type="date"
-                  name="to"
-                  value={currentExperience.to}
+                  name="to_date"
+                  value={currentExperience.to_date}
                   onChange={(e) => handleInputChange("experience", e)}
                   className="w-full p-2 border rounded-md focus:outline-blue-500"
                 />
