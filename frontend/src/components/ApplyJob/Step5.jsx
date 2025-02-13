@@ -16,8 +16,7 @@ const Step5 = ({ formData, errors, handleChange }) => {
           name="resume"
           onChange={handleChange}
           accept=".pdf,.doc,.docx"
-          className="w-full p-2 border rounded-md focus:outline-blue-500"
-          // required
+          className="w-full p-2 border mb-4"
         />
       </div>
       {/* Cover Letter */}
@@ -39,7 +38,7 @@ const Step5 = ({ formData, errors, handleChange }) => {
         <input
           type="checkbox"
           name="terms_accepted"
-          checked={formData.terms_accepted || false} // Avoids uncontrolled value issues
+          value={formData.terms_accepted}
           onChange={handleChange}
           className="mr-2"
           required
@@ -58,7 +57,7 @@ const Step5 = ({ formData, errors, handleChange }) => {
         <input
           type="checkbox"
           name="contact_consent"
-          checked={formData.contact_consent || false}
+          value={formData.contact_consent}
           onChange={handleChange}
           className="mr-2"
           required

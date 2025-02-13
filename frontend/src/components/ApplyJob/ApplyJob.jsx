@@ -115,10 +115,12 @@ const ApplyJob = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
+    
     setFormData((prev) => ({
       ...prev,
       [name]: type === "file" ? files[0] : type === "checkbox" ? checked : value,
     }));  
+    
   };
 
   const nextStep = () => setStep((prev) => prev + 1);
@@ -127,11 +129,11 @@ const ApplyJob = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = validateForm();
-
+  
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-
-      // Redirect to first page with error
+  
+      // Redirect to the appropriate step if there are errors
       if (
         newErrors.full_name ||
         newErrors.email ||
@@ -143,37 +145,47 @@ const ApplyJob = () => {
         setStep(2);
       }
     } else {
-       const formDataToSend = new FormData();
-    Object.keys(formData).forEach((key) => {
-      formDataToSend.append(key, formData[key]);
-    });
-
-    try {
-      const response = await axios.post("http://127.0.0.1:8000/api/applicants/", formDataToSend, {
-        headers: { "Content-Type": "multipart/form-data" },
+      const formDataToSend = new FormData();
+      Object.keys(formData).forEach((key) => {
+        formDataToSend.append(key, formData[key]);
       });
+  
+      try {
+        
+        // formData.resume=null
+        console.log(formData);
+        const response = await axiosInstance.post("http://127.0.0.1:8000/api/applicants/", formDataToSend, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        
+  
         console.log(response);
-
-        const jsonString = JSON.stringify(formData, null, 2);
-        const blob = new Blob([jsonString], { type: "application/json" });
-
-        // Create a download link
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = "applicant_data.json";
-
-        // Trigger download
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-
+  
+        // // Prepare JSON file for download
+        // const jsonString = JSON.stringify(formData, null, 2);
+        // const blob = new Blob([jsonString], { type: "application/json" });
+  
+        // // Create a download link
+        // const a = document.createElement("a");
+        // a.href = URL.createObjectURL(blob);
+        // a.download = "applicant_data.json"; // Ensure correct file name
+        // document.body.appendChild(a);
+        // a.click();
+        // document.body.removeChild(a);
+  
         alert("Form data has been exported as JSON file!");
       } catch (error) {
-        console.error("Error exporting JSON:", error);
+        if (error.response) {
+          console.error("Server Error:", error.response.data);
+        } else if (error.request) {
+          console.error("Network Error:", error.request);
+        } else {
+          console.error("Error:", error.message);
+        }
       }
     }
   };
-
+  
   return (
     <div className="main-container flex flex-col md:flex-row bg-gray-100 sm:pb-8 gap-1 min-h-screen">
       {/* Sidebar with Job Details */}
@@ -253,7 +265,7 @@ const ApplyJob = () => {
             />
           )}
           {step === 5 && (
-            <Step5 formData={formData} handleInputChange={handleInputChange} />
+            <Step5 formData={formData} handleChange={handleChange} />
           )}
           {/* Fixed Buttons at the Bottom */}
           <div className="absolute bottom-0 left-0 right-0 flex justify-between px-5 pb-5">
