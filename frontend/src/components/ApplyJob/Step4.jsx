@@ -48,6 +48,7 @@ const Step4 = ({handleInputChange,currentCertification,formData,addEntry,removeE
                  name="awarded_date"
                  value={currentCertification.awarded_date}
                  onChange={(e) => handleInputChange("certification", e)}
+                 max={new Date().toISOString().split("T")[0]}
                  className="w-full p-2 border rounded-md focus:outline-blue-500"
                />
                <label className="block text-gray-700 font-semibold mb-2">

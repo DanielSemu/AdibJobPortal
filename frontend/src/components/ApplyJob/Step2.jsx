@@ -30,6 +30,7 @@ const Step2 = ({handleInputChange,currentEducation,formData,errors,addEntry,remo
                 >
                   <option value="">Select</option>
                   <option value="High School">High School</option>
+                  <option value="Diploma">Diploma</option>
                   <option value="Bachelor’s Degree">Bachelor’s Degree</option>
                   <option value="Master’s Degree">Master’s Degree</option>
                   <option value="PhD">PhD</option>
@@ -59,6 +60,7 @@ const Step2 = ({handleInputChange,currentEducation,formData,errors,addEntry,remo
                   name="graduation_year"
                   value={currentEducation.graduation_year}
                   onChange={(e) => handleInputChange("education", e)}
+                  max={new Date().toISOString().split("T")[0]}
                   className="w-full p-2 border rounded-md focus:outline-blue-500"
                   required
                 />

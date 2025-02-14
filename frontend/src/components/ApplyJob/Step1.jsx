@@ -86,6 +86,7 @@ const Step1 = ({formData,errors,handleChange}) => {
                 name="birth_date"
                 value={formData.birth_date}
                 onChange={handleChange}
+                max={new Date().toISOString().split("T")[0]}
                 className="p-2 border rounded-md focus:outline-blue-500 flex-grow md:flex-none"
                 required
               />

@@ -36,6 +36,7 @@ const ApplyJob = () => {
     company_name: "",
     from_date: "",
     to_date: "",
+    banking_experience:true,
   });
   const [currentEducation, setCurrentEducation] = useState({
     education_level: "",
