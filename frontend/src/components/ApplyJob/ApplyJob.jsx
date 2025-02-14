@@ -23,7 +23,7 @@ const ApplyJob = () => {
     birth_date: "",
     contact_consent: false,
     cover_letter: "",
-    resume: null,
+    // resume: null,
     terms_accepted: false,
     educations: [],
     experiences: [],
@@ -151,12 +151,12 @@ const ApplyJob = () => {
       });
   
       try {
-        
+        console.log(formData.resume);
+        console.log(formData.resume);
         // formData.resume=null
+
         console.log(formData);
-        const response = await axiosInstance.post("http://127.0.0.1:8000/api/applicants/", formDataToSend, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        });
+        const response = await axiosInstance.post("applicants/", formData);
         
   
         console.log(response);
@@ -265,7 +265,7 @@ const ApplyJob = () => {
             />
           )}
           {step === 5 && (
-            <Step5 formData={formData} handleChange={handleChange} />
+            <Step5 formData={formData}  handleChange={handleChange} />
           )}
           {/* Fixed Buttons at the Bottom */}
           <div className="absolute bottom-0 left-0 right-0 flex justify-between px-5 pb-5">
