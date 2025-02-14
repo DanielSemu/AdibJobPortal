@@ -9,7 +9,6 @@ import Step4 from "./Step4";
 import Step5 from "./Step5";
 import { getSingleJob } from "../../services/jobsService";
 import axiosInstance from "../../services/axiosInstance";
-import axios from "axios";
 
 const ApplyJob = () => {
   const { id } = useParams();
@@ -23,7 +22,7 @@ const ApplyJob = () => {
     birth_date: "",
     contact_consent: false,
     cover_letter: "",
-    // resume: null,
+    resume: null,
     terms_accepted: false,
     educations: [],
     experiences: [],
@@ -62,6 +61,16 @@ const ApplyJob = () => {
     };
     fetchJob();
   }, [id]);
+
+  const handleChange = (e) => {
+    const { name, value, type, checked, files } = e.target;
+    
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "file" ? files[0] : type === "checkbox" ? checked : value,
+    }));  
+    
+  };
 
   const handleInputChange = (section, e) => {
     const { name, value } = e.target;
@@ -113,15 +122,7 @@ const ApplyJob = () => {
     return newErrors;
   };
 
-  const handleChange = (e) => {
-    const { name, value, type, checked, files } = e.target;
-    
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "file" ? files[0] : type === "checkbox" ? checked : value,
-    }));  
-    
-  };
+  
 
   const nextStep = () => setStep((prev) => prev + 1);
   const prevStep = () => setStep((prev) => prev - 1);
@@ -132,8 +133,6 @@ const ApplyJob = () => {
   
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-  
-      // Redirect to the appropriate step if there are errors
       if (
         newErrors.full_name ||
         newErrors.email ||
@@ -149,31 +148,12 @@ const ApplyJob = () => {
       Object.keys(formData).forEach((key) => {
         formDataToSend.append(key, formData[key]);
       });
-  
+    
       try {
-        console.log(formData.resume);
-        console.log(formData.resume);
-        // formData.resume=null
-
-        console.log(formData);
+        formData.resume=null
         const response = await axiosInstance.post("applicants/", formData);
-        
-  
         console.log(response);
-  
-        // // Prepare JSON file for download
-        // const jsonString = JSON.stringify(formData, null, 2);
-        // const blob = new Blob([jsonString], { type: "application/json" });
-  
-        // // Create a download link
-        // const a = document.createElement("a");
-        // a.href = URL.createObjectURL(blob);
-        // a.download = "applicant_data.json"; // Ensure correct file name
-        // document.body.appendChild(a);
-        // a.click();
-        // document.body.removeChild(a);
-  
-        alert("Form data has been exported as JSON file!");
+        alert("Application Submitted Successfully Inserted ");
       } catch (error) {
         if (error.response) {
           console.error("Server Error:", error.response.data);
