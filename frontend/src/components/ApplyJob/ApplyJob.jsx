@@ -15,6 +15,7 @@ const ApplyJob = () => {
   const [step, setStep] = useState(1);
   const [detailedData, setDetailedData] = useState([]);
   const [formData, setFormData] = useState({
+    job:id,
     full_name: "",
     email: "",
     phone: "",
@@ -29,6 +30,7 @@ const ApplyJob = () => {
     certifications: [],
   });
   const [errors, setErrors] = useState({});
+  const [fetchError, setFetchError] = useState(false);
 
   // Temporary state to hold current experience input
   const [currentExperience, setCurrentExperience] = useState({
@@ -55,13 +57,19 @@ const ApplyJob = () => {
     const fetchJob = async () => {
       try {
         const response = await getSingleJob(parseInt(id));
-        setDetailedData(response);
+        if (response) {
+          setDetailedData(response);
+        } else {
+          setFetchError(true);
+        }
       } catch (error) {
         console.error("Error fetching job:", error);
+        setFetchError(true);
       }
     };
     fetchJob();
   }, [id]);
+
 
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
@@ -166,7 +174,10 @@ const ApplyJob = () => {
       }
     }
   };
-  
+  if (fetchError) {
+    return <div className="main-container text-red-500">There is no job with this ID.</div>;
+  }
+
   return (
     <div className="main-container flex flex-col md:flex-row bg-gray-100 sm:pb-8 gap-1 min-h-screen">
       {/* Sidebar with Job Details */}

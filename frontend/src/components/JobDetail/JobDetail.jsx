@@ -151,7 +151,8 @@ const JobDetail = () => {
           </>
         )}
 
-        {/* Apply Button */}
+        {
+          detailedData.title &&(
         <Link
           to={applied ? "#" : `/apply/${detailedData.id}`}
           className={`mt-6 w-full px-6 py-3 text-lg font-semibold text-white rounded-lg transition-all duration-300 flex items-center justify-center ${
@@ -163,6 +164,9 @@ const JobDetail = () => {
         >
           Apply Now
         </Link>
+          )
+        }
+        
       </div>
     </div>
   );
