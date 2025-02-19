@@ -127,6 +127,13 @@ class RegisterUserView(APIView):
             },
             status=status.HTTP_201_CREATED
         )
+        
+# class LogoutView(APIView):
+#     permission_classes=[IsAuthenticated]
+#     def post(self, request):
+#         response = Response({'message': 'Logged out successfully'}, status=200)
+#         response.delete_cookie('refresh_token')
+#         return response
 class LogoutView(APIView):
     """
     Handles user logout by clearing the access and refresh tokens stored in HttpOnly cookies.
@@ -139,5 +146,6 @@ class LogoutView(APIView):
         
         # Clear the refresh token cookie if used
         response.delete_cookie('refresh_token')
+        
         
         return response
