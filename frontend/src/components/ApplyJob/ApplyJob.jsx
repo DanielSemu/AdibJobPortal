@@ -9,6 +9,7 @@ import Step4 from "./Step4";
 import Step5 from "./Step5";
 import { getSingleJob } from "../../services/jobsService";
 import axiosInstance from "../../services/axiosInstance";
+import { showErrorToast, showSuccessToast } from "../utils/toastUtils";
 
 const ApplyJob = () => {
   const { id } = useParams();
@@ -162,15 +163,10 @@ const ApplyJob = () => {
         formData.resume=null
         const response = await axiosInstance.post("applicants/", formData);
         console.log(response);
-        alert("Application Submitted Successfully Inserted ");
+        showSuccessToast("Application Submitted Successfully Inserted ")
       } catch (error) {
-        if (error.response) {
-          console.error("Server Error:", error.response.data);
-        } else if (error.request) {
-          console.error("Network Error:", error.request);
-        } else {
-          console.error("Error:", error.message);
-        }
+        console.error("Error response:", error.response.data);  
+        showErrorToast(error.response.data.error || "An error occurred.");
       }
     }
   };

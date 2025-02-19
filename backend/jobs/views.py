@@ -11,7 +11,7 @@ from .models import Applicant, Job, Responsibility, Qualification, Skill, Benefi
 
 class JobView(APIView):
     # permission_classes = [IsAuthenticated]
-
+    
     def get(self, request, id=None, *args, **kwargs):
         if id:
             job = get_object_or_404(Job, id=id)  # Get single job

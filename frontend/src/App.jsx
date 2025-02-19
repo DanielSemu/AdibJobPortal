@@ -15,10 +15,24 @@ import JobDetail from './components/JobDetail/JobDetail'
 import ScrollToTop from './services/ScrollToTop'
 import ApplyJob from './components/ApplyJob/ApplyJob'
 import JobCategoryDetail from './components/JobCategoryDetail/JobCategoryDetail'
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
   return (
     <>
+     <ToastContainer 
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
       <Navbar/>
       <ScrollToTop />
       <Routes>
