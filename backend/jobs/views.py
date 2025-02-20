@@ -1,7 +1,8 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
+from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import NotFound
 from django.shortcuts import get_object_or_404
 from .serializers import ApplicantSerializer, JobSerializer, ResponsibilitySerializer, QualificationSerializer, SkillSerializer, BenefitSerializer
@@ -118,12 +119,18 @@ class BenefitView(APIView):
 
 
 class ApplicantAPIView(APIView):
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         serializer = ApplicantSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({"message": "Applicant created successfully", "data": serializer.data}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"status": "success", "message": "Application submitted successfully"},
+                status=status.HTTP_201_CREATED
+            )
+        return Response(
+            {"status": "error", "errors": serializer.errors},
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
     def get(self, request):
         applicants = Applicant.objects.all()
@@ -134,44 +141,43 @@ class ApplicantAPIView(APIView):
     
     
     
-    
 
 
-class ApplicantAPIView(APIView):
-    def post(self, request, *args, **kwargs):
-        try:
-            serializer = ApplicantSerializer(data=request.data)
-            if serializer.is_valid():
-                applicant = serializer.save()
-                return Response(
-                    {
-                        "status": "success",
-                        "message": f"Applicant '{applicant.full_name}' created successfully.",
-                        "applicant_id": applicant.id,
-                        "data": serializer.data,
-                    },
-                    status=status.HTTP_201_CREATED,
-                )
-            else:
-                # Return detailed validation errors
-                return Response(
-                    {
-                        "status": "error",
-                        "message": "Validation failed. Please check the errors.",
-                        "errors": serializer.errors,
-                    },
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+# class ApplicantAPIView(APIView):
+#     def post(self, request, *args, **kwargs):
+#         try:
+#             serializer = ApplicantSerializer(data=request.data)
+#             if serializer.is_valid():
+#                 applicant = serializer.save()
+#                 return Response(
+#                     {
+#                         "status": "success",
+#                         "message": f"Applicant '{applicant.full_name}' created successfully.",
+#                         "applicant_id": applicant.id,
+#                         "data": serializer.data,
+#                     },
+#                     status=status.HTTP_201_CREATED,
+#                 )
+#             else:
+#                 # Return detailed validation errors
+#                 return Response(
+#                     {
+#                         "status": "error",
+#                         "message": "Validation failed. Please check the errors.",
+#                         "errors": serializer.errors,
+#                     },
+#                     status=status.HTTP_400_BAD_REQUEST,
+#                 )
 
-        except Exception as e:
-            # Handle unexpected exceptions
-            print(f"Unexpected error: {e}")
-            return Response(
-                {
-                    "status": "error",
-                    "message": "An unexpected error occurred. Please try again later.",
-                    "details": str(e),
-                },
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
+#         except Exception as e:
+#             # Handle unexpected exceptions
+#             print(f"Unexpected error: {e}")
+#             return Response(
+#                 {
+#                     "status": "error",
+#                     "message": "An unexpected error occurred. Please try again later.",
+#                     "details": str(e),
+#                 },
+#                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+#             )
     

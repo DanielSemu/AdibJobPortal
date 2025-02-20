@@ -38,42 +38,34 @@ class ApplicantSerializer(serializers.ModelSerializer):
         model = Applicant
         fields = '__all__'
 
-    def validate_email(self, value):
-        if Applicant.objects.filter(email=value).exists():
-            raise serializers.ValidationError("An applicant with this email already exists.")
-        return value
-
     def create(self, validated_data):
-        try:
-            # Extract nested data
-            educations_data = validated_data.pop('educations', [])
-            experiences_data = validated_data.pop('experiences', [])
-            certifications_data = validated_data.pop('certifications', [])
+        email = validated_data.get('email')
+        job_id = validated_data.get('job')  # Ensure job_id is correct
 
-            # Create main Applicant object
-            applicant = Applicant.objects.create(**validated_data)
+        if Applicant.objects.filter(email=email, job_id=job_id).exists():
+            raise serializers.ValidationError(
+                {"error": "You have already applied for this job."}
+            )
 
-            # Debugging statements
-            print(f"Educations Data: {educations_data}")
-            print(f"Experiences Data: {experiences_data}")
-            print(f"Certifications Data: {certifications_data}")
+        # Extract nested data
+        educations_data = validated_data.pop('educations', [])
+        experiences_data = validated_data.pop('experiences', [])
+        certifications_data = validated_data.pop('certifications', [])
 
-            # Create related objects
-            for education in educations_data:
-                Education.objects.create(applicant=applicant, **education)
+        # Create main Applicant object
+        applicant = Applicant.objects.create(**validated_data)
 
-            for experience in experiences_data:
-                Experience.objects.create(applicant=applicant, **experience)
+        # Create related objects
+        for education in educations_data:
+            Education.objects.create(applicant=applicant, **education)
 
-            for certification in certifications_data:
-                Certification.objects.create(applicant=applicant, **certification)
+        for experience in experiences_data:
+            Experience.objects.create(applicant=applicant, **experience)
 
-            return applicant
+        for certification in certifications_data:
+            Certification.objects.create(applicant=applicant, **certification)
 
-        except Exception as e:
-            # Log the full error message for debugging
-            print(f"Error during applicant creation: {e}")
-            raise serializers.ValidationError({"detail": f"An error occurred: {e}"})
+        return applicant
     
 # class EducationSerializer(serializers.ModelSerializer):
 #     class Meta:

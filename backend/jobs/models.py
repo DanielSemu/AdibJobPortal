@@ -53,8 +53,8 @@ class Benefit(models.Model):
 class Applicant(models.Model):
     job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='job')
     full_name = models.CharField(max_length=255)
-    email = models.EmailField(unique=True)
-    phone = models.CharField(max_length=15)
+    email = models.EmailField(max_length=50)
+    phone = models.CharField(max_length=50)
     gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female')])
     birth_date = models.DateField()
     contact_consent = models.BooleanField(default=False)

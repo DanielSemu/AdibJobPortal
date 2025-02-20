@@ -3,12 +3,15 @@ from rest_framework.views import APIView # type: ignore
 from rest_framework.response import Response # type: ignore
 from rest_framework.permissions import IsAuthenticated,AllowAny # type: ignore
 from rest_framework import status # type: ignore
-from django.contrib.auth.models import User # type: ignore
 from rest_framework.exceptions import ValidationError # type: ignore
 from django.contrib.auth.hashers import make_password # type: ignore
 from rest_framework_simplejwt.views import TokenObtainPairView,TokenRefreshView # type: ignore
 from rest_framework_simplejwt.tokens import RefreshToken # type: ignore
 from rest_framework.exceptions import AuthenticationFailed
+
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
@@ -67,10 +70,10 @@ class UserProfileView(APIView):
     def get(self,request):
         user=request.user
         return Response({
-            'username':user.username,
+            'full_name':user.full_name,
             'email':user.email,
-            'first name':user.first_name,
-            'last name':user.last_name
+            'birthdate':user.birthdate,
+            'phone_number':user.phone_number
         })
 class RegisterUserView(APIView):
     permission_classes = [AllowAny]
@@ -79,22 +82,23 @@ class RegisterUserView(APIView):
         data = request.data
         
         # Validate required fields
-        username = data.get('username')
+        full_name = data.get('full_name')
         email = data.get('email')
-        password = data.get('password')
-        print(username)  # Debugging info
+        birthdate = data.get('birthdate')
+        phone_number = data.get('phone_number')
+        gender = data.get('gender')
         
-        # Check if required fields are missing
-        if not username or not email or not password:
+        password = data.get('password')
+        
+        if not full_name or not email or not password:
             return Response(
-                {"error": "Username, email, and password are required fields."},
+                {"error": "full_name, email, and password are required fields."},
                 status=status.HTTP_400_BAD_REQUEST
             )
         
-        # Check if username already exists
-        if User.objects.filter(username=username).exists():
+        if User.objects.filter(email=email).exists():
             return Response(
-                {"error": "A user with this username is already registered."},
+                {"error": "A user with this email is already registered."},
                 status=status.HTTP_409_CONFLICT
             )
         
@@ -107,11 +111,13 @@ class RegisterUserView(APIView):
         
         # Create user
         user = User.objects.create(
-            username=username,
+            full_name=full_name,
             email=email,
+            birthdate=birthdate,
+            phone_number=phone_number,
+            gender=gender,
+            
             password=make_password(password),
-            first_name=data.get('first_name'),
-            last_name=data.get('last_name')
         )
         
         # Return a success response
@@ -121,7 +127,7 @@ class RegisterUserView(APIView):
                 "message": "User registered successfully.",
                 "user": {
                     "id": user.id,
-                    "username": user.username,
+                    "full_name": user.full_name,
                     "email": user.email,
                 },
             },
