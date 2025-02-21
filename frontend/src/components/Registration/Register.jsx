@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { registerUser } from "../../api/auth";
+import { Link, useNavigate } from "react-router-dom";
+import { registerUser, sendOTP } from "../../api/auth"; // Import sendOTP function
 import { showErrorToast, showSuccessToast } from "../utils/toastUtils";
 
 const Register = () => {
@@ -9,33 +9,73 @@ const Register = () => {
     email: "",
     birthdate: "",
     phone_number: "",
-    gender: "",  // Add gender field here
+    gender: "",
     password: "",
     confirm_password: "",
   });
 
-  // Handle input changes
+  const [otp, setOtp] = useState("");
+  const [generatedOtp, setGeneratedOtp] = useState(null);
+  const [showOtpModal, setShowOtpModal] = useState(false);
+
+  const navigate = useNavigate();
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Handle form submission
+  const handleOTPChange = (e) => {
+    setOtp(e.target.value);
+  };
+
+  const generateOTP = () => {
+    return Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit OTP
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
+    // Check if passwords match
+    if (formData.password !== formData.confirm_password) {
+      showErrorToast("Passwords do not match.");
+      return;
+    }
+  
+    const otpCode = generateOTP();
+    setGeneratedOtp(otpCode);
+  
     try {
-      const response = await registerUser(formData);
+      const response = await sendOTP(formData.phone_number, otpCode); // Send OTP to email
       if (!response.success) {
-        showErrorToast(`Registration failed: ${response.message}`);
+        showErrorToast(`OTP sending failed: ${response.message}`);
       } else {
-        showSuccessToast("Registration successful");
+        setShowOtpModal(true); // Show modal for OTP input
       }
     } catch (error) {
-      showErrorToast("An unexpected error occurred");
+      showErrorToast("Failed to send OTP.");
+    }
+  };
+  
+  const handleVerifyOTP = async () => {
+    if (otp === generatedOtp) {
+      try {
+        const response = await registerUser(formData);
+        if (!response.success) {
+          showErrorToast(`Registration failed: ${response.message}`);
+        } else {
+          navigate("/login");
+          showSuccessToast("Registration successful");
+        }
+      } catch (error) {
+        showErrorToast("An unexpected error occurred");
+      }
+    } else {
+      showErrorToast("Incorrect OTP. Please try again.");
     }
   };
 
   return (
-    <section className="main-container flex items-center justify-center  bg-gray-50">
+    <section className="main-container flex items-center justify-center bg-gray-50">
       <div className="w-full max-w-2xl bg-white shadow-lg rounded-lg p-8">
         <h1 className="text-2xl font-bold text-center text-gray-900 mb-6">
           Create an Account
@@ -101,7 +141,7 @@ const Register = () => {
             />
           </div>
 
-          {/* Gender (Radio Buttons) */}
+          {/* Gender */}
           <div>
             <label className="block text-sm font-medium text-gray-900">Gender</label>
             <div className="flex items-center space-x-6">
@@ -109,8 +149,8 @@ const Register = () => {
                 <input
                   type="radio"
                   name="gender"
-                  value="M"
-                  checked={formData.gender === "M"}
+                  value="Male"
+                  checked={formData.gender === "Male"}
                   onChange={handleChange}
                   className="h-4 w-4"
                   required
@@ -121,8 +161,8 @@ const Register = () => {
                 <input
                   type="radio"
                   name="gender"
-                  value="F"
-                  checked={formData.gender === "F"}
+                  value="Female"
+                  checked={formData.gender === "Female"}
                   onChange={handleChange}
                   className="h-4 w-4"
                   required
@@ -161,8 +201,6 @@ const Register = () => {
               required
             />
           </div>
-
-          {/* Terms and Conditions Checkbox */}
           <div className="md:col-span-2 flex items-center gap-2">
             <input type="checkbox" className="w-4 h-4" required />
             <label className="text-sm text-gray-600">
@@ -173,6 +211,7 @@ const Register = () => {
             </label>
           </div>
 
+
           {/* Submit Button */}
           <div className="md:col-span-2">
             <button
@@ -182,16 +221,38 @@ const Register = () => {
               Create an Account
             </button>
           </div>
-
-          {/* Login Link */}
-          <p className="text-sm text-center md:col-span-2">
-            Already have an account?{" "}
-            <Link to="/login" className="text-blue-500 hover:underline">
-              Login here
-            </Link>
-          </p>
         </form>
       </div>
+
+      {/* OTP Modal */}
+      {showOtpModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+            <h2 className="text-lg font-bold mb-4">Enter OTP</h2>
+            <input
+              type="text"
+              value={otp}
+              onChange={handleOTPChange}
+              className="w-full p-2 border border-gray-300 rounded-lg"
+              maxLength="6"
+            />
+            <div className="flex justify-between mt-4">
+              <button
+                onClick={handleVerifyOTP}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg"
+              >
+                Verify
+              </button>
+              <button
+                onClick={() => setShowOtpModal(false)}
+                className="bg-red-500 text-white px-4 py-2 rounded-lg"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };

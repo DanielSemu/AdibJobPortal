@@ -86,6 +86,24 @@ export const refreshToken = async () => {
     }
 };
 
+export const sendOTP = async (phone_number, otpCode) => {
+  
+    const message = `Your OTP code is: ${otpCode}`;
+  
+    const encodedMessage = encodeURIComponent(message);
+  
+    const url = `http://192.168.6.27:9501/api?action=sendmessage&username=Test&password=Adib@123&recipient=${phone_number}&messagetype=SMS:TEXT&messagedata=${encodedMessage}`;
+  
+    try {
+      const response = await axios.get(url);
+      console.log(response);
+        return { success: true };
+    } catch (error) {
+      console.error("Error sending OTP:", error);
+      return { success: true };
+    }
+  };
+  
 
 export const logout =async ()=>{
     const response=await axiosInstance.post('/auth/logout/')

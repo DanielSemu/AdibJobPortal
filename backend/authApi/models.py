@@ -24,13 +24,15 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     full_name = models.CharField(max_length=255)
     birthdate = models.DateField(null=True, blank=True)
-    phone_number = models.CharField(max_length=15, unique=True)
+    phone_number = models.CharField(max_length=15)
     
     GENDER_CHOICES = [
         ('M', 'Male'),
         ('F', 'Female'),
+        ('O', 'Other'),
     ]
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, default='O')
+    
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True, blank=True)
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)

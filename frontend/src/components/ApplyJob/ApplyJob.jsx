@@ -10,11 +10,13 @@ import Step5 from "./Step5";
 import { getSingleJob } from "../../services/jobsService";
 import axiosInstance from "../../services/axiosInstance";
 import { showErrorToast, showSuccessToast } from "../utils/toastUtils";
+import { profile } from "../../api/auth";
 
 const ApplyJob = () => {
   const { id } = useParams();
   const [step, setStep] = useState(1);
   const [detailedData, setDetailedData] = useState([]);
+  const [userProfile, setUserProfile]=useState([])
   const [formData, setFormData] = useState({
     job:id,
     full_name: "",
@@ -55,6 +57,30 @@ const ApplyJob = () => {
   });
 
   useEffect(() => {
+    const fetchProfile= async ()=>{
+      try {
+        const response=await profile()
+        console.log(response);
+        
+        if( response){
+          setUserProfile(response);
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          full_name: response.full_name || "",
+          email: response.email || "",
+          phone: response.phone_number|| "",
+          gender: response.gender || "",
+          birth_date: response.birthdate || "",
+        }));
+        }
+        else{
+
+        }
+      } catch (error) {
+        console.error("Error fetching job:", error);
+        setFetchError(true);
+      }
+    }
     const fetchJob = async () => {
       try {
         const response = await getSingleJob(parseInt(id));
@@ -69,6 +95,7 @@ const ApplyJob = () => {
       }
     };
     fetchJob();
+    fetchProfile()
   }, [id]);
 
 

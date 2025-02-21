@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 import os
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,8 +27,9 @@ SECRET_KEY = 'django-insecure-95qbkqtt4(_sm=&$8&#k3in9&j6)exxd&+a8!1dldoi%8a%6r*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.2.32', 'localhost', '127.0.0.1']
 CORS_ALLOW_CREDENTIALS = True
+
 
 # Application definition
 
@@ -57,6 +59,7 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',  # React development server
+    'http://192.168.2.32:5173',  # React development server
     'http://localhost:5174',  # React development server
     'https://your-production-domain.com',  # Your production domain
 ]
@@ -98,7 +101,13 @@ REST_FRAMEWORK = {
     ),
     
 }
-
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ROTATE_REFRESH_TOKENS": False,
+    "BLACKLIST_AFTER_ROTATION": False,
+    "UPDATE_LAST_LOGIN": False,
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators

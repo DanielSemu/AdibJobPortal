@@ -28,6 +28,7 @@ const Login = () => {
         setAccessToken(response.data.access);
         showSuccessToast("Login succesfully")
         navigate("/");
+        window.location.reload();
       } else if (
         response.status === 401 ||
         response.statusText === "Unauthorized"
