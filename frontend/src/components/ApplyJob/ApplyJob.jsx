@@ -78,7 +78,7 @@ const ApplyJob = () => {
         }
       } catch (error) {
         console.error("Error fetching job:", error);
-        setFetchError(true);
+        // setFetchError(true);
       }
     }
     const fetchJob = async () => {

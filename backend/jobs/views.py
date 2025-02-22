@@ -127,6 +127,7 @@ class ApplicantAPIView(APIView):
                 {"status": "success", "message": "Application submitted successfully"},
                 status=status.HTTP_201_CREATED
             )
+        print("Validation Errors:", serializer.errors)
         return Response(
             {"status": "error", "errors": serializer.errors},
             status=status.HTTP_400_BAD_REQUEST
