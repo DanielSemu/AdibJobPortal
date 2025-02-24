@@ -101,12 +101,27 @@ const ApplyJob = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
-    
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "file" ? files[0] : type === "checkbox" ? checked : value,
-    }));  
-    
+  
+    if (type === 'file' && files && files[0]) {
+      const file = files[0];
+      console.log("here");
+      
+      // Create a unique identifier (e.g., using timestamp or any other unique value)
+      const uniqueIdentifier = Date.now(); // Using timestamp as the unique identifier
+  
+      // Create a new file with the common base name and the unique identifier
+      const renamedFile = new File([file], `applicant_resume_${uniqueIdentifier}${file.name.slice(file.name.lastIndexOf('.'))}`, { type: file.type });
+  
+      setFormData({
+        ...formData,
+        [name]: renamedFile // Store the renamed file in state
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: type === 'checkbox' ? checked : value
+      });
+    }
   };
 
   const handleInputChange = (section, e) => {
@@ -187,7 +202,9 @@ const ApplyJob = () => {
       });
     
       try {
+        console.log(formData.resume);
         formData.resume=null
+
         const response = await axiosInstance.post("applicants/", formData);
         console.log(response);
         showSuccessToast("Application Submitted Successfully Inserted ")
@@ -283,17 +300,35 @@ const ApplyJob = () => {
             <Step5 formData={formData}  handleChange={handleChange} />
           )}
           {/* Fixed Buttons at the Bottom */}
-          <div className="absolute bottom-0 left-0 right-0 flex justify-between px-5 pb-5">
+          <div className="absolute bottom-0 left-0 right-0 flex justify-between px-5 pb-0">
             {step > 1 ? (
-              <FaAngleDoubleLeft onClick={prevStep} className="text-3xl" />
+              <button
+              type="button"
+              onClick={prevStep}
+              className="bg-gray-600 text-white rounded-full py-2 px-6 flex items-center gap-2"
+            >
+              <FaAngleDoubleLeft /> Previous
+            </button>
             ) : (
               <div className="ml-auto">
-                <FaAngleDoubleRight onClick={nextStep} className="text-3xl" />
+                <button
+              type="button"
+              onClick={nextStep}
+              className="bg-blue-600 text-white rounded-full py-2 px-6 flex items-center gap-2"
+            >
+              Next <FaAngleDoubleRight />
+            </button>
               </div>
             )}
 
             {step > 1 && step < 5 && (
-              <FaAngleDoubleRight onClick={nextStep} className="text-3xl" />
+              <button
+              type="button"
+              onClick={nextStep}
+              className="bg-blue-600 text-white rounded-full py-2 px-6 flex items-center gap-2"
+            >
+              Next <FaAngleDoubleRight />
+            </button>
             )}
 
             {step === 5 && (

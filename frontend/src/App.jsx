@@ -14,6 +14,7 @@ import Register from './components/Registration/Register'
 import JobDetail from './components/JobDetail/JobDetail'
 import ScrollToTop from './services/ScrollToTop'
 import ApplyJob from './components/ApplyJob/ApplyJob'
+import AppyJob1 from './components/ApplyJob/AppyJob1'
 import JobCategoryDetail from './components/JobCategoryDetail/JobCategoryDetail'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';

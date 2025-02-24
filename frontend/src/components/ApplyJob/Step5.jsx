@@ -28,6 +28,7 @@ const Step5 = ({ formData, errors, handleChange }) => {
           name="cover_letter"
           value={formData.cover_letter}
           onChange={handleChange}
+          placeholder="Cover Letter"
           className="w-full p-2 border rounded-md focus:outline-blue-500"
           rows="4"
         ></textarea>

@@ -1,9 +1,12 @@
 // React Frontend (ApplicantForm.jsx)
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useParams } from "react-router-dom";
 
 const AppyJob1 = () => {
+  const { id } = useParams();
   const [formData, setFormData] = useState({
+    job:id,
     full_name: '',
     email: '',
     phone: '',
@@ -17,11 +20,29 @@ const AppyJob1 = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === 'file' ? files[0] : type === 'checkbox' ? checked : value
-    });
+  
+    if (type === 'file' && files && files[0]) {
+      const file = files[0];
+      console.log("here");
+      
+      // Create a unique identifier (e.g., using timestamp or any other unique value)
+      const uniqueIdentifier = Date.now(); // Using timestamp as the unique identifier
+  
+      // Create a new file with the common base name and the unique identifier
+      const renamedFile = new File([file], `applicant_resume_${uniqueIdentifier}${file.name.slice(file.name.lastIndexOf('.'))}`, { type: file.type });
+  
+      setFormData({
+        ...formData,
+        [name]: renamedFile // Store the renamed file in state
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: type === 'checkbox' ? checked : value
+      });
+    }
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,9 +50,11 @@ const AppyJob1 = () => {
     Object.keys(formData).forEach((key) => {
       formDataToSend.append(key, formData[key]);
     });
-
+    
+    
     try {
       const response = await axios.post('http://127.0.0.1:8000/api/applicants/', formDataToSend);
+      console.log(formDataToSend);
       alert('Application submitted successfully!');
     } catch (error) {
       console.error('Error submitting application:', error.response?.data || error.message);
