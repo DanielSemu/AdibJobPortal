@@ -16,12 +16,7 @@ class ExperienceSerializer(serializers.ModelSerializer):
         fields = '__all__'
         extra_kwargs = {"applicant": {"read_only": True}}
 
-    def create(self, validated_data):
-        # Convert "banking_experience" from string to Boolean
-        if "banking_experience" in validated_data:
-            validated_data["banking_experience"] = str(validated_data["banking_experience"]).lower() == "true"
-
-        return super().create(validated_data)
+   
 
 
 
@@ -72,8 +67,8 @@ class ApplicantSerializer(serializers.ModelSerializer):
             Education.objects.create(applicant=applicant, **education)
 
         for experience in experiences_data:
-            experience["banking_experience"] = experience["banking_experience"].lower() == "true"
             Experience.objects.create(applicant=applicant, **experience)
+            
         for certification in certifications_data:
             Certification.objects.create(applicant=applicant, **certification)
 

@@ -12,6 +12,7 @@ import axiosInstance from "../../services/axiosInstance";
 import { showErrorToast, showSuccessToast } from "../utils/toastUtils";
 import { profile } from "../../api/auth";
 import axios from "axios";
+import { useRef } from "react";
 
 const ApplyJob = () => {
   const { id } = useParams();
@@ -42,7 +43,7 @@ const ApplyJob = () => {
     company_name: "",
     from_date: "",
     to_date: "",
-    banking_experience:true,
+    banking_experience:false,
   });
   const [currentEducation, setCurrentEducation] = useState({
     education_level: "",
@@ -126,10 +127,10 @@ const ApplyJob = () => {
   };
 
   const handleInputChange = (section, e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked, files } = e.target;
     switch (section) {
       case "experience":
-        setCurrentExperience((prev) => ({ ...prev, [name]: value }));
+        setCurrentExperience((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
         break;
       case "education":
         setCurrentEducation((prev) => ({ ...prev, [name]: value }));
@@ -141,16 +142,46 @@ const ApplyJob = () => {
         break;
     }
   };
+  
+  const fileInputRef = useRef(null);
   const addEntry = (section, entry, setEntry) => {
     if (Object.values(entry).some((val) => val === "")) return; // Ensure all fields are filled
-
+  
     setFormData((prevData) => ({
       ...prevData,
       [section]: [...prevData[section], entry],
     }));
-
-    setEntry(Object.fromEntries(Object.keys(entry).map((key) => [key, ""])));
+  
+    // Reset input fields properly
+    if (section === "experiences") {
+      setEntry({
+        job_title: "",
+        company_name: "",
+        from_date: "",
+        to_date: "",
+        banking_experience: false, // Reset checkbox properly
+      });
+    } else if (section === "educations") {
+      setEntry({
+        education_level: "",
+        field_of_study: "",
+        education_organization: "",
+        graduation_year: "",
+      });
+    } else if (section === "certifications") {
+      setEntry({
+        certificate_title: "",
+        awarding_company: "",
+        awarded_date: "",
+        certificate_file: "",
+      });
+    }
+  
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
+  
 
   const removeEntry = (section, index) => {
     setFormData((prevData) => ({
@@ -210,8 +241,6 @@ Object.keys(formData).forEach((key) => {
 
     
       try {
-        console.log(formData.resume);
-        // formData.resume=null
 
         const response = await axios.post("http://127.0.0.1:8000/api/applicants/", formDataToSend, {
           headers: {
@@ -305,6 +334,7 @@ Object.keys(formData).forEach((key) => {
               addEntry={addEntry}
               removeEntry={removeEntry}
               setCurrentCertification={setCurrentCertification}
+              fileInputRef={fileInputRef}
             />
           )}
           {step === 5 && (
@@ -316,7 +346,7 @@ Object.keys(formData).forEach((key) => {
               <button
               type="button"
               onClick={prevStep}
-              className="bg-gray-600 text-white rounded-full py-2 px-6 flex items-center gap-2"
+              className="bg-gray-600 text-white rounded-full py-0 px-6 flex items-center gap-2"
             >
               <FaAngleDoubleLeft /> Previous
             </button>
