@@ -11,6 +11,7 @@ import { getSingleJob } from "../../services/jobsService";
 import axiosInstance from "../../services/axiosInstance";
 import { showErrorToast, showSuccessToast } from "../utils/toastUtils";
 import { profile } from "../../api/auth";
+import axios from "axios";
 
 const ApplyJob = () => {
   const { id } = useParams();
@@ -197,16 +198,26 @@ const ApplyJob = () => {
       }
     } else {
       const formDataToSend = new FormData();
-      Object.keys(formData).forEach((key) => {
-        formDataToSend.append(key, formData[key]);
-      });
+
+Object.keys(formData).forEach((key) => {
+  if (Array.isArray(formData[key])) {
+    // Convert arrays (lists of objects) to JSON strings
+    formDataToSend.append(key, JSON.stringify(formData[key]));
+  } else {
+    formDataToSend.append(key, formData[key]);
+  }
+});
+
     
       try {
         console.log(formData.resume);
-        formData.resume=null
+        // formData.resume=null
 
-        const response = await axiosInstance.post("applicants/", formData);
-        console.log(response);
+        const response = await axios.post("http://127.0.0.1:8000/api/applicants/", formDataToSend, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
         showSuccessToast("Application Submitted Successfully Inserted ")
       } catch (error) {
         console.error("Error response:", error.response.data);  

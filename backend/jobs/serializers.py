@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Job, Responsibility, Qualification, Skill, Benefit, JobCategory,Applicant, Education, Experience, Certification
-
+import json
 
 class EducationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -9,10 +9,22 @@ class EducationSerializer(serializers.ModelSerializer):
         extra_kwargs = {"applicant": {"read_only": True}}
 
 class ExperienceSerializer(serializers.ModelSerializer):
+    banking_experience = serializers.BooleanField()
+
     class Meta:
         model = Experience
         fields = '__all__'
         extra_kwargs = {"applicant": {"read_only": True}}
+
+    def create(self, validated_data):
+        # Convert "banking_experience" from string to Boolean
+        if "banking_experience" in validated_data:
+            validated_data["banking_experience"] = str(validated_data["banking_experience"]).lower() == "true"
+
+        return super().create(validated_data)
+
+
+
 
 class CertificationSerializer(serializers.ModelSerializer):
     certificate_file = serializers.FileField(required=False, allow_null=True)
@@ -40,17 +52,17 @@ class ApplicantSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         email = validated_data.get('email')
-        job_id = validated_data.get('job')  # Ensure job_id is correct
+        job_id = validated_data.get('job')
 
         if Applicant.objects.filter(email=email, job_id=job_id).exists():
             raise serializers.ValidationError(
                 {"error": "You have already applied for this job."}
             )
 
-        # Extract nested data
-        educations_data = validated_data.pop('educations', [])
-        experiences_data = validated_data.pop('experiences', [])
-        certifications_data = validated_data.pop('certifications', [])
+        # ✅ Use `self.initial_data` instead of `self.context['request']`
+        educations_data = self._parse_json_field(self.initial_data.get('educations', '[]'))
+        experiences_data = self._parse_json_field(self.initial_data.get('experiences', '[]'))
+        certifications_data = self._parse_json_field(self.initial_data.get('certifications', '[]'))
 
         # Create main Applicant object
         applicant = Applicant.objects.create(**validated_data)
@@ -60,12 +72,19 @@ class ApplicantSerializer(serializers.ModelSerializer):
             Education.objects.create(applicant=applicant, **education)
 
         for experience in experiences_data:
+            experience["banking_experience"] = experience["banking_experience"].lower() == "true"
             Experience.objects.create(applicant=applicant, **experience)
-
         for certification in certifications_data:
             Certification.objects.create(applicant=applicant, **certification)
 
         return applicant
+
+    def _parse_json_field(self, json_field):
+        """Helper function to parse JSON string into Python list."""
+        try:
+            return json.loads(json_field) if isinstance(json_field, str) else json_field
+        except json.JSONDecodeError:
+            return []
     
 # class EducationSerializer(serializers.ModelSerializer):
 #     class Meta:

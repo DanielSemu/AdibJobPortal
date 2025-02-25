@@ -91,7 +91,7 @@ class Certification(models.Model):
     certificate_title = models.CharField(max_length=100)
     awarding_company = models.CharField(max_length=255)
     awarded_date = models.DateField()
-    certificate_file = models.FileField(upload_to='certificates/',null=True,blank=True)
+    certificate_file = models.FileField(upload_to='certificates/',blank=True ,null=True  )
 
     def __str__(self):
         return self.certificate_title
