@@ -106,17 +106,11 @@ const ApplyJob = () => {
   
     if (type === 'file' && files && files[0]) {
       const file = files[0];
-      console.log("here");
-      
-      // Create a unique identifier (e.g., using timestamp or any other unique value)
-      const uniqueIdentifier = Date.now(); // Using timestamp as the unique identifier
-  
-      // Create a new file with the common base name and the unique identifier
+      const uniqueIdentifier = Date.now(); 
       const renamedFile = new File([file], `applicant_resume_${uniqueIdentifier}${file.name.slice(file.name.lastIndexOf('.'))}`, { type: file.type });
-  
       setFormData({
         ...formData,
-        [name]: renamedFile // Store the renamed file in state
+        [name]: renamedFile 
       });
     } else {
       setFormData({
@@ -128,38 +122,49 @@ const ApplyJob = () => {
 
   const handleInputChange = (section, e) => {
     const { name, value, type, checked, files } = e.target;
+  
     switch (section) {
       case "experience":
-        setCurrentExperience((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+        setCurrentExperience((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
         break;
       case "education":
         setCurrentEducation((prev) => ({ ...prev, [name]: value }));
         break;
       case "certification":
-        setCurrentCertification((prev) => ({ ...prev, [name]: value }));
+        if (name === "certificate_file" && files.length > 0) {
+          const file = files[0];
+          const fileExtension = file.name.split('.').pop(); // Get file extension
+          const newFileName = `certificate_${Date.now()}.${fileExtension}`; // Rename file
+  
+          const renamedFile = new File([file], newFileName, { type: file.type });
+  
+          setCurrentCertification((prev) => ({ ...prev, certificate_file: renamedFile }));
+        } else {
+          setCurrentCertification((prev) => ({ ...prev, [name]: value }));
+        }
         break;
       default:
         break;
     }
   };
   
+  
   const fileInputRef = useRef(null);
   const addEntry = (section, entry, setEntry) => {
-    if (Object.values(entry).some((val) => val === "")) return; // Ensure all fields are filled
+    if (Object.values(entry).some((val) => val === "")) return; 
   
     setFormData((prevData) => ({
       ...prevData,
       [section]: [...prevData[section], entry],
     }));
   
-    // Reset input fields properly
     if (section === "experiences") {
       setEntry({
         job_title: "",
         company_name: "",
         from_date: "",
         to_date: "",
-        banking_experience: false, // Reset checkbox properly
+        banking_experience: false, 
       });
     } else if (section === "educations") {
       setEntry({
@@ -241,8 +246,8 @@ Object.keys(formData).forEach((key) => {
 
     
       try {
-
-        const response = await axios.post("http://127.0.0.1:8000/api/applicants/", formDataToSend, {
+        
+        const response = await axiosInstance.post("applicants/", formDataToSend, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
