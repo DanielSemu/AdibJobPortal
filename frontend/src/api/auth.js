@@ -86,9 +86,15 @@ export const refreshToken = async () => {
     }
 };
 
-export const sendOTP = async (phone_number, otpCode) => {
-  
-    const message = `Your OTP code is: ${otpCode}`;
+export const sendOTP = async (phone_number, otpCode, purpose) => {
+    const message = ''
+    if (purpose=="application"){
+        message = `Your Verification Code is: ${otpCode}`;
+    }
+    else{
+        message = `Your OTP code is: ${otpCode}`;    
+    }
+
   
     const encodedMessage = encodeURIComponent(message);
   

@@ -26,7 +26,7 @@ const Register = () => {
 
   const handleOTPChange = (e) => {
     setOtp(e.target.value);
-  };
+  };  
 
   const generateOTP = () => {
     return Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit OTP

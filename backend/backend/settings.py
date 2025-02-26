@@ -94,7 +94,18 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
-    
+    #  'default': {
+    #     'ENGINE': 'sql_server.pyodbc',  # SQL Server backend for Django
+    #     'NAME': 'ADIB_JobPortal',   # Name of the database
+    #     'USER': 'sa',        # Your SQL Server username
+    #     'PASSWORD': 'Adib@Te5t',    # Your SQL Server password
+    #     'HOST': 'INAPP-DB-SRVR\ADIBTESTDBSERVER',          # Server name or IP address
+    #     'PORT': '',                     # Leave empty for default
+    #     'OPTIONS': {
+    #         'driver': 'ODBC Driver 17 for SQL Server',  # Ensure the correct driver is used
+    #         'extra_params': 'TrustServerCertificate=yes;',
+    #     },
+    # }
 }
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -153,3 +164,12 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+EMAIL_BACKEND='django.core.mail.backends.smtp.Emailbackend'
+EMAIL_HOST='smtp.gmail.com'
+EMAIL_PORT=587
+EMAIL_HOST_USER= 'danielsemu07@gmail  .com'
+EMAIL_PASSWORD=''
+EMAIL_USER_TLS=True
+EMAIL_USER_SSL=False
