@@ -40,10 +40,15 @@ class ApplicantSerializer(serializers.ModelSerializer):
     experiences = ExperienceSerializer(many=True, required=False)
     certifications = CertificationSerializer(many=True, required=False)
     resume = serializers.FileField(required=False, allow_null=True)
+    job_name = serializers.SerializerMethodField()  # Add this line to include the job name
 
     class Meta:
         model = Applicant
         fields = '__all__'
+        
+    def get_job_name(self, obj):
+        # This method returns the name of the related job
+        return obj.job.title  # Adjust the attribute name according to your `Job` model
 
     def create(self, validated_data):
         email = validated_data.get('email')

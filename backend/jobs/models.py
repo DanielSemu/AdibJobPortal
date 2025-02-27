@@ -51,6 +51,22 @@ class Benefit(models.Model):
     
 
 class Applicant(models.Model):
+    STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Under Review', 'Under Review'),
+        ('Shortlisted', 'Shortlisted'),
+        ('Interview Scheduled', 'Interview Scheduled'),
+        ('Interviewed', 'Interviewed'),
+        ('Assessment Pending', 'Assessment Pending'),
+        ('Offered', 'Offered'),
+        ('Accepted', 'Accepted'),
+        ('Rejected', 'Rejected'),
+        ('Withdrawn', 'Withdrawn'),
+        ('Hired', 'Hired'),
+        ('On Hold', 'On Hold'),
+        ('Waitlisted', 'Waitlisted'),
+        ('Background Check', 'Background Check'),
+    ]
     job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='job')
     full_name = models.CharField(max_length=255)
     email = models.EmailField(max_length=50)
@@ -61,7 +77,7 @@ class Applicant(models.Model):
     cover_letter = models.TextField(blank=True)
     resume = models.FileField(upload_to='resumes/',blank=True ,null=True  )
     terms_accepted = models.BooleanField(default=False)
-
+    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='Pending')
     def __str__(self):
         return self.full_name
 

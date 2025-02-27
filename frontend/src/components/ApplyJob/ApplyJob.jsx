@@ -66,7 +66,6 @@ const ApplyJob = () => {
     const fetchProfile = async () => {
       try {
         const response = await profile();
-        console.log(response);
 
         if (response) {
           setUserProfile(response);

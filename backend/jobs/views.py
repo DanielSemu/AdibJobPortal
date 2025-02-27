@@ -5,6 +5,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import NotFound
 from django.shortcuts import get_object_or_404
+from rest_framework.decorators import api_view, permission_classes
 from .serializers import ApplicantSerializer, JobSerializer, ResponsibilitySerializer, QualificationSerializer, SkillSerializer, BenefitSerializer
 from .models import Applicant, Job, Responsibility, Qualification, Skill, Benefit
 
@@ -140,7 +141,16 @@ class ApplicantAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])    
+def getUserApplications(request):
+    user_email=request.user.email
+    applications=Applicant.objects.filter(email=user_email)
     
+    if not applications.exists():
+        return Response({"message": "No applications found for this user."}, status=status.HTTP_404_NOT_FOUND)
+    serializer=ApplicantSerializer(applications, many=True)
+    return  Response(serializer.data, status=status.HTTP_200_OK)
     
     
 

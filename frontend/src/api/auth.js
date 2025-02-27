@@ -110,6 +110,19 @@ export const sendOTP = async (phone_number, otpCode, purpose) => {
       return { success: true };
     }
   };
+
+  export const getMyApplications = async () => {
+    try {
+        const response = await axiosInstance.get("/api/my_applications/");
+        return response.data;  // Assuming response.data contains the list of applications
+    } catch (error) {
+        // Log the full error to get better debugging information
+        console.error("Error fetching applications:", error);
+        // Return an empty array or null in case of error to avoid breaking the app
+        return [];
+    }
+}
+
   
 
 export const logout =async ()=>{
