@@ -87,17 +87,18 @@ export const refreshToken = async () => {
 };
 
 export const sendOTP = async (phone_number, otpCode, purpose) => {
-    const message = ''
-    if (purpose=="application"){
+    
+    let message = ''; // Use let instead of const so we can reassign it
+    
+    if (purpose === "application") {
         message = `Your Verification Code is: ${otpCode}`;
-    }
-    else{
-        message = `Your OTP code is: ${otpCode}`;    
+    } else {
+        message = `Your OTP code is: ${otpCode}`;
     }
 
   
     const encodedMessage = encodeURIComponent(message);
-  
+
     const url = `http://192.168.6.27:9501/api?action=sendmessage&username=Test&password=Adib@123&recipient=${phone_number}&messagetype=SMS:TEXT&messagedata=${encodedMessage}`;
   
     try {

@@ -70,7 +70,7 @@ const Step4 = ({
           max={new Date().toISOString().split("T")[0]}
           className="w-full p-2 border rounded-md focus:outline-blue-500"
         />
-        <label className="block text-gray-700 font-semibold mb-2">
+        {/* <label className="block text-gray-700 font-semibold mb-2">
           Upload Certificate (PDF/DOCX)
         </label>
         <input
@@ -81,7 +81,7 @@ const Step4 = ({
           onChange={(e) => handleInputChange("certification", e)}
           className="w-full p-2 border rounded-md focus:outline-blue-500"
           // required
-        />
+        /> */}
         <button
           type="button"
           onClick={() =>

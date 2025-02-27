@@ -59,7 +59,7 @@ const ApplyJob = () => {
     certificate_title: "",
     awarding_company: "",
     awarded_date: "",
-    certificate_file: "",
+    // certificate_file: "",
   });
 
   useEffect(() => {
@@ -141,29 +141,29 @@ const ApplyJob = () => {
         setCurrentEducation((prev) => ({ ...prev, [name]: value }));
         break;
       case "certification":
-        if (name === "certificate_file" && files.length > 0) {
-          const file = files[0];
-          const fileExtension = file.name.split(".").pop(); // Get file extension
-          const newFileName = `certificate_${Date.now()}.${fileExtension}`; // Rename file
+        // if (name === "certificate_file" && files.length > 0) {
+        //   const file = files[0];
+        //   const fileExtension = file.name.split(".").pop(); // Get file extension
+        //   const newFileName = `certificate_${Date.now()}.${fileExtension}`; // Rename file
 
-          const renamedFile = new File([file], newFileName, {
-            type: file.type,
-          });
+        //   const renamedFile = new File([file], newFileName, {
+        //     type: file.type,
+        //   });
 
-          setCurrentCertification((prev) => ({
-            ...prev,
-            certificate_file: renamedFile,
-          }));
-        } else {
+        //   setCurrentCertification((prev) => ({
+        //     ...prev,
+        //     certificate_file: renamedFile,
+        //   }));
+        // } else {
           setCurrentCertification((prev) => ({ ...prev, [name]: value }));
-        }
+        // }
         break;
       default:
         break;
     }
   };
 
-  const fileInputRef = useRef(null);
+  // const fileInputRef = useRef(null);
   const addEntry = (section, entry, setEntry) => {
     if (Object.values(entry).some((val) => val === "")) return;
 
@@ -192,7 +192,7 @@ const ApplyJob = () => {
         certificate_title: "",
         awarding_company: "",
         awarded_date: "",
-        certificate_file: "",
+        // certificate_file: "",
       });
     }
 
@@ -233,7 +233,10 @@ const ApplyJob = () => {
   const generateVerificationNumber = () => {
     return Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit OTP
   };
-
+  const handleCancel =()=>{
+    setVerificationModal(false)
+    setErrors({})
+  }
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = validateForm();
@@ -257,6 +260,8 @@ const ApplyJob = () => {
     setGeneratedCode(otpCode);
     try {
       const purpose='application'
+      console.log(otpCode);
+      
       const response = await sendOTP(formData.phone, otpCode,purpose);
       if (!response.success) {
         showErrorToast(`verification Code sending failed: ${response.message}`);
@@ -264,7 +269,7 @@ const ApplyJob = () => {
         setVerificationModal(true); // Show modal for OTP input
       }
     } catch (error) {
-      showErrorToast("Failed to send OTP.");
+      showErrorToast("Failed to send Verification Number.");
     }
   };
 
@@ -272,7 +277,7 @@ const ApplyJob = () => {
   const submitVerified = async (e) => {
      if(verificationCode === generatedCode) {
       const formDataToSend = new FormData();
-
+      
       Object.keys(formData).forEach((key) => {
         if (Array.isArray(formData[key])) {
           // Convert arrays (lists of objects) to JSON strings
@@ -282,9 +287,10 @@ const ApplyJob = () => {
         }
       });
 
-      // verify Email before submitting the application form
-
-      try {
+     
+      
+      try { 
+        console.log(formDataToSend);
         const response = await axiosInstance.post(
           "applicants/",
           formDataToSend,
@@ -301,6 +307,7 @@ const ApplyJob = () => {
         console.error("Error response:", error.response.data);
         showErrorToast(error.response.data.error || "An error occurred.");
         setErrors({});
+        setVerificationModal(false)
       }
       finally{
         setVerificationCode('')
@@ -395,7 +402,7 @@ const ApplyJob = () => {
               addEntry={addEntry}
               removeEntry={removeEntry}
               setCurrentCertification={setCurrentCertification}
-              fileInputRef={fileInputRef}
+              // fileInputRef={fileInputRef}
             />
           )}
           {step === 5 && (
@@ -465,7 +472,7 @@ const ApplyJob = () => {
                 Verify
               </button>
               <button
-                onClick={() => setVerificationModal(false)}
+                onClick={handleCancel}
                 className="bg-red-500 text-white px-4 py-2 rounded-lg"
               >
                 Cancel

@@ -22,7 +22,7 @@ class ExperienceSerializer(serializers.ModelSerializer):
 
 
 class CertificationSerializer(serializers.ModelSerializer):
-    certificate_file = serializers.FileField(required=False, allow_null=True)
+    # certificate_file = serializers.FileField(required=False, allow_null=True)
 
     class Meta:
         model = Certification

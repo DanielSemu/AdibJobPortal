@@ -45,7 +45,8 @@ const Register = () => {
     setGeneratedOtp(otpCode);
   
     try {
-      const response = await sendOTP(formData.phone_number, otpCode); // Send OTP to email
+      const purpose='registration'
+      const response = await sendOTP(formData.phone_number, otpCode,purpose); // Send OTP to email
       if (!response.success) {
         showErrorToast(`OTP sending failed: ${response.message}`);
       } else {
