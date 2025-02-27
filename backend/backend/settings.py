@@ -58,12 +58,14 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:5173',  # React development server
-    'http://192.168.2.32:5173',  # React development server
-    'http://localhost:5174',  # React development server
-    'https://your-production-domain.com',  # Your production domain
+    "http://localhost:5173",
+    "http://127.0.0.1:5173"
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173"
+]
 
 ROOT_URLCONF = 'backend.urls'
 

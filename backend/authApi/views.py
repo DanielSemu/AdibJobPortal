@@ -73,7 +73,8 @@ class UserProfileView(APIView):
             'full_name':user.full_name,
             'email':user.email,
             'birthdate':user.birthdate,
-            'phone_number':user.phone_number
+            'phone_number':user.phone_number,
+            'gender':user.gender
         })
 class RegisterUserView(APIView):
     permission_classes = [AllowAny]
