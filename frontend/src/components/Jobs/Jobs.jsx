@@ -8,14 +8,20 @@ import { getJobs } from "../../services/jobsService";
 
 const Jobs = () => {
   const [jobs, setJobs]=useState([])
-  useEffect(()=>{
-    const fetchJobs= async ()=>{
-      const response=await getJobs()
-      setJobs(response)
-    }
-
-    fetchJobs()
-  },[])
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const response = await getJobs();
+        setJobs(response || []); 
+      } catch (error) {
+        console.error("Error fetching jobs:", error);
+        setJobs([]); // Prevent crash by setting an empty array on failure
+      }
+    };
+  
+    fetchJobs();
+  }, []);
+  
   return (
     <>
       <div id="jobs" className="main-container ">
@@ -24,7 +30,7 @@ const Jobs = () => {
             Latest Jobs
           </h3>
           <p className="text-slate-400 max-w-xl mx-auto">
-            Search all the open positions on the web. Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusamus commodi aliquam expedita nesciunt, rerum veniam?
+            Find all the open positions Available. Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusamus commodi aliquam expedita nesciunt, rerum veniam?
           </p>
         </div>
         <div className="grid lg:grid-cols-3 md:grid-cols-2   mt-8 gap-[30px]  px-10">

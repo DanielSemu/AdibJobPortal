@@ -1,10 +1,11 @@
-import React from 'react'
+import React,{useState,useEffect} from 'react'
 import {AiFillSketchSquare,AiOutlinePieChart } from 'react-icons/ai' 
 import { MdOutlineMenuBook } from "react-icons/md";
 import { FaChalkboardUser ,FaLaptopCode} from "react-icons/fa6";
 import { Link } from 'react-router-dom';
 import { categories } from '../../data/categories';
-import { jobs } from '../../data/jobs';
+// import { jobs } from '../../data/jobs';
+import { getJobs } from "../../services/jobsService";
 
 const iconMap = {
   AiFillSketchSquare: AiFillSketchSquare,
@@ -15,7 +16,21 @@ const iconMap = {
 };
 
 const JobCategories = () => {
-  
+  const [jobs, setJobs]=useState([])
+    useEffect(() => {
+      const fetchJobs = async () => {
+        try {
+          const response = await getJobs();
+          setJobs(response || []); // Ensure it defaults to an empty array
+        } catch (error) {
+          console.error("Error fetching jobs:", error);
+          setJobs([]); // Prevent crash by setting an empty array on failure
+        }
+      };
+    
+      fetchJobs();
+    }, []);
+    
 
   return (
     <div id='categories' className="main-container">

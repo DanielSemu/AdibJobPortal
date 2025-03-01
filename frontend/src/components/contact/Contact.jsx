@@ -99,7 +99,7 @@ const Contact = () => {
       <div className="flex justify-center mt-12">
         <div className="text-center text-gray-600">
           <p className="text-lg">Or reach us at:</p>
-          <p className="text-xl font-semibold mt-2">support@addisbankssc.com</p>
+          <p className="text-xl font-semibold mt-2">support@addisbanksc.com</p>
           <p className="mt-2">We will get back to you within 24 hours.</p>
         </div>
       </div>
