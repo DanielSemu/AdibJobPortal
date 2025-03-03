@@ -4,30 +4,17 @@ import { FaAngleDown } from "react-icons/fa";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import logo from "../../assets/Addis_logo.jpg";
 import { logout, profile } from "../../api/auth";
+import useAuth from "../../hooks/useAuth";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [userProfile, setUserProfile] = useState(null);
+  // const [userProfile, setUserProfile] = useState(null);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const {userProfile,setUserProfile}=useAuth()
 
-  // Fetch user profile
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        const response = await profile();
-        setUserProfile(response);
-      } catch (error) {
-        console.error("Error fetching user profile:", error);
-        setUserProfile(null);
-      }
-    };
-    fetchUserProfile();
-  }, []);
-
-  // Toggle functions
   const toggleMobileMenu = () => setIsMobileMenuOpen((prev) => !prev);
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
   const toggleDropdown = () => setIsDropdownOpen((prev) => !prev);

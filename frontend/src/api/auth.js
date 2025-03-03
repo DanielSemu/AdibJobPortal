@@ -49,6 +49,7 @@ export const login = async (email, password) => {
         );
         const { access } = response.data;  // Destructure access token from the response
         setAccessToken(access)
+        
         return response;  
     } catch (error) {
         return error.response
