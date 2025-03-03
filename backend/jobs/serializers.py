@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Job, Responsibility, Qualification, Skill, Benefit, JobCategory,Applicant, Education, Experience, Certification
+from .models import Job, Responsibility, Qualification, Skill, Benefit, JobCategory,Applicant, Education, Experience, Certification,ContactUs
 import json
 
 class EducationSerializer(serializers.ModelSerializer):
@@ -85,6 +85,13 @@ class ApplicantSerializer(serializers.ModelSerializer):
             return json.loads(json_field) if isinstance(json_field, str) else json_field
         except json.JSONDecodeError:
             return []
+    
+    
+class ContactUsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model =ContactUs
+        fields= '__all__'
+    
     
 # class EducationSerializer(serializers.ModelSerializer):
 #     class Meta:

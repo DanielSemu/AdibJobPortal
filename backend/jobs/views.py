@@ -6,8 +6,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import NotFound
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view, permission_classes
-from .serializers import ApplicantSerializer, JobSerializer, ResponsibilitySerializer, QualificationSerializer, SkillSerializer, BenefitSerializer
-from .models import Applicant, Job, Responsibility, Qualification, Skill, Benefit
+from .serializers import ApplicantSerializer,JobSerializer, ResponsibilitySerializer, QualificationSerializer, SkillSerializer, BenefitSerializer,ContactUsSerializer  
+from .models import Applicant, Job, Responsibility, Qualification, Skill, Benefit,ContactUs
 
 
 
@@ -152,7 +152,46 @@ def getUserApplications(request):
     serializer=ApplicantSerializer(applications, many=True)
     return  Response(serializer.data, status=status.HTTP_200_OK)
     
-    
+
+class ContactUsAPIView(APIView):  
+    # ✅ GET: Retrieve all contact messages  
+    def get(self, request, *args, **kwargs):  
+        contacts = ContactUs.objects.all()  
+        serializer = ContactUsSerializer(contacts, many=True)  
+        return Response(serializer.data, status=status.HTTP_200_OK)  
+
+    # ✅ POST: Create a new contact message  
+    def post(self, request, *args, **kwargs):  
+        print(request.data)
+        serializer = ContactUsSerializer(data=request.data)  
+        if serializer.is_valid():  
+            serializer.save()  
+            return Response(serializer.data, status=status.HTTP_201_CREATED)  
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)  
+
+    # ✅ PUT: Update an existing contact message  
+    def put(self, request, *args, **kwargs):  
+        contact_id = kwargs.get('pk')  
+        try:  
+            contact = ContactUs.objects.get(pk=contact_id)  
+        except ContactUs.DoesNotExist:  
+            return Response({"error": "Contact not found"}, status=status.HTTP_404_NOT_FOUND)  
+
+        serializer = ContactUsSerializer(contact, data=request.data, partial=True)  
+        if serializer.is_valid():  
+            serializer.save()  
+            return Response(serializer.data, status=status.HTTP_200_OK)  
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)  
+
+    # ✅ DELETE: Remove a contact message  
+    def delete(self, request, *args, **kwargs):  
+        contact_id = kwargs.get('pk')  
+        try:  
+            contact = ContactUs.objects.get(pk=contact_id)  
+            contact.delete()  
+            return Response({"message": "Deleted successfully"}, status=status.HTTP_204_NO_CONTENT)  
+        except ContactUs.DoesNotExist:  
+            return Response({"error": "Contact not found"}, status=status.HTTP_404_NOT_FOUND)  
 
 
 # class ApplicantAPIView(APIView):
