@@ -126,8 +126,11 @@ export const sendOTP = async (phone_number, otpCode, purpose) => {
   
 
 export const logout =async ()=>{
-    const response=await axiosInstance.post('/auth/logout/')
-    
-    setAccessToken(null)
-    return response
+    try {
+        const response=await axiosInstance.post('/auth/logout/')
+        setAccessToken(null)
+        return response
+    } catch (error) {
+        console.error("Logout error", error)    
+    }
 }

@@ -3,7 +3,7 @@ import { CiMenuBurger } from "react-icons/ci";
 import { FaAngleDown } from "react-icons/fa";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import logo from "../../assets/Addis_logo.jpg";
-import { profile } from "../../api/auth";
+import { logout, profile } from "../../api/auth";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -72,10 +72,16 @@ const Navbar = () => {
   }, [isMobileMenuOpen]);
 
   // Logout function
-  const handleLogout = () => {
-    setUserProfile(null);
-    closeDropdown();
-    navigate("/login");
+  const handleLogout = async() => {
+    try {
+      const response=await logout()
+      setUserProfile(null);
+      closeDropdown();
+      navigate("/login");    
+    } catch (error) {
+      console.error("Failed to logout", error);
+    }
+    
   };
 
   return (
