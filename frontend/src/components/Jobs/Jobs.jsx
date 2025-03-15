@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FaArrowRight } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
-import logo from "../../assets/Addis_logo.jpg";
+import logo from "../../assets/adb-whitebg-logo.png";
 import { Link } from "react-router-dom";
 // import { jobs } from "../../data/jobs";
 import { getJobs } from "../../services/jobsService";
@@ -43,12 +43,11 @@ const Jobs = () => {
                     <img src={logo} className="size-8" alt="" />
                   </div>
                   <div className="ms-3">
-                    <a
+                    <p
                       className="block text-[16px] font-semibold hover:text-[#007dda] transition-all duration-500"
-                      href="/#"
                     >
                       Addis Bank S.C
-                    </a>
+                    </p>
                     <span className="block text-sm text-slate-400">{1} days ago</span>
                   </div>
                 </div>
@@ -89,7 +88,7 @@ const Jobs = () => {
             </div>
           ))}
         </div>
-        <div className="grid md:grid-cols-12  grid-cols-1 mt-8">
+        {/* <div className="grid md:grid-cols-12  grid-cols-1 mt-8">
           <div className="md:col-span-12 text-center">
             <a
               className="btn btn-link text-slate-400 hover:text-[#007dda] after:bg-emerald-600 duration-500 ease-in-out inline-flex items-center"
@@ -99,7 +98,7 @@ const Jobs = () => {
               <FaArrowRight className="ml-3" />
             </a>
           </div>
-        </div>
+        </div> */}
       </div>
     </>
   );

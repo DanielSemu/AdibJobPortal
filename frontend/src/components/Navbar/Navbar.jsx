@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { CiMenuBurger } from "react-icons/ci";
 import { FaAngleDown } from "react-icons/fa";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import logo from "../../assets/Addis_logo.jpg";
+import logo from "../../assets/logo.png";
 import { logout, profile } from "../../api/auth";
 import useAuth from "../../hooks/useAuth";
 
@@ -76,12 +76,12 @@ const Navbar = () => {
       <div className="max-w-screen-xl flex items-center justify-between mx-auto p-4">
         {/* Logo */}
         <Link to="/" className="flex items-center space-x-3">
-          <img src={logo} className="h-8 rounded-full" alt="Addis Bank Logo" />
+          <img src={logo} className="h-8" alt="Addis Bank Logo" />
           <span
             onClick={() => window.scroll(0, 0)}
-            className="text-2xl font-bold text-white cursor-pointer"
+            className="text-2xl font-bold text-[#ffd91e] cursor-pointer"
           >
-            Addis Bank S.C
+            Addis Bank Job Portal
           </span>
         </Link>
 
