@@ -413,7 +413,7 @@ const ApplyJob = () => {
               <button
                 type="button"
                 onClick={prevStep}
-                className="bg-gray-600 text-white rounded-full py-0 px-6 flex items-center gap-2"
+                className="bg-gray-600 text-white rounded-full py-2 px-6 flex items-center gap-2"
               >
                 <FaAngleDoubleLeft /> Previous
               </button>

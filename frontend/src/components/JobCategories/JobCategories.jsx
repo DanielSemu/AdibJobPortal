@@ -35,11 +35,11 @@ const JobCategories = () => {
   return (
     <div id='categories' className="main-container">
       <div className="grid grid-cols-1 pb-8 text-center">
-        <h3 className="mb-4 md:text-[26px] md:leading-normal text-2xl leading-normal font-semibold">
+        <h3 className="mb-4 md:text-[30px] text-primary md:leading-normal text-2xl leading-normal font-semibold">
           Popular Categories
         </h3>
-        <p className="text-slate-400 max-w-xl mx-auto">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Animi atque repellendus debitis earum temporibus consectetur!
+        <p className="text-slate-500 mx-10">
+        Explore a wide range of job categories tailored to different skills and expertise. Find the perfect role that aligns with your career goals and passion.
         </p>
       </div>
       <div className="grid mx-10 lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 mt-8 gap-[30px]">

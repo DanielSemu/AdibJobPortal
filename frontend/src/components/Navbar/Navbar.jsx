@@ -73,8 +73,9 @@ const Navbar = () => {
 
   return (
     <nav className="bg-[#007dda] fixed w-full z-20 top-0 start-0">
-      <div className="max-w-screen-xl flex items-center justify-between mx-auto p-4">
+      <div className="max-w-screen-xl block sm:flex  items-center justify-between mx-auto p-4">
         {/* Logo */}
+        
         <Link to="/" className="flex items-center space-x-3">
           <img src={logo} className="h-8" alt="Addis Bank Logo" />
           <span
@@ -86,12 +87,12 @@ const Navbar = () => {
         </Link>
 
         {/* Register / Login Button */}
-        <div className="flex md:order-2 space-x-3">
+        <div className="flex mt-5 sm:mt-0 justify-end md:order-2 space-x-3">
           {userProfile ? (
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={toggleDropdown}
-                className="text-gray-600 bg-[#ffd91e] border-2 flex items-center border-transparent hover:bg-[#007dda] hover:text-[#ffd91e] hover:border-[#ffd91e] font-medium rounded-lg text-sm px-4 py-2 transition-all duration-300"
+                className="text-primary bg-[#ffd91e] border-2 flex items-center border-transparent hover:bg-[#007dda] hover:text-[#ffd91e] hover:border-[#ffd91e] font-medium rounded-lg text-sm px-4 py-2 transition-all duration-300"
               >
                 {userProfile.email} <FaAngleDown />
               </button>

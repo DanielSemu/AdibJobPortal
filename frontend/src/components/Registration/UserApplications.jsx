@@ -22,7 +22,7 @@ const ApplicationCard = ({ application }) => {
     "Background Check": "bg-purple-100 text-purple-600"
   };
   return (
-    <div className="max-w-sm w-full bg-white shadow-lg rounded-lg overflow-hidden my-4 mx-auto">
+    <div className="max-w-sm w-full bg-white shadow-lg rounded-lg overflow-hidden mx-auto">
       <div className="p-4">
         <h2 className="text-2xl font-semibold text-gray-800">{application.job_name}</h2>
         <p className="text-sm text-gray-600">{application.description}</p>
@@ -64,7 +64,7 @@ const UserApplications = () => {
   }, [])
 
   return (
-    <div className="main-container bg-gray-100 py-8 px-4">
+    <div className="main-container mt-10 bg-gray-100 py-8 px-4">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-4xl font-bold text-center text-gray-800 mb-8">Your Applications</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

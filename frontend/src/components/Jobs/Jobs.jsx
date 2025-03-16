@@ -26,11 +26,11 @@ const Jobs = () => {
     <>
       <div id="jobs" className="main-container ">
         <div className="grid grid-cols-1 text-center">
-          <h3 className="mb-4 md:text-[26px] md:leading-normal text-2xl leading-normal font-semibold">
+          <h3 className="mb-4 md:text-[30px] text-primary md:leading-normal text-2xl leading-normal font-semibold">
             Latest Jobs
           </h3>
-          <p className="text-slate-400 max-w-xl mx-auto">
-            Find all the open positions Available. Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusamus commodi aliquam expedita nesciunt, rerum veniam?
+          <p className="text-slate-500 mx-10">
+          Discover exciting career opportunities at Our Bank. We're seeking talented and passionate individuals to join our dynamic team. Explore open positions that match your skills and aspirations, and take the next step toward a rewarding career with us.
           </p>
         </div>
         <div className="grid lg:grid-cols-3 md:grid-cols-2   mt-8 gap-[30px]  px-10">
@@ -44,7 +44,7 @@ const Jobs = () => {
                   </div>
                   <div className="ms-3">
                     <p
-                      className="block text-[16px] font-semibold hover:text-[#007dda] transition-all duration-500"
+                      className="block text-[16px] text-primary font-semibold hover:text-secondary transition-all duration-500"
                     >
                       Addis Bank S.C
                     </p>
