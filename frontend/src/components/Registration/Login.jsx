@@ -4,6 +4,7 @@ import { login } from "../../api/auth";
 import { useNavigate } from "react-router-dom";
 import { showErrorToast, showSuccessToast } from "../utils/toastUtils";
 import { setAccessToken } from "../../api/tokenStorage";
+import useAuth from "../../hooks/useAuth";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +13,7 @@ const Login = () => {
   });
   const navigate = useNavigate();
   const [error, setError] = useState("");
+  const {setUserProfile}=useAuth()
 
   // Handle input changes
   const handleChange = (e) => {
@@ -26,9 +28,9 @@ const Login = () => {
       const response = await login(email, password);
       if (response.status === 200 || response.statusText === "Ok") {
         setAccessToken(response.data.access);
-        showSuccessToast("Login succesfully")
+        showSuccessToast("Login successfully")
+        setUserProfile(email)
         navigate("/");
-        window.location.reload();
       } else if (
         response.status === 401 ||
         response.statusText === "Unauthorized"

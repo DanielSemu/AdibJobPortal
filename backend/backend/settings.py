@@ -63,6 +63,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://192.168.2.32:5173",
     "http://192.168.75.222:5173"
     
+    "http://192.168.2.32:8000",
 ]
 
 CSRF_TRUSTED_ORIGINS = [

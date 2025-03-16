@@ -2,32 +2,19 @@ import React, { useState, useEffect, useRef } from "react";
 import { CiMenuBurger } from "react-icons/ci";
 import { FaAngleDown } from "react-icons/fa";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import logo from "../../assets/Addis_logo.jpg";
-import { profile } from "../../api/auth";
+import logo from "../../assets/logo.png";
+import { logout, profile } from "../../api/auth";
+import useAuth from "../../hooks/useAuth";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [userProfile, setUserProfile] = useState(null);
+  // const [userProfile, setUserProfile] = useState(null);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const {userProfile,setUserProfile}=useAuth()
 
-  // Fetch user profile
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        const response = await profile();
-        setUserProfile(response);
-      } catch (error) {
-        console.error("Error fetching user profile:", error);
-        setUserProfile(null);
-      }
-    };
-    fetchUserProfile();
-  }, []);
-
-  // Toggle functions
   const toggleMobileMenu = () => setIsMobileMenuOpen((prev) => !prev);
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
   const toggleDropdown = () => setIsDropdownOpen((prev) => !prev);
@@ -72,10 +59,16 @@ const Navbar = () => {
   }, [isMobileMenuOpen]);
 
   // Logout function
-  const handleLogout = () => {
-    setUserProfile(null);
-    closeDropdown();
-    navigate("/login");
+  const handleLogout = async() => {
+    try {
+      const response=await logout()
+      setUserProfile(null);
+      closeDropdown();
+      navigate("/login");    
+    } catch (error) {
+      console.error("Failed to logout", error);
+    }
+    
   };
 
   return (
@@ -83,12 +76,12 @@ const Navbar = () => {
       <div className="max-w-screen-xl flex items-center justify-between mx-auto p-4">
         {/* Logo */}
         <Link to="/" className="flex items-center space-x-3">
-          <img src={logo} className="h-8 rounded-full" alt="Addis Bank Logo" />
+          <img src={logo} className="h-8" alt="Addis Bank Logo" />
           <span
             onClick={() => window.scroll(0, 0)}
-            className="text-2xl font-bold text-white cursor-pointer"
+            className="text-2xl font-bold text-[#ffd91e] cursor-pointer"
           >
-            Addis Bank S.C
+            Addis Bank Job Portal
           </span>
         </Link>
 

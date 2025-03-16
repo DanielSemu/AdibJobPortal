@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { FaArrowRight } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
 import { getJobs } from "../../services/jobsService";
-import logo from "../../assets/Addis_logo.jpg";
+import logo from "../../assets/adb-whitebg-logo.png";
 
 const JobCategoryDetail = () => {
   const { id } = useParams();
@@ -38,7 +38,7 @@ const JobCategoryDetail = () => {
                 Latest Jobs Under Category- {category.categoryName}
               </h3>
               <p className="text-slate-400 max-w-xl mx-auto">
-                Find all the open positions under this .
+                Find all the open positions under this Category.
               </p>
             </div>
             <div className="grid lg:grid-cols-3 md:grid-cols-2   mt-8 gap-[30px]  px-10">

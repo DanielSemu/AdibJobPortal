@@ -1,10 +1,12 @@
 import React, { useState } from "react";
+import { contactUs } from "../../services/jobsService";
+import { showErrorToast, showSuccessToast } from "../utils/toastUtils";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
-    name: "",
+    full_name: "",
     email: "",
-    message: "",
+    content: "",
   });
 
   const handleChange = (e) => {
@@ -15,11 +17,22 @@ const Contact = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add form submission logic here
-    console.log(formData);
-  };
+    try {
+        const response = await contactUs(formData);
+        showSuccessToast("Message sent successfully!");
+        setFormData({ full_name: "", email: "", content: "" });
+    } catch (error) {
+        console.error("Error:", error);
+        if (error.response) {
+          showErrorToast("Failed to send message: " + (error.response.data?.error || "Please try again."));
+        } else {
+          showErrorToast("An unexpected error occurred. Please check your internet connection.");
+        }
+    }
+};
+
 
   return (
     <div id="contact" className="container mx-auto px-4 py-16">
@@ -38,9 +51,9 @@ const Contact = () => {
                 </label>
                 <input
                   type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
+                  id="full_name"
+                  name="full_name"
+                  value={formData.full_name}
                   onChange={handleChange}
                   className="mt-2 w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
                   placeholder="Enter your name"
@@ -66,15 +79,15 @@ const Contact = () => {
               </div>
             </div>
 
-            {/* Message */}
+            {/* content */}
             <div className="mb-6">
-              <label htmlFor="message" className="block text-lg font-medium text-gray-700">
+              <label htmlFor="content" className="block text-lg font-medium text-gray-700">
                 Your Message
               </label>
               <textarea
-                id="message"
-                name="message"
-                value={formData.message}
+                id="content"
+                name="content"
+                value={formData.content}
                 onChange={handleChange}
                 className="mt-2 w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
                 rows="6"
@@ -87,7 +100,7 @@ const Contact = () => {
             <div className="flex justify-center">
               <button
                 type="submit"
-                className="bg-blue-600 text-white py-3 px-8 rounded-lg text-lg font-medium hover:bg-blue-700 transition duration-300"
+                className="bg-primary text-secondary py-3 px-8 rounded-lg text-lg font-medium hover:bg-[#256290] transition duration-300"
               >
                 Send Message
               </button>
