@@ -87,6 +87,8 @@ class Education(models.Model):
     field_of_study = models.CharField(max_length=100)
     education_organization = models.CharField(max_length=255)
     graduation_year = models.DateField()
+    cgpa = models.DecimalField(max_digits=10, decimal_places=2)
+    exit_exam = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
         return f"{self.education_level} - {self.education_organization}"

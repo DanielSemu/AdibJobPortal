@@ -54,6 +54,8 @@ const ApplyJob = () => {
     field_of_study: "",
     education_organization: "",
     graduation_year: "",
+    cgpa:null,
+    exit_exam:null
   });
   const [currentCertification, setCurrentCertification] = useState({
     certificate_title: "",
