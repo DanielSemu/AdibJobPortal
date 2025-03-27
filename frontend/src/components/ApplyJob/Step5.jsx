@@ -17,6 +17,7 @@ const Step5 = ({ formData, errors, handleChange }) => {
           onChange={handleChange}
           accept=".pdf,.doc,.docx"
           className="w-full p-2 border mb-4"
+          required
         />
       </div>
       {/* Cover Letter */}
@@ -31,6 +32,7 @@ const Step5 = ({ formData, errors, handleChange }) => {
           placeholder="Cover Letter"
           className="w-full p-2 border rounded-md focus:outline-blue-500"
           rows="4"
+          required
         ></textarea>
       </div>
 
