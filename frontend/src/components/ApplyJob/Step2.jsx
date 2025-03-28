@@ -111,6 +111,7 @@ const Step2 = ({
             value={currentEducation.cgpa}
             onChange={(e) => handleInputChange("education", e)}
             min={0}
+            max={4.00}
             className="p-2 border rounded-md focus:outline-blue-500 flex-grow md:flex-none"
             required
           />

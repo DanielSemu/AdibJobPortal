@@ -19,7 +19,6 @@ const ApplyJob = () => {
   const [step, setStep] = useState(1);
   const [detailedData, setDetailedData] = useState([]);
   const [list, setList] = useState([]);
-  const [summarized, setSummarized] = useState(false);
   const [verificationModal, setVerificationModal] = useState(false);
   const [userProfile, setUserProfile] = useState([]);
   const [formData, setFormData] = useState({
@@ -109,7 +108,7 @@ const ApplyJob = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
-    setSummarized(false);
+    
     if (type === "file" && files && files[0]) {
       const file = files[0];
       const uniqueIdentifier = Date.now();
@@ -134,7 +133,7 @@ const ApplyJob = () => {
 
   const handleInputChange = (section, e) => {
     const { name, value, type, checked, files } = e.target;
-    setSummarized(false);
+    
     switch (section) {
       case "experience":
         setCurrentExperience((prev) => ({
@@ -198,30 +197,40 @@ const ApplyJob = () => {
     }));
   };
 
-  const handleVerify = () => {
-    setSummarized(true);
-    setVerificationModal(false);
-  };
+
 
   const validateForm = () => {
     let newErrors = {};
-
-    if (!formData.full_name.trim())
-      newErrors.full_name = "Full Name is required";
+  
+    if (!formData.full_name.trim()) newErrors.full_name = "Full Name is required";
     if (!formData.email.trim()) newErrors.email = "Email is required";
     if (!formData.phone.trim()) newErrors.phone = "Phone number is required";
     if (!formData.gender) newErrors.gender = "Gender is required";
-    if (!formData.birth_date) newErrors.birth_date = "birth_date is required";
-
+    if (!formData.birth_date) newErrors.birth_date = "Birth date is required";
+    
+    if (!formData.contact_consent)
+      newErrors.contact_consent = "You must give consent to be contacted";
+  
+    if (!formData.cover_letter.trim()) 
+      newErrors.cover_letter = "Cover letter is required";
+  
+    if (!formData.resume) newErrors.resume = "Resume is required";
+  
+    if (!formData.terms_accepted)
+      newErrors.terms_accepted = "You must accept the terms and conditions";
+  
     if (formData.educations.length === 0)
-      newErrors.educations = "Education is required";
-
+      newErrors.educations = "At least one education entry is required";
+  
+    
     return newErrors;
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = validateForm();
+    setVerificationModal(false);
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -231,15 +240,21 @@ const ApplyJob = () => {
         newErrors.phone ||
         newErrors.birth_date
       ) {
-        setStep(1);
+        return setStep(1);
       } else if (newErrors.educations || newErrors.experiences) {
-        setStep(2);
+        return setStep(2);
+      }
+      else if (
+        newErrors.terms_accepted ||
+        newErrors.resume ||
+        newErrors.cover_letter ||
+        newErrors.contact_consent
+      ){
+       return setStep(5);
       }
     }
-    if (!summarized) {
-      showErrorToast("you have to summarize and approve your application");
-      return;
-    }
+
+   
 
     const formDataToSend = new FormData();
 
@@ -261,6 +276,7 @@ const ApplyJob = () => {
       showSuccessToast("Application Submitted Successfully Inserted ");
     } catch (error) {
       console.error("Error response:", error.response.data);
+      setErrors({});
       showErrorToast(error.response.data.error);
     }
   };
@@ -374,7 +390,7 @@ const ApplyJob = () => {
             />
           )}
           {step === 5 && (
-            <Step5 formData={formData} handleChange={handleChange} />
+            <Step5 formData={formData} errors={errors} handleChange={handleChange} />
           )}
           {/* Fixed Buttons at the Bottom */}
           <div className="absolute bottom-0 left-0 right-0 flex justify-between px-5 pb-0">
@@ -409,14 +425,7 @@ const ApplyJob = () => {
             )}
 
             {step === 5 &&
-              (summarized ? (
-                <button
-                  type="submit"
-                  className="px-4 py-1 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 flex items-center transition duration-200 ml-auto"
-                >
-                  Submit <FaCheck className="ml-1" />
-                </button>
-              ) : (
+              (
                 <button
                   type="button"
                   onClick={() => setVerificationModal(true)}
@@ -424,7 +433,7 @@ const ApplyJob = () => {
                 >
                   Verify <FaCheck className="ml-1" />
                 </button>
-              ))}
+              )}
           </div>
         </form>
 
@@ -524,7 +533,7 @@ const ApplyJob = () => {
               {/* Buttons */}
               <div className="flex justify-between mt-4">
                 <button
-                  onClick={handleVerify}
+                  onClick={handleSubmit}
                   className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 w-1/2 mx-1"
                 >
                   Verify
