@@ -34,7 +34,10 @@ const AddJob = () => {
   const addDetail = () => {
     setFormData({
       ...formData,
-      details: [...formData.details, { detail_type: "Responsibility", description: "" }],
+      details: [
+        ...formData.details,
+        { detail_type: "Responsibility", description: "" },
+      ],
     });
   };
 
@@ -66,27 +69,51 @@ const AddJob = () => {
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block text-gray-700">Job Title</label>
-          <input type="text" name="title" value={formData.title} onChange={handleChange} className="w-full p-2 border rounded-lg"/>
+          <input
+            type="text"
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+            className="w-full p-2 border rounded-lg"
+          />
         </div>
-        
+
         <div>
           <label className="block text-gray-700">Category</label>
-          <select name="category" value={formData.category} onChange={handleChange} className="w-full p-2 border rounded-lg">
+          <select
+            name="category"
+            value={formData.category}
+            onChange={handleChange}
+            className="w-full p-2 border rounded-lg"
+          >
             <option value="">Select Category</option>
             {categories.map((category) => (
-              <option key={category.id} value={category.id}>{category.name}</option>
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
             ))}
           </select>
         </div>
 
         <div>
           <label className="block text-gray-700">Location</label>
-          <input type="text" name="location" value={formData.location} onChange={handleChange} className="w-full p-2 border rounded-lg"/>
+          <input
+            type="text"
+            name="location"
+            value={formData.location}
+            onChange={handleChange}
+            className="w-full p-2 border rounded-lg"
+          />
         </div>
 
         <div>
           <label className="block text-gray-700">Job Type</label>
-          <select name="job_type" value={formData.job_type} onChange={handleChange} className="w-full p-2 border rounded-lg">
+          <select
+            name="job_type"
+            value={formData.job_type}
+            onChange={handleChange}
+            className="w-full p-2 border rounded-lg"
+          >
             <option value="Full-time">Full-time</option>
             <option value="Part-time">Part-time</option>
             <option value="Contract">Contract</option>
@@ -95,47 +122,113 @@ const AddJob = () => {
 
         <div>
           <label className="block text-gray-700">Salary</label>
-          <input type="text" name="salary" value={formData.salary} onChange={handleChange} className="w-full p-2 border rounded-lg"/>
+          <input
+            type="text"
+            name="salary"
+            value={formData.salary}
+            onChange={handleChange}
+            className="w-full p-2 border rounded-lg"
+          />
         </div>
 
         <div>
           <label className="block text-gray-700">Description</label>
-          <textarea name="description" value={formData.description} onChange={handleChange} className="w-full p-2 border rounded-lg"></textarea>
+          <textarea
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            className="w-full p-2 border rounded-lg"
+          ></textarea>
         </div>
 
         <div>
           <label className="block text-gray-700">Application Deadline</label>
-          <input type="date" name="application_deadline" value={formData.application_deadline} onChange={handleChange} className="w-full p-2 border rounded-lg"/>
+          <input
+            type="date"
+            name="application_deadline"
+            value={formData.application_deadline}
+            onChange={handleChange}
+            className="w-full p-2 border rounded-lg"
+          />
         </div>
 
         <div>
           <label className="block text-gray-700">Status</label>
-          <select name="status" value={formData.status} onChange={handleChange} className="w-full p-2 border rounded-lg">
+          <select
+            name="status"
+            value={formData.status}
+            onChange={handleChange}
+            className="w-full p-2 border rounded-lg"
+          >
             <option value="Active">Active</option>
             <option value="InActive">InActive</option>
             <option value="Closed">Closed</option>
           </select>
         </div>
 
-        {/* Job Details Section */}
+        {/* Job Details Table */}
         <div>
           <h3 className="text-lg font-semibold">Job Details</h3>
-          {formData.details.map((detail, index) => (
-            <div key={index} className="border p-4 rounded-lg mt-2">
-              <select name="detail_type" value={detail.detail_type} onChange={(e) => handleDetailChange(index, e)} className="w-full p-2 border rounded-lg">
-                <option value="Responsibility">Responsibility</option>
-                <option value="Qualification">Qualification</option>
-                <option value="Skill">Skill</option>
-                <option value="Benefit">Benefit</option>
-              </select>
-              <textarea name="description" value={detail.description} onChange={(e) => handleDetailChange(index, e)} className="w-full p-2 border rounded-lg mt-2"></textarea>
-              <button type="button" onClick={() => removeDetail(index)} className="text-red-500 mt-2">Remove</button>
-            </div>
-          ))}
-          <button type="button" onClick={addDetail} className="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 mt-2">Add Detail</button>
+          <table className="w-full table-auto border-collapse mt-2">
+            <thead>
+              <tr>
+                <th className="border p-2 text-left">Detail Type</th>
+                <th className="border p-2 text-left">Description</th>
+                <th className="border p-2">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {formData.details.map((detail, index) => (
+                <tr key={index}>
+                  <td className="border p-2">
+                    <select
+                      name="detail_type"
+                      value={detail.detail_type}
+                      onChange={(e) => handleDetailChange(index, e)}
+                      className="w-full p-2 border rounded-lg"
+                    >
+                      <option value="Responsibility">Responsibility</option>
+                      <option value="Qualification">Qualification</option>
+                      <option value="Skill">Skill</option>
+                      <option value="Benefit">Benefit</option>
+                    </select>
+                  </td>
+                  <td className="border p-2">
+                    <textarea
+                      name="description"
+                      value={detail.description}
+                      onChange={(e) => handleDetailChange(index, e)}
+                      className="w-full p-2 border rounded-lg"
+                    ></textarea>
+                  </td>
+                  <td className="border p-2 text-center">
+                    <button
+                      type="button"
+                      onClick={() => removeDetail(index)}
+                      className="text-red-500"
+                    >
+                      Remove
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <button
+            type="button"
+            onClick={addDetail}
+            className="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 mt-2"
+          >
+            Add Detail
+          </button>
         </div>
 
-        <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">Submit</button>
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+        >
+          Submit
+        </button>
       </form>
     </div>
   );
