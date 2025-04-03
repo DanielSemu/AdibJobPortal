@@ -1,4 +1,8 @@
 from django.db import models
+from django.db.models import Case, When, Value, IntegerField
+from django.utils.timezone import now
+from django.utils import timezone
+
 
 class JobCategory(models.Model):
     name = models.CharField(max_length=255)
@@ -15,7 +19,22 @@ class Job(models.Model):
     salary = models.CharField(max_length=255, default="As per Companies Salary Scale")
     description = models.TextField()
     application_deadline = models.DateField()
-    status = models.CharField(max_length=50, choices=[("Active", "Active"), ("InActive", "InActive"), ("Closed", "Closed")], default="InActive")
+    show_experience=models.BooleanField(default=True)
+    status = models.CharField(
+        max_length=50,
+        choices=[("Active", "Active"), ("InActive", "InActive"), ("Closed", "Closed")],
+        default="InActive",
+    )
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+    posted_at = models.DateTimeField(null=True, blank=True)  # New field
+
+    def save(self, *args, **kwargs):
+        # If the status is changing to "Active" and posted_at is not set, update it
+        if self.status == "Active" and self.posted_at is None:
+            self.posted_at = now()
+        super().save(*args, **kwargs)
+
 
     def __str__(self):
         return self.title
@@ -32,8 +51,21 @@ class JobDetail(models.Model):
     detail_type = models.CharField(max_length=20, choices=DETAIL_TYPES)
     description = models.TextField()
 
+    class Meta:
+        ordering = [
+            Case(
+                When(detail_type="Responsibility", then=Value(1)),
+                When(detail_type="Qualification", then=Value(2)),
+                When(detail_type="Skill", then=Value(3)),
+                When(detail_type="Benefit", then=Value(4)),
+                default=Value(5),
+                output_field=IntegerField(),
+            )
+        ]
+
     def __str__(self):
         return f"{self.job.title} - {self.detail_type}: {self.description[:50]}"
+
 
     
 

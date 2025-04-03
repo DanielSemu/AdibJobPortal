@@ -11,7 +11,6 @@ const AddJob = () => {
     salary: "As per Companies Salary Scale",
     description: "",
     application_deadline: "",
-    status: "Active",
     details: [],
   });
 
@@ -152,19 +151,7 @@ const AddJob = () => {
           />
         </div>
 
-        <div>
-          <label className="block text-gray-700">Status</label>
-          <select
-            name="status"
-            value={formData.status}
-            onChange={handleChange}
-            className="w-full p-2 border rounded-lg"
-          >
-            <option value="Active">Active</option>
-            <option value="InActive">InActive</option>
-            <option value="Closed">Closed</option>
-          </select>
-        </div>
+
 
         {/* Job Details Table */}
         <div>

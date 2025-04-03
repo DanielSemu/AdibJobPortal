@@ -89,7 +89,7 @@ const ApplyJob = () => {
         const response = await getSingleJob(parseInt(id));
         if (response) {
           setDetailedData(response);
-          if (response.title !== "") {
+          if (!response.show_experience) {
             setList([1, 2, 4, 5]);
           } else {
             setList([1, 2, 3, 4, 5]);

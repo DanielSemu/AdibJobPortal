@@ -17,7 +17,7 @@ class JobSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Job
-        fields = ["id", "title", "company", "category", "location", "job_type", "salary", "description", "application_deadline", "status", "details"]
+        fields = "__all__"
 
     def create(self, validated_data):
         details_data = validated_data.pop('details', [])

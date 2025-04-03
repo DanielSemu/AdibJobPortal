@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view, permission_classes
 from .serializers import ApplicantSerializer,ContactUsSerializer ,JobCategorySerializer,JobSerializer
 from .models import Applicant, Job,ContactUs,JobCategory
+from django.utils import timezone
 
 
 
@@ -17,7 +18,7 @@ class JobView(APIView):
             job = get_object_or_404(Job, id=id)  # Get a single job
             serializer = JobSerializer(job)
         else:
-            jobs = Job.objects.all()  # Get all jobs
+            jobs = Job.objects.filter(status="Active",application_deadline__gte=timezone.now().date())  # Get all jobs
             serializer = JobSerializer(jobs, many=True)
         
         return Response(serializer.data, status=status.HTTP_200_OK)
