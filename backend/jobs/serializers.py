@@ -29,6 +29,7 @@ class JobSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         details_data = validated_data.pop('details', [])
         instance.title = validated_data.get('title', instance.title)
+        instance.job_grade = validated_data.get('job_grade', instance.job_grade)
         instance.company = validated_data.get('company', instance.company)
         instance.category = validated_data.get('category', instance.category)
         instance.location = validated_data.get('location', instance.location)

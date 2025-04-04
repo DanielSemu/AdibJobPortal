@@ -48,7 +48,7 @@ const JobDetail = () => {
       <div className="w-full max-w-3xl bg-white shadow-xl rounded-lg p-8">
         {/* Job Title and Company */}
         {detailedData.title && (
-          <h1 className="text-4xl font-bold text-gray-900">{detailedData.title}</h1>
+          <h1 className="text-4xl font-bold text-gray-900">{detailedData.title} {detailedData.job_grade}</h1>
         )}
         {detailedData.company && (
           <p className="text-lg text-gray-600 mt-2">{detailedData.company}</p>

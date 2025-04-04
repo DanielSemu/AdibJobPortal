@@ -11,7 +11,9 @@ class JobCategory(models.Model):
         return self.name
 
 class Job(models.Model):
+    vacancy_number=models.CharField(max_length=50, null=True, blank=True)
     title = models.CharField(max_length=255)
+    job_grade=models.CharField(max_length=100 , null=True, blank=True)
     company = models.CharField(max_length=255, default="Addis Bank S.C")
     category = models.ForeignKey(JobCategory, on_delete=models.CASCADE, related_name="jobs")
     location = models.CharField(max_length=255)

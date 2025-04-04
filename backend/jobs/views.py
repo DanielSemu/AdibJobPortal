@@ -11,18 +11,15 @@ from .models import Applicant, Job,ContactUs,JobCategory
 from django.utils import timezone
 
 
-
-class JobView(APIView):
+class AdminJobView(APIView):
     def get(self, request, id=None, *args, **kwargs):
         if id:
-            job = get_object_or_404(Job, id=id)  # Get a single job
+            job=get_object_or_404(Job, id=id)
             serializer = JobSerializer(job)
         else:
-            jobs = Job.objects.filter(status="Active",application_deadline__gte=timezone.now().date())  # Get all jobs
+            jobs=Job.objects.all()
             serializer = JobSerializer(jobs, many=True)
-        
         return Response(serializer.data, status=status.HTTP_200_OK)
-
     def post(self, request, *args, **kwargs):
         serializer = JobSerializer(data=request.data)
         if serializer.is_valid():
@@ -44,6 +41,19 @@ class JobView(APIView):
         job = get_object_or_404(Job, id=id)
         job.delete()
         return Response({"message": "Job deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+
+class JobView(APIView):
+    def get(self, request, id=None, *args, **kwargs):
+        if id:
+            job = get_object_or_404(Job, id=id)  # Get a single job
+            serializer = JobSerializer(job)
+        else:
+            jobs = Job.objects.filter(status="Active",application_deadline__gte=timezone.now().date())  # Get all jobs
+            serializer = JobSerializer(jobs, many=True)
+        
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+   
 
 class JobCategoryView(APIView):
     def get(self, request, id=None, *args, **kwargs):

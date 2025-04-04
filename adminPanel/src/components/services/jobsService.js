@@ -1,10 +1,21 @@
 import axiosInstance from "./axiosInstance";
 
-export const getJobs =async()=>{
-    const response=await axiosInstance.get('jobs/')
-    return response.data
-}
-export const getSingleJob =async(id)=>{
-    const response=await axiosInstance.get(`jobs/${id}/`)
-    return response.data
-}
+export const getJobs = async () => {
+  const response = await axiosInstance.get('admin_jobs/');
+  return response.data;
+};
+
+export const getSingleJob = async (id) => {
+  const response = await axiosInstance.get(`admin_jobs/${id}/`);
+  return response.data;
+};
+
+export const updateJob = async (id, job) => {
+  const response = await axiosInstance.put(`admin_jobs/${id}/`, job);
+  return response.data;
+};
+
+export const postJob = async (jobData) => {
+  const response = await axiosInstance.post('admin_jobs/', jobData);
+  return response.data;
+};

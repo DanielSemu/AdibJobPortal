@@ -1,9 +1,13 @@
 import { useState, useEffect } from "react";
+import { FaTimes } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import { postJob } from "../services/jobsService";
 
 const AddJob = () => {
   const [categories, setCategories] = useState([]);
   const [formData, setFormData] = useState({
     title: "",
+    jobGrade:"",
     company: "Addis Bank S.C",
     category: "",
     location: "",
@@ -47,24 +51,26 @@ const AddJob = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch("http://localhost:8000/api/jobs/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    });
-
-    if (response.ok) {
+    try {
+      await postJob(formData);
       alert("Job posted successfully!");
-    } else {
+    } catch (error) {
+      console.error(error);
       alert("Error posting job.");
     }
   };
-
   return (
     <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-10">
-      <h2 className="text-2xl font-bold mb-4">Post a Job</h2>
+      <div className="flex justify-between">
+        <h2 className="text-2xl font-bold mb-4">Post a Job</h2>
+        <Link
+          to="bulk"
+          className="flex items-center justify-center text-white bg-blue-600 px-4 py-2 rounded-lg hover:bg-blue-700 text-sm font-medium shadow-md transition duration-300 ease-in-out"
+        >
+          Upload Bulk
+        </Link>
+      </div>
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block text-gray-700">Job Title</label>
@@ -72,6 +78,16 @@ const AddJob = () => {
             type="text"
             name="title"
             value={formData.title}
+            onChange={handleChange}
+            className="w-full p-2 border rounded-lg"
+          />
+        </div>
+        <div>
+          <label className="block text-gray-700">Job Grade</label>
+          <input
+            type="text"
+            name="jobGrade"
+            value={formData.jobGrade}
             onChange={handleChange}
             className="w-full p-2 border rounded-lg"
           />
@@ -151,8 +167,6 @@ const AddJob = () => {
           />
         </div>
 
-
-
         {/* Job Details Table */}
         <div>
           <h3 className="text-lg font-semibold">Job Details</h3>
@@ -181,20 +195,20 @@ const AddJob = () => {
                     </select>
                   </td>
                   <td className="border p-2">
-                    <textarea
+                    <input
                       name="description"
                       value={detail.description}
                       onChange={(e) => handleDetailChange(index, e)}
                       className="w-full p-2 border rounded-lg"
-                    ></textarea>
+                    ></input>
                   </td>
-                  <td className="border p-2 text-center">
+                  <td className="border  text-center">
                     <button
                       type="button"
                       onClick={() => removeDetail(index)}
                       className="text-red-500"
                     >
-                      Remove
+                      <FaTimes />
                     </button>
                   </td>
                 </tr>
@@ -204,7 +218,7 @@ const AddJob = () => {
           <button
             type="button"
             onClick={addDetail}
-            className="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 mt-2"
+            className=" bg-green-500 text-white p-2 rounded-lg hover:bg-green-600 mt-2"
           >
             Add Detail
           </button>

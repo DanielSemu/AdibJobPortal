@@ -82,7 +82,7 @@ const Jobs = () => {
                 {/* Job Title and Location */}
                 <div className="mt-6">
                   <p className="text-lg hover:text-[#007dda] font-semibold transition-all duration-500">
-                    {job.title}
+                    {job.title} Grade {job.job_grade}
                   </p>
                   <h6 className="text-base font-medium flex items-center">
                     <FaLocationDot className="mr-1" />

@@ -315,7 +315,7 @@ const ApplyJob = () => {
       {/* Sidebar with Job Details */}
       <div className="w-full md:w-1/3 bg-white shadow-lg rounded-lg p-8">
         <h2 className="text-3xl font-bold text-gray-900">
-          {detailedData.title}
+          {detailedData.title} Grade {detailedData.job_grade}
         </h2>
         <p className="text-lg text-gray-600 mt-2 font-medium">
           {detailedData.company}
