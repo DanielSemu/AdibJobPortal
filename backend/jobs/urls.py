@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ApplicantAPIView, JobView,getUserApplications,ContactUsAPIView,JobCategoryView,AdminJobView
+from .views import ApplicantAPIView, JobView,getUserApplications,ContactUsAPIView,JobCategoryView,AdminJobView,JobBulkUploadView
 
 urlpatterns = [
     # Job CRUD operations
@@ -8,6 +8,7 @@ urlpatterns = [
     
     path('admin_jobs/', AdminJobView.as_view(), name='admin_job-list'),  # Get all jobs
     path('admin_jobs/<int:id>/', AdminJobView.as_view(), name='admin_job-detail'),  # Get a single job
+    path('jobs/bulk-upload/', JobBulkUploadView.as_view(), name='job-bulk-upload'),
     
     path('categories/', JobCategoryView.as_view(), name='categories-list'),  # Get all jobs
     path('categories/<int:id>/', JobCategoryView.as_view(), name='category-detail'),  # Get a single job

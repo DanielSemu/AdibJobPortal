@@ -9,6 +9,10 @@ from rest_framework.decorators import api_view, permission_classes
 from .serializers import ApplicantSerializer,ContactUsSerializer ,JobCategorySerializer,JobSerializer
 from .models import Applicant, Job,ContactUs,JobCategory
 from django.utils import timezone
+import chardet
+from io import BytesIO, TextIOWrapper
+import csv
+from dateutil.parser import parse
 
 
 class AdminJobView(APIView):
@@ -52,9 +56,59 @@ class JobView(APIView):
             serializer = JobSerializer(jobs, many=True)
         
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    
+class JobBulkUploadView(APIView):
+    def post(self, request, *args, **kwargs):
+        csv_file = request.FILES.get('file')
+        if not csv_file:
+            return Response({"error": "No file provided"}, status=status.HTTP_400_BAD_REQUEST)
 
-   
+        # Read small sample for encoding detection
+        sample = csv_file.read(1024)
+        encoding = chardet.detect(sample)['encoding'] or 'utf-8'
 
+        # Go back to beginning of file
+        csv_file.seek(0)
+
+        decoded_file = TextIOWrapper(csv_file.file, encoding=encoding)
+        reader = csv.DictReader(decoded_file)
+
+        jobs_to_create = []
+
+        for row in reader:
+            try:
+                category_obj = JobCategory.objects.get(name=row['category'])
+            except JobCategory.DoesNotExist:
+                return Response({"error": f"Category '{row['category']}' not found."}, status=status.HTTP_400_BAD_REQUEST)
+
+            # 🛠 Fix the date format here
+            raw_date = row['application_deadline']
+            parsed_date = parse(raw_date, dayfirst=False).date()
+
+            job = Job(
+                vacancy_number=row.get('vacancy_number') or None,
+                title=row['title'],
+                job_grade=row.get('job_grade') or None,
+                company=row.get('company', 'Addis Bank S.C'),
+                category=category_obj,
+                location=row['location'],
+                job_type=row['job_type'],
+                salary=row.get('salary', 'As per Companies Salary Scale'),
+                description=row['description'],
+                application_deadline=parsed_date,
+                show_experience=row.get('show_experience', 'True').lower() == 'true',
+                status=row.get('status', 'InActive'),
+                created_at=now(),
+                updated_at=now()
+            )
+
+            jobs_to_create.append(job)
+
+        Job.objects.bulk_create(jobs_to_create)
+
+        return Response({"message": "Jobs uploaded successfully!"}, status=status.HTTP_201_CREATED)
+    
 class JobCategoryView(APIView):
     def get(self, request, id=None, *args, **kwargs):
         if id:
