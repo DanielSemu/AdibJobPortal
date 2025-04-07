@@ -7,8 +7,9 @@ from rest_framework.exceptions import NotFound
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view, permission_classes
 from .serializers import ApplicantSerializer,ContactUsSerializer ,JobCategorySerializer,JobSerializer
-from .models import Applicant, Job,ContactUs,JobCategory
+from .models import Applicant, Job,ContactUs,JobCategory,JobDetail
 from django.utils import timezone
+from django.utils.timezone import now
 import chardet
 from io import BytesIO, TextIOWrapper
 import csv
@@ -109,6 +110,44 @@ class JobBulkUploadView(APIView):
 
         return Response({"message": "Jobs uploaded successfully!"}, status=status.HTTP_201_CREATED)
     
+class JobDetailBulkUploadView(APIView):
+    def post(self, request, job_id, *args, **kwargs):
+        csv_file = request.FILES.get('file')
+        if not csv_file:
+            return Response({"error": "No file provided"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Read small sample for encoding detection
+        sample = csv_file.read(1024)
+        encoding = chardet.detect(sample)['encoding'] or 'utf-8'
+
+        # Go back to beginning of file
+        csv_file.seek(0)
+
+        decoded_file = TextIOWrapper(csv_file.file, encoding=encoding)
+        reader = csv.DictReader(decoded_file)
+
+        # 🔵 Get the Job once
+        try:
+            job = Job.objects.get(id=job_id)
+        except Job.DoesNotExist:
+            return Response({"error": f"Job with id '{job_id}' not found."},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        details_to_create = []
+
+        for row in reader:
+            detail = JobDetail(
+                job=job,
+                detail_type=row['detail_type'],
+                description=row['description'],
+            )
+            details_to_create.append(detail)
+
+        JobDetail.objects.bulk_create(details_to_create)
+
+        return Response({"message": "Job Details uploaded successfully!"}, status=status.HTTP_201_CREATED)
+
+
 class JobCategoryView(APIView):
     def get(self, request, id=None, *args, **kwargs):
         if id:
