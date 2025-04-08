@@ -29,7 +29,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['192.168.2.32', 'localhost', '127.0.0.1','192.168.75.222']
 CORS_ALLOW_CREDENTIALS = True
-
+X_FRAME_OPTIONS = 'ALLOW-FROM http://localhost:5173'
 
 # Application definition
 

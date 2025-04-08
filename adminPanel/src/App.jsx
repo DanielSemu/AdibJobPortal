@@ -8,6 +8,8 @@ import EditJob from "./components/Jobs/EditJob";
 import AddJob from "./components/Jobs/AddJob";
 import UploadBulk from "./components/Jobs/UploadBulk";
 import UploadJobDetail from "./components/Jobs/UploadJobDetail";
+import Categories from "./components/Jobs/Categories";
+import Applications from "./components/Applications/Applications";
 
 const App = () => {
   return (
@@ -22,6 +24,8 @@ const App = () => {
             <Route path="/edit/job_detail/:id" element={<UploadJobDetail/>}/>
             <Route path="/detail/:id" element={<JobDetail/>}/>
             <Route path="/edit/:id" element={<EditJob/>}/>
+            <Route path="/categories" element={<Categories/>}/>
+            <Route path="/applications" element={<Applications/>}/>
          </Routes>
       </div>
     </>

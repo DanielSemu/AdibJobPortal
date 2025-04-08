@@ -15,6 +15,7 @@ const AddJob = () => {
     salary: "As per Companies Salary Scale",
     description: "",
     application_deadline: "",
+    show_experience:true,
     details: [],
   });
 
@@ -25,9 +26,12 @@ const AddJob = () => {
   }, []);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, type, checked, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
-
   const handleDetailChange = (index, e) => {
     const updatedDetails = [...formData.details];
     updatedDetails[index][e.target.name] = e.target.value;
@@ -165,6 +169,18 @@ const AddJob = () => {
             onChange={handleChange}
             className="w-full p-2 border rounded-lg"
           />
+        </div>
+        <div className="flex gap-4">
+          <input
+            type="checkbox"
+            name="show_experience"
+            checked={formData.show_experience} // 👈 use "checked" not "value"
+            onChange={handleChange}
+            className="p-2 border rounded-lg"
+          />
+          <label className="block text-gray-700">
+            Should Display Experience Page?
+          </label>
         </div>
 
         {/* Job Details Table */}

@@ -19,7 +19,8 @@ const EditJob = () => {
     salary: "As per Companies Salary Scale",
     description: "",
     application_deadline: "",
-    status:'InActive',
+    show_experience: null,
+    status: "InActive",
     details: [],
   });
 
@@ -28,6 +29,7 @@ const EditJob = () => {
     const fetchData = async () => {
       try {
         const job = await getSingleJob(id);
+        
         setFormData({
           title: job.title || "",
           job_grade: job.job_grade || "",
@@ -38,6 +40,7 @@ const EditJob = () => {
           salary: job.salary || "As per Companies Salary Scale",
           description: job.description || "",
           application_deadline: job.application_deadline || "",
+          show_experience: job.show_experience || "",
           details: job.details || [],
         });
       } catch (error) {
@@ -55,8 +58,13 @@ const EditJob = () => {
   }, []);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, type, checked, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
+  
 
   const handleDetailChange = (index, e) => {
     const updatedDetails = [...formData.details];
@@ -67,7 +75,10 @@ const EditJob = () => {
   const addDetail = () => {
     setFormData({
       ...formData,
-      details: [...formData.details, { detail_type: "Responsibility", description: "" }],
+      details: [
+        ...formData.details,
+        { detail_type: "Responsibility", description: "" },
+      ],
     });
   };
 
@@ -81,7 +92,7 @@ const EditJob = () => {
     try {
       const updatedFormData = { ...formData, status: "InActive" };
       console.log(updatedFormData);
-  
+
       await updateJob(id, updatedFormData);
       alert("Job updated successfully!");
       navigate("/jobs");
@@ -90,11 +101,10 @@ const EditJob = () => {
       alert("Error updating job.");
     }
   };
-  
 
   return (
     <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-10">
-        <h2 className="text-2xl font-bold mb-4">Edit Job</h2>
+      <h2 className="text-2xl font-bold mb-4">Edit Job</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Form Fields */}
         <div>
@@ -192,16 +202,28 @@ const EditJob = () => {
             className="w-full p-2 border rounded-lg"
           />
         </div>
+        <div className="flex gap-4">
+          <input
+            type="checkbox"
+            name="show_experience"
+            checked={formData.show_experience} // 👈 use "checked" not "value"
+            onChange={handleChange}
+            className="p-2 border rounded-lg"
+          />
+          <label className="block text-gray-700">
+            Should Display Experience Page?
+          </label>
+        </div>
 
         <div className="flex justify-between">
-        <h2 className="text-2xl font-bold mb-4">Upload Job Details</h2>
-        <Link
-          to={`/edit/job_detail/${id}`}
-          className="flex items-center justify-center text-white bg-blue-600 px-4 py-2 rounded-lg hover:bg-blue-700 text-sm font-medium shadow-md transition duration-300 ease-in-out"
-        >
-          Upload Bulk
-        </Link>
-      </div>
+          <h2 className="text-2xl font-bold mb-4">Upload Job Details</h2>
+          <Link
+            to={`/edit/job_detail/${id}`}
+            className="flex items-center justify-center text-white bg-blue-600 px-4 py-2 rounded-lg hover:bg-blue-700 text-sm font-medium shadow-md transition duration-300 ease-in-out"
+          >
+            Upload Bulk
+          </Link>
+        </div>
         {/* Job Details Table */}
         <div>
           <h3 className="text-lg font-semibold">Job Details</h3>

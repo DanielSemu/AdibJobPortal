@@ -23,17 +23,25 @@ const Jobs = () => {
   const handleDetailView = (row) => {
     navigate(`/detail/${row.id}`);
   };
-  const handleAuthorization = (row) => {
-    const confirmed = window.confirm("Are you sure you want to authorize Post this Job?");
+  const handleAuthorization = async (row) => {
+    const confirmed = window.confirm("Are you sure you want to authorize and post this Job?");
     if (confirmed) {
-      row.status="Active"
-      updateJob(row.id, row)
-      console.log("Authorized:", row);
+      try {
+        const updatedRow = { ...row, status: "Active" };
+        await updateJob(row.id, updatedRow);
+        
+        // Refresh the jobs list
+        const response = await getJobs();
+        setJobs(response);
+  
+      } catch (error) {
+        console.error("Authorization failed:", error);
+      }
     } else {
-      // user clicked "No"
       console.log("Authorization cancelled");
     }
   };
+  
   
   const columns = [
     { header: "job Title", accessor: "title" },

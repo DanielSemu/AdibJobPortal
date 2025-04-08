@@ -19,3 +19,12 @@ export const postJob = async (jobData) => {
   const response = await axiosInstance.post('admin_jobs/', jobData);
   return response.data;
 };
+
+export const getCategories = async () => {
+  const response = await axiosInstance.get('categories/');
+  return response.data;
+};
+export const getApplications = async () => {
+  const response = await axiosInstance.get('applicants/');
+  return response.data;
+};

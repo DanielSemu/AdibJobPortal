@@ -21,7 +21,7 @@ class Job(models.Model):
     salary = models.CharField(max_length=255, default="As per Companies Salary Scale")
     description = models.TextField()
     application_deadline = models.DateField()
-    show_experience=models.BooleanField(default=True)
+    show_experience=models.BooleanField()
     status = models.CharField(
         max_length=50,
         choices=[("Active", "Active"), ("InActive", "InActive"), ("Closed", "Closed")],

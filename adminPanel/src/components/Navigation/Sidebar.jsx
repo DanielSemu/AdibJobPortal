@@ -77,12 +77,12 @@ const Sidebar = () => {
                     </Link>
                   </li>
                   <li>
-                    <a
-                      href="#"
+                    <Link
+                      to="categories"
                       className="flex items-center w-full p-2 text-gray-900 rounded-lg pl-11 hover:bg-gray-100"
                     >
                       Job Categories
-                    </a>
+                    </Link>
                   </li>
                   <li>
                     <a
@@ -97,13 +97,13 @@ const Sidebar = () => {
             </li>
 
             <li>
-              <a
-                href="#"
+              <Link
+                to="/applications"
                 className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
               >
                 <FaRegFileAlt className="w-5 h-5 text-gray-500 group-hover:text-gray-900" />
                 <span className="ms-3">Applications</span>
-              </a>
+              </Link>
             </li>
 
             <li>

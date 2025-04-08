@@ -37,6 +37,7 @@ class JobSerializer(serializers.ModelSerializer):
         instance.salary = validated_data.get('salary', instance.salary)
         instance.description = validated_data.get('description', instance.description)
         instance.application_deadline = validated_data.get('application_deadline', instance.application_deadline)
+        instance.show_experience = validated_data.get('show_experience', instance.show_experience)
         instance.status = validated_data.get('status', instance.status)
         instance.save()
 

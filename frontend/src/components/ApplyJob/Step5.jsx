@@ -18,7 +18,7 @@ const Step5 = ({ formData, errors, handleChange }) => {
           type="file"
           name="resume"
           onChange={handleChange}
-          accept=".pdf,.doc,.docx"
+          accept=".pdf"
           className="w-full p-2 border mb-4"
           required
         />
