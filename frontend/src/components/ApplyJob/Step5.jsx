@@ -12,7 +12,7 @@ const Step5 = ({ formData, errors, handleChange }) => {
           <p className="text-red-500">{errors.resume}</p>
         )}
         <label className="block text-gray-700 font-semibold mb-2">
-          Upload Resume (PDF/DOCX)
+          Upload Resume (PDF)
         </label>
         <input
           type="file"

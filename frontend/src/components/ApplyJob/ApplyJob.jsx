@@ -32,6 +32,7 @@ const ApplyJob = () => {
     cover_letter: "",
     resume: null,
     terms_accepted: false,
+    workPlace: [],
     educations: [],
     experiences: [],
     certifications: [],
@@ -355,6 +356,7 @@ const ApplyJob = () => {
               formData={formData}
               errors={errors}
               handleChange={handleChange}
+              workPlace={detailedData.location}
             />
           )}
           {step === 2 && (

@@ -31,10 +31,22 @@ const Applications = () => {
       
         const columns = [
         //   { header: "name", accessor: "name", cell:()=>("yyyy-xxxx-jjjj") },
-          { header: "full_name", accessor: "full_name" },
-          { header: "job_name", accessor: "job_name" },
-          { header: "gender", accessor: "gender" },
-          { header: "status", accessor: "status" },
+          { header: "Full Name", accessor: "full_name" },
+          { header: "Job ", accessor: "job_name" },
+          { header: "Gender", accessor: "gender" },
+          { header: "Age", accessor: "genderd",
+            cell:(row)=>{
+              const birthDate=new Date(row.birth_date)
+              const today=new Date()
+              let age =today.getFullYear() - birthDate.getFullYear()
+              const monthDiff= today.getMonth() -birthDate.getMonth()
+              if(monthDiff <0 ||(monthDiff === 0 && today.getDate() < birthDate.getDate())){
+                age--
+              }
+              return age
+            }
+           },
+          { header: "Status", accessor: "status" },
           {
             header: "Resume",
             accessor: "resume",
@@ -54,23 +66,11 @@ const Applications = () => {
               )
             ),
           },          
-          {
-            header: "Actions",
-            accessor: "actions",
-            cell: (row) => (
-              <div className="flex gap-2">
-                <button onClick={() => handleDetailView(row)} className="btn">
-                  <FiEye />
-                </button>
-                <button onClick={() => handleEdit(row)} className="btn">
-                  <FiEdit />
-                </button>
-              </div>
-            ),
-          },
+
         ];
   return (
     <div>
+      <Link to={'/filter_applicants'} className=" bg-blue-700 text-white py-1 px-3  flex w-fit rounded-md hover:bg-blue-500 transition-all ">Filter Applicants</Link>
       <ReusableTable
         columns={columns}
         records={applicants}

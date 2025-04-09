@@ -10,6 +10,7 @@ import UploadBulk from "./components/Jobs/UploadBulk";
 import UploadJobDetail from "./components/Jobs/UploadJobDetail";
 import Categories from "./components/Jobs/Categories";
 import Applications from "./components/Applications/Applications";
+import FilterApplicants from "./components/Applications/FilterApplicants";
 
 const App = () => {
   return (
@@ -26,6 +27,7 @@ const App = () => {
             <Route path="/edit/:id" element={<EditJob/>}/>
             <Route path="/categories" element={<Categories/>}/>
             <Route path="/applications" element={<Applications/>}/>
+            <Route path="/filter_applicants" element={<FilterApplicants/>}/>
          </Routes>
       </div>
     </>
