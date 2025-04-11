@@ -137,6 +137,7 @@ class Certification(models.Model):
     
 
 
+
 class ContactUs(models.Model):
     full_name=models.CharField(max_length=150)
     email=models.EmailField(max_length=50)

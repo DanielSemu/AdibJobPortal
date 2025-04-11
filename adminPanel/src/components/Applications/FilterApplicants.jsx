@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { getJobs } from "../services/jobsService";
+import { filterApplicants, getJobs } from "../services/jobsService";
+import ReusableTable from "../ui/ReausableTable";
 
 const FilterApplicants = () => {
   const [jobs, setJobs] = useState([]);
+  const [filteredApplicants,setFilteredApplicants]=useState([])
   const [locations, setLocations] = useState([]); 
   const [errors,setErrors]=useState({})
+  const [selectedResume, setSelectedResume] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [criteria, setCriteria] = useState({
     selectedJob: "",
     selectedLocation: "",
-    educationLevel: "",
-    fieldOfStudy: "",
     minExperienceYears: "",
     gender: "",
     minCGPA: "",
@@ -48,38 +50,86 @@ const FilterApplicants = () => {
     }
   };
   const validateForm = () => {
-    let newErrors = { ...errors }; 
+    let newErrors = {};
   
-    if (criteria.minCGPA < 2 || criteria.minCGPA > 4) {
-      newErrors.minCGPA = "Your Cumulative GPA should be between 2 and 4";
+    if (!criteria.selectedJob) {
+      newErrors.selectedJob = "Job is required.";
     }
-    else {
-        newErrors.minCGPA = ""; 
-      }
-    if(criteria.minExit < 50 || criteria.minExit > 100){
-        newErrors.minExit="Your Exit Exam Score Should be between 50 and 100"
+    if (!criteria.selectedLocation) {
+      newErrors.selectedLocation = "Location is required.";
     }
-     else {
-      newErrors.minExit = ""; 
+    if (criteria.minExperienceYears && isNaN(criteria.minExperienceYears)) {
+      newErrors.minExperienceYears = "Experience must be a number.";
     }
-    setErrors(newErrors); 
+    if (criteria.minCGPA && isNaN(criteria.minCGPA)) {
+      newErrors.minCGPA = "CGPA must be a number.";
+    }
+    if (criteria.minExit && isNaN(criteria.minExit)) {
+      newErrors.minExit = "Exit score must be a number.";
+    }
+  
+    setErrors(newErrors);
+  
+    return Object.keys(newErrors).length === 0; // ✅ Valid if no errors
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!validateForm()) return;  // If form is invalid, stop
+  
+    const response=await filterApplicants(criteria)
+    console.log(response);
+    if (response.length == 0){
+      setErrors({...errors, emptyFiltered:"There Is no Applicant That Satisfies the Above Criteria"})
+    }
+    
+    setFilteredApplicants(response)
   };
   
-  const handleFilter = () => {
-    console.log("Filter Applicants with:", criteria);
-    validateForm(); 
-  
-    if (Object.values(errors).every((error) => error === "")) {
-        console.log("Form is valid, sending data to backend...");
 
+  const columns = [
+    //   { header: "name", accessor: "name", cell:()=>("yyyy-xxxx-jjjj") },
+      { header: "Full Name", accessor: "full_name" },
+      { header: "Job ", accessor: "job_name" },
+      { header: "Gender", accessor: "gender" },
+      { header: "Age", accessor: "genderd",
+        cell:(row)=>{
+          const birthDate=new Date(row.birth_date)
+          const today=new Date()
+          let age =today.getFullYear() - birthDate.getFullYear()
+          const monthDiff= today.getMonth() -birthDate.getMonth()
+          if(monthDiff <0 ||(monthDiff === 0 && today.getDate() < birthDate.getDate())){
+            age--
+          }
+          return age
+        }
+       },
+      { header: "Status", accessor: "status" },
+      {
+        header: "Resume",
+        accessor: "resume",
+        cell: (row) => (
+          row.resume ? (
+            <button
+              onClick={() => {
+                setSelectedResume(row.resume);
+                setIsModalOpen(true);
+              }}
+              className="text-blue-500 underline"
+            >
+              View Resume
+            </button>
+          ) : (
+            <span className="text-gray-400">No Resume</span>
+          )
+        ),
+      },          
 
-        
-    }
-  };
-  
+    ];
 
   return (
     <div className="p-6">
+      <form action="" onSubmit={handleSubmit}>
       <h2 className="text-2xl font-bold mb-4">Filter Applications</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -91,6 +141,7 @@ const FilterApplicants = () => {
             value={criteria.selectedJob}
             onChange={handleJobSelect} // Handle job selection
             className="w-full border p-2 rounded-md"
+            required
           >
             <option value="">-- Select Job --</option>
             {jobs.map((item, index) => (
@@ -109,7 +160,8 @@ const FilterApplicants = () => {
             value={criteria.selectedLocation}
             onChange={handleChange}
             className="w-full border p-2 rounded-md"
-            disabled={!locations.length} // Disable if no locations available
+            disabled={!locations.length} 
+            required
           >
             <option value="">-- Select Location --</option>
             {locations.map((location, index) => (
@@ -120,31 +172,7 @@ const FilterApplicants = () => {
           </select>
         </div>
 
-        {/* Education Level */}
-        <div>
-          <label className="block mb-1 font-semibold">Education Level</label>
-          <input
-            type="text"
-            name="educationLevel"
-            value={criteria.educationLevel}
-            onChange={handleChange}
-            placeholder="e.g., Bachelor, Master"
-            className="w-full border p-2 rounded-md"
-          />
-        </div>
-
-        {/* Field of Study */}
-        <div>
-          <label className="block mb-1 font-semibold">Field of Study</label>
-          <input
-            type="text"
-            name="fieldOfStudy"
-            value={criteria.fieldOfStudy}
-            onChange={handleChange}
-            placeholder="e.g., Computer Science"
-            className="w-full border p-2 rounded-md"
-          />
-        </div>
+       
 
         {/* Minimum Experience */}
         <div>
@@ -155,6 +183,7 @@ const FilterApplicants = () => {
             value={criteria.minExperienceYears}
             onChange={handleChange}
             className="w-full border p-2 rounded-md"
+            required
           />
         </div>
 
@@ -187,6 +216,7 @@ const FilterApplicants = () => {
             value={criteria.minCGPA}
             onChange={handleChange}
             className="w-full border p-2 rounded-md"
+            required
           />
         </div>
         {/* Minimum Exit Exam Result */}
@@ -207,12 +237,37 @@ const FilterApplicants = () => {
       </div>
 
       <button
-        onClick={handleFilter}
+        type="submit"
         className="mt-6 bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-lg"
       >
         Apply Filter
       </button>
-      
+      </form>
+      {errors.emptyFiltered&&(<p className="text-red-500 text-sm">{errors.emptyFiltered}</p>)}
+      <ReusableTable
+        columns={columns}
+        records={filteredApplicants}
+        // addAddress={"/categories/add"}
+        title={"Filtered Applicants"}
+      />
+      {isModalOpen && selectedResume && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div className="bg-white p-4 rounded-lg w-4/5 h-full relative">
+      <button
+        onClick={() => setIsModalOpen(false)}
+        className="absolute top-2 right-2 text-red-500"
+      >
+        ✖️
+      </button>
+      <iframe
+        src={`http://192.168.2.32:8000${selectedResume}`}
+        className="w-full h-full"
+        frameBorder="0"
+        title="Resume Viewer"
+      ></iframe>
+    </div>
+  </div>
+)}
     </div>
   );
 };

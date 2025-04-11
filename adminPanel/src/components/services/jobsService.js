@@ -28,3 +28,8 @@ export const getApplications = async () => {
   const response = await axiosInstance.get('applicants/');
   return response.data;
 };
+
+export const filterApplicants = async (criteria)=>{
+  const response=await axiosInstance.post('filter_applicants/', criteria)
+  return response.data
+}

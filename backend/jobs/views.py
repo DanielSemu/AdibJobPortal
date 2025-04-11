@@ -217,6 +217,63 @@ def getUserApplications(request):
     return  Response(serializer.data, status=status.HTTP_200_OK)
     
 
+
+class FilterApplicantsView(APIView):
+    def post(self,request):
+        data=request.data
+
+        selected_job=data.get('selectedJob')
+        selected_location=data.get('selectedLocation')
+        min_experience_years =data.get('minExperienceYears')
+        gender=data.get('gender')
+        min_cgpa=data.get('mincGPA')
+        min_exit=data.get('minExit')
+        print(selected_job,selected_location,min_experience_years,min_cgpa,min_exit)
+        
+        applicants=Applicant.objects.filter(status = 'Pending')
+        
+        if selected_job:
+            applicants=applicants.filter(job__id=selected_job)
+        
+        if selected_location:
+            applicants = applicants.filter(job__location__icontains=selected_location)
+            
+        if gender:
+            applicants=applicants.filter(gender=gender)
+        
+        filtered_applicants=[]
+        for applicant in applicants:
+            total_experience_years=0
+            for experience in applicant.experiences.all():
+                if experience.from_date and experience.to_date:
+                    duration=(experience.to_date - experience.from_date).days / 365
+                    total_experience_years += duration
+            
+            
+            if min_experience_years  and total_experience_years < float(min_experience_years ):
+                continue
+            
+            educations= applicant.educations.all()
+            
+            if not educations.exists():
+                continue
+            
+            highest_education=educations.order_by('-graduation_year').first()
+            
+            if min_cgpa and float(highest_education.cgpa) < float(min_cgpa):
+                print("here")
+                continue
+            
+            if min_exit and float(highest_education.exit_exam) < float(min_exit):
+                continue  # Skip if Exit exam score is low
+            print(applicant)
+            filtered_applicants.append(applicant)
+        serializer = ApplicantSerializer(filtered_applicants, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+
 class ContactUsAPIView(APIView):  
     # ✅ GET: Retrieve all contact messages  
     def get(self, request, *args, **kwargs):  
