@@ -78,7 +78,6 @@ const FilterApplicants = () => {
     if (!validateForm()) return;  // If form is invalid, stop
   
     const response=await filterApplicants(criteria)
-    console.log(response);
     if (response.length == 0){
       setErrors({...errors, emptyFiltered:"There Is no Applicant That Satisfies the Above Criteria"})
     }
