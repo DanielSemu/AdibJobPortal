@@ -7,7 +7,7 @@ from rest_framework.exceptions import NotFound
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view, permission_classes
 from .serializers import ApplicantSerializer,ContactUsSerializer ,JobCategorySerializer,JobSerializer
-from .models import Applicant, Job,ContactUs,JobCategory,JobDetail
+from .models import Applicant, Job,ContactUs,JobCategory,JobDetail,TempApplicant
 from django.utils import timezone
 from django.utils.timezone import now
 import chardet
@@ -216,19 +216,21 @@ def getUserApplications(request):
     serializer=ApplicantSerializer(applications, many=True)
     return  Response(serializer.data, status=status.HTTP_200_OK)
     
-
+def getUnderReviewApplicants(request):
+    applicants=Applicant.objects.filter(status='Under Review')
+    serializer=ApplicantSerializer(applicants, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 class FilterApplicantsView(APIView):
     def post(self,request):
         data=request.data
-
+        
         selected_job=data.get('selectedJob')
         selected_location=data.get('selectedLocation')
         min_experience_years =data.get('minExperienceYears')
         gender=data.get('gender')
-        min_cgpa=data.get('mincGPA')
+        min_cgpa=data.get('minCGPA')
         min_exit=data.get('minExit')
-        print(selected_job,selected_location,min_experience_years,min_cgpa,min_exit)
         
         applicants=Applicant.objects.filter(status = 'Pending')
         
@@ -259,16 +261,16 @@ class FilterApplicantsView(APIView):
                 continue
             
             highest_education=educations.order_by('-graduation_year').first()
-            
             if min_cgpa and float(highest_education.cgpa) < float(min_cgpa):
-                print("here")
                 continue
             
             if min_exit and float(highest_education.exit_exam) < float(min_exit):
                 continue  # Skip if Exit exam score is low
-            print(applicant)
+            applicant.status="Under Review"
+            applicant.save()
             filtered_applicants.append(applicant)
         serializer = ApplicantSerializer(filtered_applicants, many=True)
+
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

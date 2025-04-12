@@ -136,6 +136,15 @@ class Certification(models.Model):
         return self.certificate_title
     
 
+# models.py
+class TempApplicant(models.Model):
+    applicant = models.ForeignKey(Applicant, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    # session_id = models.CharField(max_length=255, null=True, blank=True)
+    
+    def __str__(self):
+        return self.applicant.full_name
+
 
 
 class ContactUs(models.Model):

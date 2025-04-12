@@ -33,3 +33,7 @@ export const filterApplicants = async (criteria)=>{
   const response=await axiosInstance.post('filter_applicants/', criteria)
   return response.data
 }
+
+export const getUnderReviewApplicants = async ()=>{
+  const response= await axiosInstance.get('get_under_review_applicants/')
+}
