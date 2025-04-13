@@ -18,6 +18,8 @@ const ApplyJob = () => {
   const { id } = useParams();
   const [step, setStep] = useState(1);
   const [detailedData, setDetailedData] = useState([]);
+  const [list, setList] = useState([]);
+  const [verificationModal, setVerificationModal] = useState(false);
   const [userProfile, setUserProfile] = useState([]);
   const [formData, setFormData] = useState({
     job: id,
@@ -30,16 +32,13 @@ const ApplyJob = () => {
     cover_letter: "",
     resume: null,
     terms_accepted: false,
+    workPlace: [],
     educations: [],
     experiences: [],
     certifications: [],
   });
   const [errors, setErrors] = useState({});
   const [fetchError, setFetchError] = useState(false);
-
-  const [verificationCode, setVerificationCode] = useState("");
-  const [generatedCode, setGeneratedCode] = useState(null);
-  const [showVerificationModal, setVerificationModal] = useState(false);
 
   // Temporary state to hold current experience input
   const [currentExperience, setCurrentExperience] = useState({
@@ -54,6 +53,8 @@ const ApplyJob = () => {
     field_of_study: "",
     education_organization: "",
     graduation_year: "",
+    cgpa: null,
+    exit_exam: null,
   });
   const [currentCertification, setCurrentCertification] = useState({
     certificate_title: "",
@@ -89,6 +90,11 @@ const ApplyJob = () => {
         const response = await getSingleJob(parseInt(id));
         if (response) {
           setDetailedData(response);
+          if (!response.show_experience) {
+            setList([1, 2, 4, 5]);
+          } else {
+            setList([1, 2, 3, 4, 5]);
+          }
         } else {
           setFetchError(true);
         }
@@ -103,7 +109,7 @@ const ApplyJob = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
-
+    
     if (type === "file" && files && files[0]) {
       const file = files[0];
       const uniqueIdentifier = Date.now();
@@ -128,7 +134,7 @@ const ApplyJob = () => {
 
   const handleInputChange = (section, e) => {
     const { name, value, type, checked, files } = e.target;
-
+    
     switch (section) {
       case "experience":
         setCurrentExperience((prev) => ({
@@ -140,22 +146,7 @@ const ApplyJob = () => {
         setCurrentEducation((prev) => ({ ...prev, [name]: value }));
         break;
       case "certification":
-        // if (name === "certificate_file" && files.length > 0) {
-        //   const file = files[0];
-        //   const fileExtension = file.name.split(".").pop(); // Get file extension
-        //   const newFileName = `certificate_${Date.now()}.${fileExtension}`; // Rename file
-
-        //   const renamedFile = new File([file], newFileName, {
-        //     type: file.type,
-        //   });
-
-        //   setCurrentCertification((prev) => ({
-        //     ...prev,
-        //     certificate_file: renamedFile,
-        //   }));
-        // } else {
-          setCurrentCertification((prev) => ({ ...prev, [name]: value }));
-        // }
+        setCurrentCertification((prev) => ({ ...prev, [name]: value }));
         break;
       default:
         break;
@@ -207,38 +198,40 @@ const ApplyJob = () => {
     }));
   };
 
+
+
   const validateForm = () => {
     let newErrors = {};
-
-    if (!formData.full_name.trim())
-      newErrors.full_name = "Full Name is required";
+  
+    if (!formData.full_name.trim()) newErrors.full_name = "Full Name is required";
     if (!formData.email.trim()) newErrors.email = "Email is required";
     if (!formData.phone.trim()) newErrors.phone = "Phone number is required";
     if (!formData.gender) newErrors.gender = "Gender is required";
-    if (!formData.birth_date) newErrors.birth_date = "birth_date is required";
-
+    if (!formData.birth_date) newErrors.birth_date = "Birth date is required";
+    
+    if (!formData.contact_consent)
+      newErrors.contact_consent = "You must give consent to be contacted";
+  
+    if (!formData.cover_letter.trim()) 
+      newErrors.cover_letter = "Cover letter is required";
+  
+    if (!formData.resume) newErrors.resume = "Resume is required";
+  
+    if (!formData.terms_accepted)
+      newErrors.terms_accepted = "You must accept the terms and conditions";
+  
     if (formData.educations.length === 0)
-      newErrors.educations = "Education is required";
-
+      newErrors.educations = "At least one education entry is required";
+  
+    
     return newErrors;
   };
+  
 
-  const nextStep = () => setStep((prev) => prev + 1);
-  const prevStep = () => setStep((prev) => prev - 1);
-
-  const handleVCodeChange = (e) => {
-    setVerificationCode(e.target.value);
-  };
-  const generateVerificationNumber = () => {
-    return Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit OTP
-  };
-  const handleCancel =()=>{
-    setVerificationModal(false)
-    setErrors({})
-  }
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = validateForm();
+    setVerificationModal(false);
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -248,73 +241,66 @@ const ApplyJob = () => {
         newErrors.phone ||
         newErrors.birth_date
       ) {
-        setStep(1);
+        return setStep(1);
       } else if (newErrors.educations || newErrors.experiences) {
-        setStep(2);
+        return setStep(2);
+      }
+      else if (
+        newErrors.terms_accepted ||
+        newErrors.resume ||
+        newErrors.cover_letter ||
+        newErrors.contact_consent
+      ){
+       return setStep(5);
       }
     }
- 
-    // const verificationCode = generateVerificationNumber();
-    const otpCode = generateVerificationNumber();
-    setGeneratedCode(otpCode);
-    try {
-      const purpose='application'
-      console.log(otpCode);
-      
-      const response = await sendOTP(formData.phone, otpCode,purpose);
-      if (!response.success) {
-        showErrorToast(`verification Code sending failed: ${response.message}`);
+
+   
+
+    const formDataToSend = new FormData();
+
+    Object.keys(formData).forEach((key) => {
+      if (Array.isArray(formData[key])) {
+        // Convert arrays (lists of objects) to JSON strings
+        formDataToSend.append(key, JSON.stringify(formData[key]));
       } else {
-        setVerificationModal(true); // Show modal for OTP input
+        formDataToSend.append(key, formData[key]);
       }
+    });
+    try {
+      const response = await axiosInstance.post("applicants/", formDataToSend, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      setErrors({});
+      showSuccessToast("Application Submitted Successfully Inserted ");
     } catch (error) {
-      showErrorToast("Failed to send Verification Number.");
+      console.error("Error response:", error.response.data);
+      setErrors({});
+      showErrorToast(error.response.data.error);
     }
   };
 
-  // submit after verifying an email
-  const submitVerified = async (e) => {
-     if(verificationCode === generatedCode) {
-      const formDataToSend = new FormData();
-      
-      Object.keys(formData).forEach((key) => {
-        if (Array.isArray(formData[key])) {
-          // Convert arrays (lists of objects) to JSON strings
-          formDataToSend.append(key, JSON.stringify(formData[key]));
-        } else {
-          formDataToSend.append(key, formData[key]);
-        }
-      });
+  const nextStep = () => {
+    setStep((prev) => {
+      const currentIndex = list.indexOf(prev);
+      if (currentIndex !== -1 && currentIndex < list.length - 1) {
+        return list[currentIndex + 1]; // Move to the next valid step
+      }
+      return prev; // Stay on the same step if there's no next step
+    });
+  };
 
-     
-      
-      try { 
-        console.log(formDataToSend);
-        const response = await axiosInstance.post(
-          "applicants/",
-          formDataToSend,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-        setVerificationModal(false)
-        setErrors({});
-        showSuccessToast("Application Submitted Successfully Inserted ");
-      } catch (error) {
-        console.error("Error response:", error.response.data);
-        showErrorToast(error.response.data.error || "An error occurred.");
-        setErrors({});
-        setVerificationModal(false)
+  // Function to go to the previous available step
+  const prevStep = () => {
+    setStep((prev) => {
+      const currentIndex = list.indexOf(prev);
+      if (currentIndex > 0) {
+        return list[currentIndex - 1]; // Move to the previous valid step
       }
-      finally{
-        setVerificationCode('')
-      }
-    }else{
-      setErrors({ verificationError: "Your Verification Code is Not Correct" });
-      setVerificationCode('')
-    }
+      return prev; // Stay on the same step if there's no previous step
+    });
   };
 
   if (fetchError) {
@@ -330,7 +316,7 @@ const ApplyJob = () => {
       {/* Sidebar with Job Details */}
       <div className="w-full md:w-1/3 bg-white shadow-lg rounded-lg p-8">
         <h2 className="text-3xl font-bold text-gray-900">
-          {detailedData.title}
+          {detailedData.title} Grade {detailedData.job_grade}
         </h2>
         <p className="text-lg text-gray-600 mt-2 font-medium">
           {detailedData.company}
@@ -353,7 +339,7 @@ const ApplyJob = () => {
       <div className="w-full md:w-2/3 bg-white shadow-xl rounded-lg p-5 pb-12 md:p-10 md:ml-8 relative">
         {/* Step Indicators */}
         <div className="flex justify-center space-x-2 mb-4">
-          {[1, 2, 3, 4, 5].map((s) => (
+          {list.map((s) => (
             <div
               key={s}
               className={`h-3 w-3 rounded-full cursor-pointer transition-all ${
@@ -370,6 +356,7 @@ const ApplyJob = () => {
               formData={formData}
               errors={errors}
               handleChange={handleChange}
+              workPlace={detailedData.location}
             />
           )}
           {step === 2 && (
@@ -405,7 +392,7 @@ const ApplyJob = () => {
             />
           )}
           {step === 5 && (
-            <Step5 formData={formData} handleChange={handleChange} />
+            <Step5 formData={formData} errors={errors} handleChange={handleChange} />
           )}
           {/* Fixed Buttons at the Bottom */}
           <div className="absolute bottom-0 left-0 right-0 flex justify-between px-5 pb-0">
@@ -439,47 +426,130 @@ const ApplyJob = () => {
               </button>
             )}
 
-            {step === 5 && (
-              <button
-                type="submit"
-                className="px-4 py-1 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 flex items-center transition duration-200 ml-auto"
-              >
-                Submit <FaCheck className="ml-1" />
-              </button>
-            )}
+            {step === 5 &&
+              (
+                <button
+                  type="button"
+                  onClick={() => setVerificationModal(true)}
+                  className="px-4 py-1 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 flex items-center transition duration-200 ml-auto"
+                >
+                  Verify <FaCheck className="ml-1" />
+                </button>
+              )}
           </div>
         </form>
-        {showVerificationModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-            <h2 className="text-lg font-bold mb-4">Verify Your phone number</h2>
-            {errors &&(
-              <p className="text-red-500">{errors.verificationError}</p>
-            )}
-            <input
-              type="text"
-              value={verificationCode}
-              onChange={handleVCodeChange}
-              className="w-full p-2 border border-gray-300 rounded-lg"
-              maxLength="6"
-            />
-            <div className="flex justify-between mt-4">
-              <button
-                onClick={submitVerified}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg"
-              >
-                Verify
-              </button>
-              <button
-                onClick={handleCancel}
-                className="bg-red-500 text-white px-4 py-2 rounded-lg"
-              >
-                Cancel
-              </button>
+
+        {verificationModal && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 px-4 pt-20">
+            <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg sm:max-w-2xl md:max-w-3xl max-h-[90vh] overflow-auto">
+              <h2 className="text-lg font-bold mb-4 text-center">
+                Verify Your Information
+              </h2>
+
+              {errors.verificationError && (
+                <p className="text-red-500 text-center mb-2">
+                  {errors.verificationError}
+                </p>
+              )}
+
+              <div className="max-h-96 overflow-y-auto p-2 border rounded-lg">
+                <ul className="space-y-2">
+                  <li>
+                    <strong>Full Name:</strong> {formData.full_name}
+                  </li>
+                  <li>
+                    <strong>Email:</strong> {formData.email}
+                  </li>
+                  <li>
+                    <strong>Phone:</strong> {formData.phone}
+                  </li>
+                  <li>
+                    <strong>Gender:</strong> {formData.gender}
+                  </li>
+                  <li>
+                    <strong>Birth Date:</strong> {formData.birth_date}
+                  </li>
+                  
+                  <li>
+                    <strong>Cover Letter:</strong>{" "}
+                    {formData.cover_letter || "Not Provided"}
+                  </li>
+                  <li>
+                    <strong>Resume:</strong>{" "}
+                    {formData.resume ? formData.resume.name : "Not Uploaded"}
+                  </li>
+                  <li>
+                    <strong>Terms Accepted:</strong>{" "}
+                    {formData.terms_accepted ? "Yes" : "No"}
+                  </li>
+                  <li>
+                    <strong>Contact Consent:</strong>{" "}
+                    {formData.contact_consent ? "Yes" : "No"}
+                  </li>
+                </ul>
+
+                <h3 className="text-md font-semibold mt-4">Education</h3>
+                <ul className="pl-4 list-disc">
+                  {formData.educations.length > 0 ? (
+                    formData.educations.map((edu, index) => (
+                      <li key={index}>
+                        {edu.education_level} in {edu.field_of_study} -{" "}
+                        {edu.education_organization} ({edu.graduation_year})
+                      </li>
+                    ))
+                  ) : (
+                    <li>No education details added.</li>
+                  )}
+                </ul>
+
+                <h3 className="text-md font-semibold mt-4">Work Experience</h3>
+                <ul className="pl-4 list-disc">
+                  {formData.experiences.length > 0 ? (
+                    formData.experiences.map((exp, index) => (
+                      <li key={index}>
+                        {exp.job_title} at {exp.company_name} ({exp.from_date} -{" "}
+                        {exp.to_date})
+                        {exp.banking_experience && " [Banking Experience]"}
+                      </li>
+                    ))
+                  ) : (
+                    <li>No experience details added.</li>
+                  )}
+                </ul>
+
+                <h3 className="text-md font-semibold mt-4">Certifications</h3>
+                <ul className="pl-4 list-disc">
+                  {formData.certifications.length > 0 ? (
+                    formData.certifications.map((cert, index) => (
+                      <li key={index}>
+                        {cert.certificate_title} - {cert.awarding_company} (
+                        {cert.awarded_date})
+                      </li>
+                    ))
+                  ) : (
+                    <li>No certifications added.</li>
+                  )}
+                </ul>
+              </div>
+
+              {/* Buttons */}
+              <div className="flex justify-between mt-4">
+                <button
+                  onClick={handleSubmit}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 w-1/2 mx-1"
+                >
+                  Verify
+                </button>
+                <button
+                  onClick={() => setVerificationModal(false)}
+                  className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 w-1/2 mx-1"
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
       </div>
     </div>
   );

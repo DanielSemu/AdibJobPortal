@@ -6,6 +6,11 @@ import Jobs from "./components/Jobs/Jobs";
 import JobDetail from "./components/Jobs/JobDetail";
 import EditJob from "./components/Jobs/EditJob";
 import AddJob from "./components/Jobs/AddJob";
+import UploadBulk from "./components/Jobs/UploadBulk";
+import UploadJobDetail from "./components/Jobs/UploadJobDetail";
+import Categories from "./components/Jobs/Categories";
+import Applications from "./components/Applications/Applications";
+import FilterApplicants from "./components/Applications/FilterApplicants";
 
 const App = () => {
   return (
@@ -16,8 +21,13 @@ const App = () => {
          <Routes>
             <Route path="/jobs" element={<Jobs/>}/>
             <Route path="/jobs/add" element={<AddJob/>}/>
+            <Route path="/jobs/add/bulk" element={<UploadBulk/>}/>
+            <Route path="/edit/job_detail/:id" element={<UploadJobDetail/>}/>
             <Route path="/detail/:id" element={<JobDetail/>}/>
             <Route path="/edit/:id" element={<EditJob/>}/>
+            <Route path="/categories" element={<Categories/>}/>
+            <Route path="/applications" element={<Applications/>}/>
+            <Route path="/filter_applicants" element={<FilterApplicants/>}/>
          </Routes>
       </div>
     </>

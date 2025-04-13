@@ -1,53 +1,74 @@
-from django.db import models # type: ignore
+from django.db import models
+from django.db.models import Case, When, Value, IntegerField
+from django.utils.timezone import now
+from django.utils import timezone
+
 
 class JobCategory(models.Model):
-    name=models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
+
     def __str__(self):
         return self.name
+
 class Job(models.Model):
+    vacancy_number=models.CharField(max_length=50, null=True, blank=True)
     title = models.CharField(max_length=255)
+    job_grade=models.CharField(max_length=100 , null=True, blank=True)
     company = models.CharField(max_length=255, default="Addis Bank S.C")
-    category=models.ForeignKey(JobCategory, on_delete=models.CASCADE, related_name="category")
+    category = models.ForeignKey(JobCategory, on_delete=models.CASCADE, related_name="jobs")
     location = models.CharField(max_length=255)
-    type = models.CharField(max_length=50, choices=[("Full-time", "Full-time"), ("Part-time", "Part-time"), ("Contract", "Contract")])
+    job_type = models.CharField(max_length=50, choices=[("Full-time", "Full-time"), ("Part-time", "Part-time"), ("Contract", "Contract")])
     salary = models.CharField(max_length=255, default="As per Companies Salary Scale")
     description = models.TextField()
     application_deadline = models.DateField()
-    status=models.CharField(max_length=50, choices=[("Active","Active"),("InActive","InActive"),("Closed","Closed")], default="InActive")
-    how_to_apply=models.TextField(default="To apply, please fill out the application form below and upload your CV. Ensure all fields are completed before submitting your application. Application deadline:")
+    show_experience=models.BooleanField()
+    status = models.CharField(
+        max_length=50,
+        choices=[("Active", "Active"), ("InActive", "InActive"), ("Closed", "Closed")],
+        default="InActive",
+    )
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+    posted_at = models.DateTimeField(null=True, blank=True)  # New field
+
+    def save(self, *args, **kwargs):
+        # If the status is changing to "Active" and posted_at is not set, update it
+        if self.status == "Active" and self.posted_at is None:
+            self.posted_at = now()
+        super().save(*args, **kwargs)
+
 
     def __str__(self):
         return self.title
 
-class Responsibility(models.Model):
-    job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name="responsibilities")
-    responsibility = models.TextField()
-
-    def __str__(self):
-        return f"{self.job.title} - {self.responsibility[:50]}"
-
-class Qualification(models.Model):
-    job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name="qualifications")
-    qualification = models.TextField()
-
-    def __str__(self):
-        return f"{self.job.title} - {self.qualification[:50]}"
-
-class Skill(models.Model):
-    job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name="skills")
-    skill = models.CharField(max_length=100)
+class JobDetail(models.Model):
+    DETAIL_TYPES = [
+        ("Responsibility", "Responsibility"),
+        ("Qualification", "Qualification"),
+        ("Skill", "Skill"),
+        ("Benefit", "Benefit"),
+    ]
     
-    def __str__(self):
-        return f"{self.job.title} - {self.skill}"
+    job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name="details")
+    detail_type = models.CharField(max_length=20, choices=DETAIL_TYPES)
+    description = models.TextField()
 
-class Benefit(models.Model):
-    job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name="benefits")
-    benefit = models.TextField()
+    class Meta:
+        ordering = [
+            Case(
+                When(detail_type="Responsibility", then=Value(1)),
+                When(detail_type="Qualification", then=Value(2)),
+                When(detail_type="Skill", then=Value(3)),
+                When(detail_type="Benefit", then=Value(4)),
+                default=Value(5),
+                output_field=IntegerField(),
+            )
+        ]
 
     def __str__(self):
-        return f"{self.job.title} - {self.benefit}"
-    
-    
+        return f"{self.job.title} - {self.detail_type}: {self.description[:50]}"
+
+
     
 
 class Applicant(models.Model):
@@ -87,6 +108,8 @@ class Education(models.Model):
     field_of_study = models.CharField(max_length=100)
     education_organization = models.CharField(max_length=255)
     graduation_year = models.DateField()
+    cgpa = models.DecimalField(max_digits=10, decimal_places=2)
+    exit_exam = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
         return f"{self.education_level} - {self.education_organization}"
@@ -112,6 +135,16 @@ class Certification(models.Model):
     def __str__(self):
         return self.certificate_title
     
+
+# models.py
+class TempApplicant(models.Model):
+    applicant = models.ForeignKey(Applicant, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    # session_id = models.CharField(max_length=255, null=True, blank=True)
+    
+    def __str__(self):
+        return self.applicant.full_name
+
 
 
 class ContactUs(models.Model):

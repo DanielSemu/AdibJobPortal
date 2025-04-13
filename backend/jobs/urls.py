@@ -1,24 +1,25 @@
 from django.urls import path
-from .views import ApplicantAPIView, JobView, ResponsibilityView, QualificationView, SkillView, BenefitView,getUserApplications,ContactUsAPIView
+from .views import ApplicantAPIView, JobView,getUserApplications,ContactUsAPIView,JobCategoryView,AdminJobView,JobBulkUploadView,JobDetailBulkUploadView,FilterApplicantsView,getUnderReviewApplicants
 
 urlpatterns = [
     # Job CRUD operations
     path('jobs/', JobView.as_view(), name='job-list'),  # Get all jobs
     path('jobs/<int:id>/', JobView.as_view(), name='job-detail'),  # Get a single job
     
-    # Responsibility CRUD operations (requires job_id)
-    path('jobs/<int:job_id>/responsibilities/', ResponsibilityView.as_view(), name='responsibility-list-create'),
+    path('admin_jobs/', AdminJobView.as_view(), name='admin_job-list'),  # Get all jobs
+    path('admin_jobs/<int:id>/', AdminJobView.as_view(), name='admin_job-detail'),  # Get a single job
+    path('jobs/bulk-upload/', JobBulkUploadView.as_view(), name='job-bulk-upload'),
+    path('jobs/job-detail-upload/<int:job_id>/', JobDetailBulkUploadView.as_view(), name='job-detail-bulk-upload'),
+
     
-    # Qualification CRUD operations (requires job_id)
-    path('jobs/<int:job_id>/qualifications/', QualificationView.as_view(), name='qualification-list-create'),
-    
-    # Skill CRUD operations (requires job_id)
-    path('jobs/<int:job_id>/skills/', SkillView.as_view(), name='skill-list-create'),
-    
-    # Benefit CRUD operations (requires job_id)
-    path('jobs/<int:job_id>/benefits/', BenefitView.as_view(), name='benefit-list-create'),
+    path('categories/', JobCategoryView.as_view(), name='categories-list'),  # Get all jobs
+    path('categories/<int:id>/', JobCategoryView.as_view(), name='category-detail'),  # Get a single job
+   
     path('applicants/', ApplicantAPIView.as_view(), name='applicants_api'),
     path('my_applications/', getUserApplications, name="my_applications"),
+    path('filter_applicants/', FilterApplicantsView.as_view(), name="filter_applicants"),
+    path('get_under_review_applicants/', getUnderReviewApplicants, name="get_under_review_applicants"),
+    
     
     path('contacts/', ContactUsAPIView.as_view(), name='contact-list-create'),  
     path('contacts/<int:pk>/', ContactUsAPIView.as_view(), name='contact-detail'), 

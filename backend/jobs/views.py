@@ -6,24 +6,25 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import NotFound
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view, permission_classes
-from .serializers import ApplicantSerializer,JobSerializer, ResponsibilitySerializer, QualificationSerializer, SkillSerializer, BenefitSerializer,ContactUsSerializer  
-from .models import Applicant, Job, Responsibility, Qualification, Skill, Benefit,ContactUs
+from .serializers import ApplicantSerializer,ContactUsSerializer ,JobCategorySerializer,JobSerializer
+from .models import Applicant, Job,ContactUs,JobCategory,JobDetail,TempApplicant
+from django.utils import timezone
+from django.utils.timezone import now
+import chardet
+from io import BytesIO, TextIOWrapper
+import csv
+from dateutil.parser import parse
 
 
-
-class JobView(APIView):
-    # permission_classes = [IsAuthenticated]
-    
+class AdminJobView(APIView):
     def get(self, request, id=None, *args, **kwargs):
         if id:
-            job = get_object_or_404(Job, id=id)  # Get single job
+            job=get_object_or_404(Job, id=id)
             serializer = JobSerializer(job)
         else:
-            jobs = Job.objects.all()  # Get all jobs
+            jobs=Job.objects.all()
             serializer = JobSerializer(jobs, many=True)
-        
         return Response(serializer.data, status=status.HTTP_200_OK)
-
     def post(self, request, *args, **kwargs):
         serializer = JobSerializer(data=request.data)
         if serializer.is_valid():
@@ -31,97 +32,160 @@ class JobView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def put(self, request, *args, **kwargs):
-        job_id = kwargs.get('pk')
-        try:
-            job = Job.objects.get(id=job_id)
-        except Job.DoesNotExist:
-            return Response({"error": "Job not found."}, status=status.HTTP_404_NOT_FOUND)
-
+    def put(self, request, id=None, *args, **kwargs):
+        job = get_object_or_404(Job, id=id)
         serializer = JobSerializer(job, data=request.data, partial=True)
+        
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
+        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def delete(self, request, id=None, *args, **kwargs):
+        job = get_object_or_404(Job, id=id)
+        job.delete()
+        return Response({"message": "Job deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
 
-class ResponsibilityView(APIView):
-    # permission_classes = [IsAuthenticated]
+class JobView(APIView):
+    def get(self, request, id=None, *args, **kwargs):
+        if id:
+            job = get_object_or_404(Job, id=id)  # Get a single job
+            serializer = JobSerializer(job)
+        else:
+            jobs = Job.objects.filter(status="Active",application_deadline__gte=timezone.now().date())  # Get all jobs
+            serializer = JobSerializer(jobs, many=True)
+        
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    
+class JobBulkUploadView(APIView):
+    def post(self, request, *args, **kwargs):
+        csv_file = request.FILES.get('file')
+        if not csv_file:
+            return Response({"error": "No file provided"}, status=status.HTTP_400_BAD_REQUEST)
 
-    def get(self, request, *args, **kwargs):
-        job_id = kwargs.get('job_id')
-        responsibilities = Responsibility.objects.filter(job_id=job_id)
-        serializer = ResponsibilitySerializer(responsibilities, many=True)
+        # Read small sample for encoding detection
+        sample = csv_file.read(1024)
+        encoding = chardet.detect(sample)['encoding'] or 'utf-8'
+
+        # Go back to beginning of file
+        csv_file.seek(0)
+
+        decoded_file = TextIOWrapper(csv_file.file, encoding=encoding)
+        reader = csv.DictReader(decoded_file)
+
+        jobs_to_create = []
+
+        for row in reader:
+            try:
+                category_obj = JobCategory.objects.get(name=row['category'])
+            except JobCategory.DoesNotExist:
+                return Response({"error": f"Category '{row['category']}' not found."}, status=status.HTTP_400_BAD_REQUEST)
+
+            # 🛠 Fix the date format here
+            raw_date = row['application_deadline']
+            parsed_date = parse(raw_date, dayfirst=False).date()
+
+            job = Job(
+                vacancy_number=row.get('vacancy_number') or None,
+                title=row['title'],
+                job_grade=row.get('job_grade') or None,
+                company=row.get('company', 'Addis Bank S.C'),
+                category=category_obj,
+                location=row['location'],
+                job_type=row['job_type'],
+                salary=row.get('salary', 'As per Companies Salary Scale'),
+                description=row['description'],
+                application_deadline=parsed_date,
+                show_experience=row.get('show_experience', 'True').lower() == 'true',
+                status=row.get('status', 'InActive'),
+                created_at=now(),
+                updated_at=now()
+            )
+
+            jobs_to_create.append(job)
+
+        Job.objects.bulk_create(jobs_to_create)
+
+        return Response({"message": "Jobs uploaded successfully!"}, status=status.HTTP_201_CREATED)
+    
+class JobDetailBulkUploadView(APIView):
+    def post(self, request, job_id, *args, **kwargs):
+        csv_file = request.FILES.get('file')
+        if not csv_file:
+            return Response({"error": "No file provided"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Read small sample for encoding detection
+        sample = csv_file.read(1024)
+        encoding = chardet.detect(sample)['encoding'] or 'utf-8'
+
+        # Go back to beginning of file
+        csv_file.seek(0)
+
+        decoded_file = TextIOWrapper(csv_file.file, encoding=encoding)
+        reader = csv.DictReader(decoded_file)
+
+        # 🔵 Get the Job once
+        try:
+            job = Job.objects.get(id=job_id)
+        except Job.DoesNotExist:
+            return Response({"error": f"Job with id '{job_id}' not found."},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        details_to_create = []
+
+        for row in reader:
+            detail = JobDetail(
+                job=job,
+                detail_type=row['detail_type'],
+                description=row['description'],
+            )
+            details_to_create.append(detail)
+
+        JobDetail.objects.bulk_create(details_to_create)
+
+        return Response({"message": "Job Details uploaded successfully!"}, status=status.HTTP_201_CREATED)
+
+
+class JobCategoryView(APIView):
+    def get(self, request, id=None, *args, **kwargs):
+        if id:
+            category = get_object_or_404(JobCategory, id=id)  # Get a single category
+            serializer = JobCategorySerializer(category)
+        else:
+            categories = JobCategory.objects.all()  # Get all categories
+            serializer = JobCategorySerializer(categories, many=True)
+        
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
-        job_id = kwargs.get('job_id')
-        serializer = ResponsibilitySerializer(data=request.data)
+        serializer = JobCategorySerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(job_id=job_id)
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-class QualificationView(APIView):
-    # permission_classes = [IsAuthenticated]
-
-    def get(self, request, *args, **kwargs):
-        job_id = kwargs.get('job_id')
-        qualifications = Qualification.objects.filter(job_id=job_id)
-        serializer = QualificationSerializer(qualifications, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def post(self, request, *args, **kwargs):
-        job_id = kwargs.get('job_id')
-        serializer = QualificationSerializer(data=request.data)
+    def put(self, request, id=None, *args, **kwargs):
+        category = get_object_or_404(JobCategory, id=id)
+        serializer = JobCategorySerializer(category, data=request.data, partial=True)
+        
         if serializer.is_valid():
-            serializer.save(job_id=job_id)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-class SkillView(APIView):
-    # permission_classes = [IsAuthenticated]
-
-    def get(self, request, *args, **kwargs):
-        job_id = kwargs.get('job_id')
-        skills = Skill.objects.filter(job_id=job_id)
-        serializer = SkillSerializer(skills, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def post(self, request, *args, **kwargs):
-        job_id = kwargs.get('job_id')
-        serializer = SkillSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(job_id=job_id)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class BenefitView(APIView):
-    # permission_classes = [IsAuthenticated]
-
-    def get(self, request, *args, **kwargs):
-        job_id = kwargs.get('job_id')
-        benefits = Benefit.objects.filter(job_id=job_id)
-        serializer = BenefitSerializer(benefits, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def post(self, request, *args, **kwargs):
-        job_id = kwargs.get('job_id')
-        serializer = BenefitSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(job_id=job_id)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+    def delete(self, request, id=None, *args, **kwargs):
+        category = get_object_or_404(JobCategory, id=id)
+        category.delete()
+        return Response({"message": "Job category deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
 
 
 
 class ApplicantAPIView(APIView):
     def post(self, request):
-        print(request.data)
+        # print(request.data)
         serializer = ApplicantSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -152,6 +216,65 @@ def getUserApplications(request):
     serializer=ApplicantSerializer(applications, many=True)
     return  Response(serializer.data, status=status.HTTP_200_OK)
     
+def getUnderReviewApplicants(request):
+    applicants=Applicant.objects.filter(status='Under Review')
+    serializer=ApplicantSerializer(applicants, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+class FilterApplicantsView(APIView):
+    def post(self,request):
+        data=request.data
+        
+        selected_job=data.get('selectedJob')
+        selected_location=data.get('selectedLocation')
+        min_experience_years =data.get('minExperienceYears')
+        gender=data.get('gender')
+        min_cgpa=data.get('minCGPA')
+        min_exit=data.get('minExit')
+        
+        applicants=Applicant.objects.filter(status = 'Pending')
+        
+        if selected_job:
+            applicants=applicants.filter(job__id=selected_job)
+        
+        if selected_location:
+            applicants = applicants.filter(job__location__icontains=selected_location)
+            
+        if gender:
+            applicants=applicants.filter(gender=gender)
+        
+        filtered_applicants=[]
+        for applicant in applicants:
+            total_experience_years=0
+            for experience in applicant.experiences.all():
+                if experience.from_date and experience.to_date:
+                    duration=(experience.to_date - experience.from_date).days / 365
+                    total_experience_years += duration
+            
+            
+            if min_experience_years  and total_experience_years < float(min_experience_years ):
+                continue
+            
+            educations= applicant.educations.all()
+            
+            if not educations.exists():
+                continue
+            
+            highest_education=educations.order_by('-graduation_year').first()
+            if min_cgpa and float(highest_education.cgpa) < float(min_cgpa):
+                continue
+            
+            if min_exit and float(highest_education.exit_exam) < float(min_exit):
+                continue  # Skip if Exit exam score is low
+            applicant.status="Under Review"
+            applicant.save()
+            filtered_applicants.append(applicant)
+        serializer = ApplicantSerializer(filtered_applicants, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
 
 class ContactUsAPIView(APIView):  
     # ✅ GET: Retrieve all contact messages  
@@ -193,42 +316,3 @@ class ContactUsAPIView(APIView):
         except ContactUs.DoesNotExist:  
             return Response({"error": "Contact not found"}, status=status.HTTP_404_NOT_FOUND)  
 
-
-# class ApplicantAPIView(APIView):
-#     def post(self, request, *args, **kwargs):
-#         try:
-#             serializer = ApplicantSerializer(data=request.data)
-#             if serializer.is_valid():
-#                 applicant = serializer.save()
-#                 return Response(
-#                     {
-#                         "status": "success",
-#                         "message": f"Applicant '{applicant.full_name}' created successfully.",
-#                         "applicant_id": applicant.id,
-#                         "data": serializer.data,
-#                     },
-#                     status=status.HTTP_201_CREATED,
-#                 )
-#             else:
-#                 # Return detailed validation errors
-#                 return Response(
-#                     {
-#                         "status": "error",
-#                         "message": "Validation failed. Please check the errors.",
-#                         "errors": serializer.errors,
-#                     },
-#                     status=status.HTTP_400_BAD_REQUEST,
-#                 )
-
-#         except Exception as e:
-#             # Handle unexpected exceptions
-#             print(f"Unexpected error: {e}")
-#             return Response(
-#                 {
-#                     "status": "error",
-#                     "message": "An unexpected error occurred. Please try again later.",
-#                     "details": str(e),
-#                 },
-#                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-#             )
-    

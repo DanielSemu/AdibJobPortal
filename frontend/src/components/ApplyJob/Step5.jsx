@@ -8,19 +8,26 @@ const Step5 = ({ formData, errors, handleChange }) => {
       </h1>
       {/* Resume Upload */}
       <div>
+      {errors.resume && (
+          <p className="text-red-500">{errors.resume}</p>
+        )}
         <label className="block text-gray-700 font-semibold mb-2">
-          Upload Resume (PDF/DOCX)
+          Upload Resume (PDF)
         </label>
         <input
           type="file"
           name="resume"
           onChange={handleChange}
-          accept=".pdf,.doc,.docx"
+          accept=".pdf"
           className="w-full p-2 border mb-4"
+          required
         />
       </div>
       {/* Cover Letter */}
       <div>
+      {errors.cover_letter && (
+          <p className="text-red-500">{errors.cover_letter}</p>
+        )}
         <label className="block text-gray-700 font-semibold mb-2">
           Cover Letter
         </label>
@@ -31,11 +38,19 @@ const Step5 = ({ formData, errors, handleChange }) => {
           placeholder="Cover Letter"
           className="w-full p-2 border rounded-md focus:outline-blue-500"
           rows="4"
+          required
         ></textarea>
       </div>
 
       {/* Terms and Conditions Checkbox */}
+      {errors.terms_accepted && (
+          <p className="text-red-500">{errors.terms_accepted}</p>
+        )}
+      {errors.contact_consent && (
+          <p className="text-red-500">{errors.contact_consent}</p>
+        )}
       <div className="flex items-center">
+     
         <input
           type="checkbox"
           name="terms_accepted"

@@ -251,7 +251,7 @@ const modified=
       {"qualification": "Bachelor's degree in Accounting or Finance."},
       {"qualification": "2+ years of experience in accounting or finance."},
       {"qualification": "Strong knowledge of accounting principles and tax regulations."},
-      {"qualification": "Proficiency in accounting software and Microsoft Excel."}
+      {"qualification": "Strong knowledge of accounting principles and tax regulations."}
     ],
     "skills": [
       {"skill": "Accounting"},
