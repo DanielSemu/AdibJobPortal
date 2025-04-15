@@ -1,5 +1,24 @@
-backend/env/
-backend/*.pyc
-backend/__pycache__/
+# === Python-related ignores ===
+__pycache__/
+*.py[cod]
+*.log
+*.pot
+*.mo
+
+# === SQLite DB ===
 backend/db.sqlite3
-backend/*.log
+
+# === Django/Backend files you don’t want tracked ===
+backend/media/
+backend/staticfiles/
+backend/*.sqlite3
+backend/*.db
+
+# === Virtual Environments ===
+env/
+venv/
+.venv/
+
+# === VSCode/IDE ===
+.vscode/
+.idea/
