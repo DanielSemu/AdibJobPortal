@@ -34,6 +34,16 @@ export const filterApplicants = async (criteria)=>{
   return response.data
 }
 
+export const confirmFilteredApplicants = async (criteria, confirm, applicant_ids) => {
+  const response = await axiosInstance.post('confirm_filter/', {
+    criteria,
+    confirm,
+    applicant_ids
+  });
+  return response.data;
+};
+
+
 export const getUnderReviewApplicants = async ()=>{
   const response= await axiosInstance.get('get_under_review_applicants/')
 }

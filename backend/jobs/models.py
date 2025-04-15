@@ -136,6 +136,17 @@ class Certification(models.Model):
         return self.certificate_title
     
 
+class Criteria(models.Model):
+    job = models.ForeignKey(Job, on_delete=models.SET_NULL, null=True)
+    location = models.CharField(max_length=255, blank=True, null=True)
+    min_experience_years = models.FloatField(blank=True, null=True)
+    gender = models.CharField(max_length=10, blank=True, null=True)
+    min_cgpa = models.FloatField(blank=True, null=True)
+    min_exit_score = models.FloatField(blank=True, null=True)
+    matched_applicants = models.PositiveIntegerField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+
 # models.py
 class TempApplicant(models.Model):
     applicant = models.ForeignKey(Applicant, on_delete=models.CASCADE)

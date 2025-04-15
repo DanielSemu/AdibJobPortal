@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ApplicantAPIView, JobView,getUserApplications,ContactUsAPIView,JobCategoryView,AdminJobView,JobBulkUploadView,JobDetailBulkUploadView,FilterApplicantsView,getUnderReviewApplicants
+from .views import ApplicantAPIView, JobView,getUserApplications,ContactUsAPIView,JobCategoryView,AdminJobView,JobBulkUploadView,JobDetailBulkUploadView,FilterApplicantsView,getUnderReviewApplicants,ConfirmFilteredApplicants
 
 urlpatterns = [
     # Job CRUD operations
@@ -18,6 +18,7 @@ urlpatterns = [
     path('applicants/', ApplicantAPIView.as_view(), name='applicants_api'),
     path('my_applications/', getUserApplications, name="my_applications"),
     path('filter_applicants/', FilterApplicantsView.as_view(), name="filter_applicants"),
+    path('confirm_filter/', ConfirmFilteredApplicants.as_view(), name="confirm_filter"),
     path('get_under_review_applicants/', getUnderReviewApplicants, name="get_under_review_applicants"),
     
     

@@ -19,8 +19,8 @@ const Applications = () => {
         fetchCategories()
     },[])
         const columns = [
-        //   { header: "name", accessor: "name", cell:()=>("yyyy-xxxx-jjjj") },
-          { header: "Full Name", accessor: "full_name" },
+          { header: "name", accessor: "name", cell:()=>("xxxx-yyyy-zzzz") },
+          // { header: "Full Name", accessor: "full_name" },
           { header: "Job ", accessor: "job_name" },
           { header: "Gender", accessor: "gender" },
           { header: "Age", accessor: "genderd",

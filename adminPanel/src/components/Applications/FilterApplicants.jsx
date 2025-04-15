@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  confirmFilteredApplicants,
   filterApplicants,
   getJobs,
   getUnderReviewApplicants,
@@ -8,6 +9,7 @@ import ReusableTable from "../ui/ReausableTable";
 
 const FilterApplicants = () => {
   const [jobs, setJobs] = useState([]);
+  const [applicants, setApplicants] = useState([]);
   const [filteredApplicants, setFilteredApplicants] = useState(0);
   const [locations, setLocations] = useState([]);
   const [errors, setErrors] = useState({});
@@ -89,10 +91,47 @@ const FilterApplicants = () => {
         emptyFiltered:
           "There Is no Applicant That Satisfies the Above Criteria",
       });
+    } else {
+      const ids = response.map((applications) => applications.id);
+      setApplicants(ids);
     }
-    console.log(response.length);
-
     setFilteredApplicants(response.length);
+  };
+
+  const handleConfirmApplicants = async () => {
+    try {
+      const confirmed = true;
+      const response = await confirmFilteredApplicants(
+        criteria,
+        confirmed,
+        applicants
+      );
+
+      // Optional: reset or give feedback
+      setApplicants([]);
+      setErrors({
+        ...errors,
+        emptyFiltered:
+          "There Is no Applicant That Satisfies the Above Criteria",
+      });
+  
+      alert("Applicants updated and criteria recorded!");
+    } catch (error) {
+      console.error("Confirmation error:", error);
+    }
+  };
+
+  const handleCancel = () => {
+    setFilteredApplicants(0); // reset the number
+    setErrors({});
+    setCriteria({
+      selectedJob: "",
+      selectedLocation: "",
+      minExperienceYears: "",
+      gender: "",
+      minCGPA: "",
+      minExit: "",
+    });
   };
 
   // const columns = [
@@ -257,14 +296,34 @@ const FilterApplicants = () => {
           Apply Filter
         </button>
       </form>
-      {errors.emptyFiltered ? (
-        <p className="text-red-500 text-sm">{errors.emptyFiltered}</p>
-      ) : (
-        <p className="text-green-500 text-sm">
-          There are {filteredApplicants} Applicants those who Satisfy this
-          criteria{" "}
-        </p>
-      )}
+      <div className="items-center p-4 my-4 bg-gray-100 rounded-md shadow-md text-center">
+        {errors.emptyFiltered ? (
+          <p className="text-red-500 text-sm mb-2">{errors.emptyFiltered}</p>
+        ) : (
+          <>
+            <p className="text-green-600 text-base font-medium mb-4">
+              {filteredApplicants} applicant{filteredApplicants !== 1 && "s"}{" "}
+              satisfy the selected criteria.
+            </p>
+
+            <div className="flex justify-center gap-4">
+              <button
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+                onClick={handleConfirmApplicants}
+              >
+                Confirm and Update
+              </button>
+
+              <button
+                className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 transition"
+                onClick={handleCancel}
+              >
+                Cancel
+              </button>
+            </div>
+          </>
+        )}
+      </div>
 
       {/* <ReusableTable
         columns={columns}

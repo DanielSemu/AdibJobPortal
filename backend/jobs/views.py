@@ -7,7 +7,7 @@ from rest_framework.exceptions import NotFound
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view, permission_classes
 from .serializers import ApplicantSerializer,ContactUsSerializer ,JobCategorySerializer,JobSerializer
-from .models import Applicant, Job,ContactUs,JobCategory,JobDetail,TempApplicant
+from .models import Applicant, Job,ContactUs,JobCategory,JobDetail,TempApplicant,Criteria
 from django.utils import timezone
 from django.utils.timezone import now
 import chardet
@@ -200,7 +200,7 @@ class ApplicantAPIView(APIView):
         )
 
     def get(self, request):
-        applicants = Applicant.objects.all()
+        applicants = Applicant.objects.filter(status="Under Review")
         serializer = ApplicantSerializer(applicants, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
@@ -266,14 +266,39 @@ class FilterApplicantsView(APIView):
             
             if min_exit and float(highest_education.exit_exam) < float(min_exit):
                 continue  # Skip if Exit exam score is low
-            applicant.status="Under Review"
-            applicant.save()
+            # applicant.status="Under Review"
+            # applicant.save()
             filtered_applicants.append(applicant)
         serializer = ApplicantSerializer(filtered_applicants, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+class ConfirmFilteredApplicants(APIView):
+    def post(self, request):
+        data = request.data
+        confirm = data.get('confirm')
+        applicant_ids = data.get('applicant_ids', [])
+        criteria_data = data.get('criteria', {})
+        print(confirm,applicant_ids,criteria_data)
+        if not confirm or not applicant_ids:
+            return Response({'error': 'Invalid request'}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Update applicants
+        updated_count = Applicant.objects.filter(id__in=applicant_ids).update(status='Under Review')
+
+        # Save criteria (you can customize your model)
+        Criteria.objects.create(
+            job_id=criteria_data.get('selectedJob'),
+            location=criteria_data.get('selectedLocation'),
+            min_experience_years=criteria_data.get('minExperienceYears'),
+            gender=criteria_data.get('gender'),
+            min_cgpa=criteria_data.get('minCGPA'),
+            min_exit_score=criteria_data.get('minExit'),
+            matched_applicants=updated_count,
+            timestamp=timezone.now()
+        )
+
+        return Response({'message': f'{updated_count} applicants updated and criteria saved.'}, status=status.HTTP_200_OK)
 
 
 class ContactUsAPIView(APIView):  
