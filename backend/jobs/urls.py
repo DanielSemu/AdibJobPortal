@@ -16,6 +16,7 @@ urlpatterns = [
     path('categories/<int:id>/', JobCategoryView.as_view(), name='category-detail'),  # Get a single job
    
     path('applicants/', ApplicantAPIView.as_view(), name='applicants_api'),
+    path('applicants/<int:id>/', ApplicantAPIView.as_view(), name='applicants_detail'),
     path('my_applications/', getUserApplications, name="my_applications"),
     path('filter_applicants/', FilterApplicantsView.as_view(), name="filter_applicants"),
     path('confirm_filter/', ConfirmFilteredApplicants.as_view(), name="confirm_filter"),

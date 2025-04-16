@@ -198,12 +198,38 @@ class ApplicantAPIView(APIView):
             {"status": "error", "errors": serializer.errors},
             status=status.HTTP_400_BAD_REQUEST
         )
-
-    def get(self, request):
-        applicants = Applicant.objects.filter(status="Under Review")
-        serializer = ApplicantSerializer(applicants, many=True)
+    def get(self, request, id=None, *args, **kwargs):
+        if id:
+            applicants = Applicant.objects.get(id=id,status="Under Review")
+            serializer = ApplicantSerializer(applicants)
+        else:
+            applicants = Applicant.objects.filter(status="Under Review")
+            serializer = ApplicantSerializer(applicants, many=True)
+            
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
+    def put(self,request, id=None, *args, **kwargs):
+        if not id:
+            return Response({"error":'Applicant id is required.'},status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            applicant=Applicant.objects.get(id=id)
+        except Applicant.DoesNotExist:
+            return Response({'error': 'Applicant not found.'}, status=status.HTTP_404_NOT_FOUND)
+        
+        new_status=request.data.get('status')
+        if not new_status:
+            return Response({'error':"status field is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        applicant.status=new_status
+        applicant.save()
+        
+        return Response({
+            'message':'Status updated successfully',
+            'applicant_id':applicant.id,
+            'new_status':applicant.status,
+        }, status=status.HTTP_200_OK)
+      
     
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])    

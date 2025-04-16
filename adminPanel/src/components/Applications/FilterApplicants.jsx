@@ -12,7 +12,8 @@ const FilterApplicants = () => {
   const [applicants, setApplicants] = useState([]);
   const [filteredApplicants, setFilteredApplicants] = useState(0);
   const [locations, setLocations] = useState([]);
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState({emptyFiltered:
+    "There Is no Applicant That Satisfies the Above Criteria",});
   
   const [criteria, setCriteria] = useState({
     selectedJob: "",

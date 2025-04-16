@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
 import ReusableTable from "../ui/ReausableTable";
-import { FiEye, FiEdit,FiLock } from "react-icons/fi";
+import { FiCheck } from "react-icons/fi";
 import { useNavigate,Link } from "react-router-dom";
 import { getApplications } from '../services/jobsService';
 
 
 const Applications = () => {
     const [applicants,setApplicants]=useState([])
-    const [selectedResume, setSelectedResume] = useState(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
 
 
     const navigate = useNavigate();
@@ -20,6 +18,11 @@ const Applications = () => {
         }
         fetchCategories()
     },[])
+
+    const handleDetailView = (row) => {
+      navigate(`/authorize_document/${row.id}`);
+    };
+
          const columns = [
     //   { header: "name", accessor: "name", cell:()=>("yyyy-xxxx-jjjj") },
       { header: "Full Name", accessor: "full_name" },
@@ -38,26 +41,19 @@ const Applications = () => {
         }
        },
       { header: "Status", accessor: "status" },
-      {
-        header: "Resume",
-        accessor: "resume",
-        cell: (row) => (
-          row.resume ? (
-            <button
-              onClick={() => {
-                setSelectedResume(row.resume);
-                setIsModalOpen(true);
-              }}
-              className="text-blue-500 underline"
-            >
-              View Resume
-            </button>
-          ) : (
-            <span className="text-gray-400">No Resume</span>
-          )
-        ),
-      },
-      { header: "Check Document", accessor: "Report" },
+  
+     {
+           header: "Verify",
+           accessor: "actions",
+           cell: (row) => (
+             <div className="flex gap-2">
+               <button onClick={() => handleDetailView(row)} className="btn">
+                 <FiCheck />
+               </button>
+             </div>
+           ),
+         },
+      
 
     ];
 
@@ -71,24 +67,6 @@ const Applications = () => {
         title={"Applicants"}
       />
       
-      {isModalOpen && selectedResume && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-4 rounded-lg w-4/5 h-full relative">
-            <button
-              onClick={() => setIsModalOpen(false)}
-              className="absolute top-2 right-2 text-red-500"
-            >
-              ✖️
-            </button>
-            <iframe
-              src={`http://192.168.2.32:8000${selectedResume}`}
-              className="w-full h-full"
-              frameBorder="0"
-              title="Resume Viewer"
-            ></iframe>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

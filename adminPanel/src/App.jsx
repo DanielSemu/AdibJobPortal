@@ -11,6 +11,7 @@ import UploadJobDetail from "./components/Jobs/UploadJobDetail";
 import Categories from "./components/Jobs/Categories";
 import Applications from "./components/Applications/Applications";
 import FilterApplicants from "./components/Applications/FilterApplicants";
+import AuthorizeDocument from "./components/Applications/AuthorizeDocument";
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
             <Route path="/categories" element={<Categories/>}/>
             <Route path="/applications" element={<Applications/>}/>
             <Route path="/filter_applicants" element={<FilterApplicants/>}/>
+            <Route path="/authorize_document/:id" element={<AuthorizeDocument/>}/>
          </Routes>
       </div>
     </>

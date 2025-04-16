@@ -145,6 +145,9 @@ class Criteria(models.Model):
     min_exit_score = models.FloatField(blank=True, null=True)
     matched_applicants = models.PositiveIntegerField()
     timestamp = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"Criterias for Job: {self.job}"
 
 
 # models.py

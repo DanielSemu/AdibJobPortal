@@ -29,6 +29,15 @@ export const getApplications = async () => {
   return response.data;
 };
 
+export const updateApplicantStatus= async (id,status)=>{
+  const response=await axiosInstance.put(`applicants/${id}/`,{status})
+  return response.data
+}
+export const getSingleApplicant = async (id) => {
+  const response = await axiosInstance.get(`applicants/${id}/`);
+  return response.data;
+};
+
 export const filterApplicants = async (criteria)=>{
   const response=await axiosInstance.post('filter_applicants/', criteria)
   return response.data
