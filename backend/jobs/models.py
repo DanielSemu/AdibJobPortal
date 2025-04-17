@@ -5,7 +5,15 @@ from django.utils import timezone
 
 
 class JobCategory(models.Model):
+    IconName = [
+        ("AiFillSketchSquare", "AiFillSketchSquare"),
+        ("MdOutlineMenuBook", "MdOutlineMenuBook"),
+        ("AiOutlinePieChart", "AiOutlinePieChart"),
+        ("FaChalkboardUser", "FaChalkboardUser"),
+        ("FaLaptopCode", "FaLaptopCode"),
+    ]
     name = models.CharField(max_length=255)
+    iconName=models.CharField(max_length=200, choices=IconName, null=True, blank=True)
 
     def __str__(self):
         return self.name

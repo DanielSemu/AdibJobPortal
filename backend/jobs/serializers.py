@@ -5,7 +5,7 @@ import json
 class JobCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = JobCategory
-        fields = "__all__"  # Includes 'id' and 'name'
+        fields = "__all__"  
 
 class JobDetailSerializer(serializers.ModelSerializer):
     class Meta:

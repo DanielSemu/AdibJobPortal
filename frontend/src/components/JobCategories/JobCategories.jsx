@@ -3,9 +3,9 @@ import {AiFillSketchSquare,AiOutlinePieChart } from 'react-icons/ai'
 import { MdOutlineMenuBook } from "react-icons/md";
 import { FaChalkboardUser ,FaLaptopCode} from "react-icons/fa6";
 import { Link } from 'react-router-dom';
-import { categories } from '../../data/categories';
+// import { categories } from '../../data/categories';
 // import { jobs } from '../../data/jobs';
-import { getJobs } from "../../services/jobsService";
+import { getCategories, getJobs } from "../../services/jobsService";
 
 const iconMap = {
   AiFillSketchSquare: AiFillSketchSquare,
@@ -17,6 +17,7 @@ const iconMap = {
 
 const JobCategories = () => {
   const [jobs, setJobs]=useState([])
+  const [categories, setCategories]=useState([])
     useEffect(() => {
       const fetchJobs = async () => {
         try {
@@ -27,8 +28,21 @@ const JobCategories = () => {
           setJobs([]); // Prevent crash by setting an empty array on failure
         }
       };
-    
+       const fetchCategories = async () => {
+        try {
+          const response = await getCategories();
+          console.log(response);
+          
+          setCategories(response || []); // Ensure it defaults to an empty array
+        } catch (error) {
+          console.error("Error fetching jobs:", error);
+          setCategories([]); // Prevent crash by setting an empty array on failure
+        }
+      };
+
+      fetchCategories();
       fetchJobs();
+      
     }, []);
     
 
@@ -57,7 +71,7 @@ const JobCategories = () => {
               className="title text-lg font-semibold hover:text-[#007dda]"
               to={`/category/${item.id}`}
             >
-              {item.categoryName}
+              {item.name}
             </Link>
             <p className="text-slate-400 mt-3">{jobCount} Jobs</p>
           </div>

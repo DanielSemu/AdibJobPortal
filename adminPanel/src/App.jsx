@@ -8,7 +8,7 @@ import EditJob from "./components/Jobs/EditJob";
 import AddJob from "./components/Jobs/AddJob";
 import UploadBulk from "./components/Jobs/UploadBulk";
 import UploadJobDetail from "./components/Jobs/UploadJobDetail";
-import Categories from "./components/Jobs/Categories";
+import Categories from "./components/Categories/Categories";
 import Applications from "./components/Applications/Applications";
 import FilterApplicants from "./components/Applications/FilterApplicants";
 import AuthorizeDocument from "./components/Applications/AuthorizeDocument";

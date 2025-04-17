@@ -10,6 +10,7 @@ const AuthorizeDocument = () => {
   useEffect(() => {
     const fetchApplicant = async () => {
       const response = await getSingleApplicant(id);
+      console.log(response);
       setApplicant(response);
     };
     fetchApplicant();
@@ -30,7 +31,6 @@ const AuthorizeDocument = () => {
   const handleAuthorize = async (status) => {
     try {
       const response = await updateApplicantStatus(id, status);
-      // optional: check for response status
       navigate('/applications'); // redirect after success
     } catch (error) {
       console.error('Failed to update status', error);
@@ -150,10 +150,11 @@ const AuthorizeDocument = () => {
                   <p>
                     <strong>To:</strong> {experience.to_date}
                   </p>
-                  <p>
-                    <strong>Banking Experience:</strong>{" "}
-                    {experience.banking_experience}
+                  {experience.banking_experience&&(
+                    <p>
+                    <strong>Worked at Banking Industry</strong>{" "}
                   </p>
+                  )}
                 </div>
               ))}
             </div>

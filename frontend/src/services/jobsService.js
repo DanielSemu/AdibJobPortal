@@ -10,6 +10,16 @@ export const getJobs =async()=>{
     }
     
 }
+export const getCategories =async()=>{
+    try {
+        const response=await axiosInstance.get('categories/')
+        return response.data    
+    } catch (error) {
+        console.error(error);
+        
+    }
+    
+}
 export const getSingleJob =async(id)=>{
     const response=await axiosInstance.get(`jobs/${id}/`)
     return response.data
