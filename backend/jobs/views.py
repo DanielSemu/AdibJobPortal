@@ -57,6 +57,13 @@ class JobView(APIView):
             serializer = JobSerializer(jobs, many=True)
         
         return Response(serializer.data, status=status.HTTP_200_OK)
+class ExpiredJobView(APIView):
+    def get(self, request, id=None, *args, **kwargs):
+        jobs = Job.objects.filter(status="Active",application_deadline__lt=timezone.now().date())
+
+        serializer = JobSerializer(jobs, many=True)
+        
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
     
 class JobBulkUploadView(APIView):

@@ -6,6 +6,7 @@ import {
   getUnderReviewApplicants,
 } from "../services/jobsService";
 import ReusableTable from "../ui/ReausableTable";
+import { useNavigate } from "react-router-dom";
 
 const FilterApplicants = () => {
   const [jobs, setJobs] = useState([]);
@@ -20,9 +21,10 @@ const FilterApplicants = () => {
     selectedLocation: "",
     minExperienceYears: "",
     gender: "",
-    minCGPA: "",
-    minExit: "",
+    minCGPA: null,
+    minExit: null,
   });
+const navigate=useNavigate()
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -106,7 +108,7 @@ const FilterApplicants = () => {
         confirmed,
         applicants
       );
-
+      
       // Optional: reset or give feedback
       setApplicants([]);
       setErrors({
@@ -116,6 +118,7 @@ const FilterApplicants = () => {
       });
   
       alert("Applicants updated and criteria recorded!");
+      navigate('/applications')
     } catch (error) {
       console.error("Confirmation error:", error);
     }

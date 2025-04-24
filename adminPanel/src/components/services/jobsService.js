@@ -4,6 +4,10 @@ export const getJobs = async () => {
   const response = await axiosInstance.get('admin_jobs/');
   return response.data;
 };
+export const getExpiredJobs = async () => {
+  const response = await axiosInstance.get('expired_jobs/');
+  return response.data;
+};
 
 export const getSingleJob = async (id) => {
   const response = await axiosInstance.get(`admin_jobs/${id}/`);
@@ -54,6 +58,7 @@ export const filterApplicants = async (criteria)=>{
 }
 
 export const confirmFilteredApplicants = async (criteria, confirm, applicant_ids) => {
+  
   const response = await axiosInstance.post('confirm_filter/', {
     criteria,
     confirm,

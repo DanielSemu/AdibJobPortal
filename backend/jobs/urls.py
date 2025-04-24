@@ -1,10 +1,11 @@
 from django.urls import path
-from .views import ApplicantAPIView, JobView,getUserApplications,ContactUsAPIView,JobCategoryView,AdminJobView,JobBulkUploadView,JobDetailBulkUploadView,FilterApplicantsView,getUnderReviewApplicants,ConfirmFilteredApplicants
+from .views import ApplicantAPIView,ExpiredJobView, JobView,getUserApplications,ContactUsAPIView,JobCategoryView,AdminJobView,JobBulkUploadView,JobDetailBulkUploadView,FilterApplicantsView,getUnderReviewApplicants,ConfirmFilteredApplicants
 
 urlpatterns = [
     # Job CRUD operations
     path('jobs/', JobView.as_view(), name='job-list'),  # Get all jobs
     path('jobs/<int:id>/', JobView.as_view(), name='job-detail'),  # Get a single job
+    path('expired_jobs/', ExpiredJobView.as_view(), name='expired_jobs'),  # Get a single job
     
     path('admin_jobs/', AdminJobView.as_view(), name='admin_job-list'),  # Get all jobs
     path('admin_jobs/<int:id>/', AdminJobView.as_view(), name='admin_job-detail'),  # Get a single job

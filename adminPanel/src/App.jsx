@@ -12,6 +12,7 @@ import Categories from "./components/Categories/Categories";
 import Applications from "./components/Applications/Applications";
 import FilterApplicants from "./components/Applications/FilterApplicants";
 import AuthorizeDocument from "./components/Applications/AuthorizeDocument";
+import CloseJobs from "./components/Jobs/CloseJobs";
 
 const App = () => {
   return (
@@ -21,6 +22,7 @@ const App = () => {
       <div className="main-container border-2 p-4 sm:ml-64 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
          <Routes>
             <Route path="/jobs" element={<Jobs/>}/>
+            <Route path="/close_jobs" element={<CloseJobs/>}/>
             <Route path="/jobs/add" element={<AddJob/>}/>
             <Route path="/jobs/add/bulk" element={<UploadBulk/>}/>
             <Route path="/edit/job_detail/:id" element={<UploadJobDetail/>}/>

@@ -91,7 +91,6 @@ const EditJob = () => {
     e.preventDefault();
     try {
       const updatedFormData = { ...formData, status: "InActive" };
-      console.log(updatedFormData);
 
       await updateJob(id, updatedFormData);
       alert("Job updated successfully!");

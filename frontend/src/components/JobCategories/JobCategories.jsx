@@ -31,7 +31,6 @@ const JobCategories = () => {
        const fetchCategories = async () => {
         try {
           const response = await getCategories();
-          console.log(response);
           
           setCategories(response || []); // Ensure it defaults to an empty array
         } catch (error) {

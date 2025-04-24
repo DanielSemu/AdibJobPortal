@@ -17,7 +17,6 @@ const JobDetail = () => {
     const fetchJob = async () => {
       try {
         const response = await getSingleJob(parseInt(id));
-        console.log(response);
         setDetailedData(response);
       } catch (error) {
         console.error("Error fetching job:", error);

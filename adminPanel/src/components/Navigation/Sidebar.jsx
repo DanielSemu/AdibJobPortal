@@ -85,13 +85,21 @@ const Sidebar = () => {
                     </Link>
                   </li>
                   <li>
+                    <Link
+                      to="close_jobs"
+                      className="flex items-center w-full p-2 text-gray-900 rounded-lg pl-11 hover:bg-gray-100"
+                    >
+                      Close Jobs
+                    </Link>
+                  </li>
+                  {/* <li>
                     <a
                       href="#"
                       className="flex items-center w-full p-2 text-gray-900 rounded-lg pl-11 hover:bg-gray-100"
                     >
                       Interview Schedule
                     </a>
-                  </li>
+                  </li> */}
                 </ul>
               )}
             </li>
