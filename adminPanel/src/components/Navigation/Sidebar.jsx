@@ -2,11 +2,26 @@ import React, { useState } from "react";
 import { AiFillDashboard } from "react-icons/ai";
 import {FaUsers,FaRegFileAlt,FaInbox,FaAngleRight,FaSignOutAlt,FaAngleDown,} from "react-icons/fa";
 import { MdOutlineWork, MdMenu, MdClose } from "react-icons/md";
-import { Link } from "react-router-dom";
+import { Link ,useNavigate} from "react-router-dom";
+import { logout, profile } from "../../api/auth";
+import useAuth from "../../hooks/useAuth";
 
 const Sidebar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const {userProfile,setUserProfile}=useAuth()
+  const navigate = useNavigate();
+
+   const handleLogout = async() => {
+      try {
+        const response=await logout()
+        setUserProfile(null);
+        navigate("/login");    
+      } catch (error) {
+        console.error("Failed to logout", error);
+      }
+      
+    };
 
   return (
     <>
@@ -42,13 +57,20 @@ const Sidebar = () => {
           {/* Sidebar Menu */}
           <ul className="space-y-2 font-medium">
             <li>
-              <a
-                href="#"
+            <button
+                className="text-primary bg-[#ffd91e] border-2 flex items-center border-transparent hover:bg-[#007dda] hover:text-[#ffd91e] hover:border-[#ffd91e] font-medium rounded-lg text-sm px-4 py-2 transition-all duration-300"
+              >
+                {userProfile.email} <FaAngleDown />
+              </button>
+            </li>
+            <li>
+              <Link
+                to="/"
                 className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
               >
                 <AiFillDashboard className="w-5 h-5 text-gray-500 group-hover:text-gray-900" />
                 <span className="ms-3">Dashboard</span>
-              </a>
+              </Link>
             </li>
 
             {/* Dropdown Menu */}
@@ -76,20 +98,22 @@ const Sidebar = () => {
                       Jobs
                     </Link>
                   </li>
+                 
                   <li>
                     <Link
-                      to="categories"
-                      className="flex items-center w-full p-2 text-gray-900 rounded-lg pl-11 hover:bg-gray-100"
-                    >
-                      Job Categories
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to="close_jobs"
+                      to="/close_jobs"
                       className="flex items-center w-full p-2 text-gray-900 rounded-lg pl-11 hover:bg-gray-100"
                     >
                       Close Jobs
+                    </Link>
+                  </li> 
+                  
+                  <li>
+                    <Link
+                      to="/categories"
+                      className="flex items-center w-full p-2 text-gray-900 rounded-lg pl-11 hover:bg-gray-100"
+                    >
+                      Job Categories
                     </Link>
                   </li>
                   {/* <li>
@@ -139,8 +163,8 @@ const Sidebar = () => {
 
             <li>
               <a
-                href="#"
-                className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
+                onClick={handleLogout}
+                className="cursor-pointer flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
               >
                 <FaSignOutAlt className="w-5 h-5 text-gray-500 group-hover:text-gray-900" />
                 <span className="ms-3">Sign Out</span>

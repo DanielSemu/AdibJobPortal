@@ -14,9 +14,14 @@ import chardet
 from io import BytesIO, TextIOWrapper
 import csv
 from dateutil.parser import parse
+from authApi.permissions import IsAdminRole
+
 
 
 class AdminJobView(APIView):
+    
+    permission_classes =[IsAuthenticated,IsAdminRole]
+    
     def get(self, request, id=None, *args, **kwargs):
         if id:
             job=get_object_or_404(Job, id=id)

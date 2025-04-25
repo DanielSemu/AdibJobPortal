@@ -21,6 +21,13 @@ class CustomUserManager(BaseUserManager):
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     """Custom user model"""
+    ROLE_CHOICES = [
+        ('admin', 'Admin'),
+        ('hr_maker', 'HR Maker'),
+        ('hr_checker', 'HR Checker'),
+        ('user', 'User'),
+    ]
+    
     email = models.EmailField(unique=True)
     full_name = models.CharField(max_length=255)
     birthdate = models.DateField(null=True, blank=True)
@@ -33,7 +40,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     ]
     
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True, blank=True)
-
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='user')
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
