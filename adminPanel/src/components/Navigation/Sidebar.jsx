@@ -100,7 +100,7 @@ const Sidebar = () => {
                           Jobs
                         </Link>
                       </li>
-                     
+                     {userProfile.role === 'hr_checker' &&(
                       <li>
                         <Link
                           to="/close_jobs"
@@ -108,7 +108,9 @@ const Sidebar = () => {
                         >
                           Close Jobs
                         </Link>
-                      </li> 
+                      </li>
+                     )}
+                       
                       
                       <li>
                         <Link
