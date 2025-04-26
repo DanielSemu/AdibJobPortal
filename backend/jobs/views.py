@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework.exceptions import NotFound
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view, permission_classes
@@ -14,13 +14,13 @@ import chardet
 from io import BytesIO, TextIOWrapper
 import csv
 from dateutil.parser import parse
-from authApi.permissions import IsAdminRole
+from authApi.permissions import IsAdminRole,ViewJobRole,IsHrCheckerRole
 
 
 
 class AdminJobView(APIView):
     
-    permission_classes =[IsAuthenticated,IsAdminRole]
+    permission_classes =[IsAuthenticated,ViewJobRole]
     
     def get(self, request, id=None, *args, **kwargs):
         if id:
@@ -63,6 +63,7 @@ class JobView(APIView):
         
         return Response(serializer.data, status=status.HTTP_200_OK)
 class ExpiredJobView(APIView):
+    permission_classes =[IsAuthenticated,ViewJobRole]
     def get(self, request, id=None, *args, **kwargs):
         jobs = Job.objects.filter(status="Active",application_deadline__lt=timezone.now().date())
 
@@ -72,6 +73,7 @@ class ExpiredJobView(APIView):
     
     
 class JobBulkUploadView(APIView):
+    permission_classes =[IsAuthenticated,ViewJobRole]
     def post(self, request, *args, **kwargs):
         csv_file = request.FILES.get('file')
         if not csv_file:
@@ -123,6 +125,7 @@ class JobBulkUploadView(APIView):
         return Response({"message": "Jobs uploaded successfully!"}, status=status.HTTP_201_CREATED)
     
 class JobDetailBulkUploadView(APIView):
+    permission_classes =[IsAuthenticated,ViewJobRole]
     def post(self, request, job_id, *args, **kwargs):
         csv_file = request.FILES.get('file')
         if not csv_file:
@@ -161,6 +164,11 @@ class JobDetailBulkUploadView(APIView):
 
 
 class JobCategoryView(APIView):
+    # permission_classes =[IsAuthenticated,ViewJobRole]
+    def get_permissions(self):
+        if self.request.method in ['POST', 'PUT', 'DELETE']:
+            return [IsAuthenticated(), ViewJobRole()]  # Auth + Role check
+        return [AllowAny()]  # <-- 🛠 Allow GET for everyone
     def get(self, request, id=None, *args, **kwargs):
         if id:
             category = get_object_or_404(JobCategory, id=id)  # Get a single category

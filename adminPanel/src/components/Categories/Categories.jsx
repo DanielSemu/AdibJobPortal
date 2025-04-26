@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import ReusableTable from "../ui/ReausableTable";
 import { FiEye, FiEdit, FiPlus } from "react-icons/fi";
-import { getCategories, updateCategory, createCategory } from "../services/jobsService";
+import {
+  getCategories,
+  updateCategory,
+  createCategory,
+} from "../services/jobsService";
+import useAuth from "../../hooks/useAuth";
 
 // Same options as your Django model
 const ICON_OPTIONS = [
@@ -20,6 +25,8 @@ const Categories = () => {
   const [editedIcon, setEditedIcon] = useState("");
   const [newCategoryName, setNewCategoryName] = useState("");
   const [newIcon, setNewIcon] = useState("");
+
+  const { userProfile, setUserProfile } = useAuth();
 
   useEffect(() => {
     fetchCategories();
@@ -87,9 +94,11 @@ const Categories = () => {
           <button onClick={() => handleDetailView(row)} className="btn">
             <FiEye />
           </button>
-          <button onClick={() => handleEdit(row)} className="btn">
-            <FiEdit />
-          </button>
+          {userProfile.role === "hr_maker" && (
+            <button onClick={() => handleEdit(row)} className="btn">
+              <FiEdit />
+            </button>
+          )}
         </div>
       ),
     },
@@ -97,13 +106,22 @@ const Categories = () => {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-4">
-        <button onClick={handleAddNew} className="btn bg-blue-700 text-white px-4 py-2 rounded flex items-center gap-2">
-          <FiPlus /> Add Category
-        </button>
-      </div>
+      {userProfile.role === "hr_maker" && (
+        <div className="flex justify-between items-center mb-4">
+          <button
+            onClick={handleAddNew}
+            className="btn bg-blue-700 text-white px-4 py-2 rounded flex items-center gap-2"
+          >
+            <FiPlus /> Add Category
+          </button>
+        </div>
+      )}
 
-      <ReusableTable columns={columns} records={categories} title={"Categories"} />
+      <ReusableTable
+        columns={columns}
+        records={categories}
+        title={"Categories"}
+      />
 
       {(selectedCategory || modalType === "add") && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
@@ -112,14 +130,18 @@ const Categories = () => {
               onClick={closeModal}
               className="absolute top-2 right-2 text-gray-600 text-xl"
             >
-              ✕ 
+              ✕
             </button>
 
             {modalType === "detail" && (
               <div>
                 <h2 className="text-xl font-bold mb-4">Category Details</h2>
-                <p><strong>Name:</strong> {selectedCategory.name}</p>
-                <p><strong>Icon Name:</strong> {selectedCategory.iconName}</p>
+                <p>
+                  <strong>Name:</strong> {selectedCategory.name}
+                </p>
+                <p>
+                  <strong>Icon Name:</strong> {selectedCategory.iconName}
+                </p>
               </div>
             )}
 
@@ -154,7 +176,10 @@ const Categories = () => {
                     </select>
                   </label>
                   <div className="mt-4 flex justify-end">
-                    <button type="submit" className="btn bg-blue-600 px-4 py-2 rounded text-white">
+                    <button
+                      type="submit"
+                      className="btn bg-blue-600 px-4 py-2 rounded text-white"
+                    >
                       Save
                     </button>
                   </div>
@@ -193,7 +218,10 @@ const Categories = () => {
                     </select>
                   </label>
                   <div className="mt-4 flex justify-end">
-                    <button type="submit" className="btn bg-blue-600 px-4 py-2 rounded text-white">
+                    <button
+                      type="submit"
+                      className="btn bg-blue-600 px-4 py-2 rounded text-white"
+                    >
                       Add
                     </button>
                   </div>

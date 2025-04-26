@@ -47,6 +47,8 @@ export const login = async (email, password) => {
                 withCredentials: true, // Ensures cookies are sent with the request
             }
         );
+        console.log(response);
+        
         const { access } = response.data;  // Destructure access token from the response
         setAccessToken(access)
         

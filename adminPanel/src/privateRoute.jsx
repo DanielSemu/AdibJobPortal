@@ -2,16 +2,23 @@ import { Navigate } from 'react-router-dom';
 import useAuth from './hooks/useAuth';
 import { getAccessToken } from './api/tokenStorage';
 
-const PrivateRoute = ({ children }) => {
-    const {loading,setLoading}=useAuth()
-    const  accessToken  = getAccessToken();  
+const PrivateRoute = ({ children, roles }) => {
+  const { loading, userProfile } = useAuth();
+  const accessToken = getAccessToken();
 
-    
-    if (loading && !accessToken) {
-        return <div>Loading...</div>;
-    }
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
-    return accessToken ? children : <Navigate to="/login" />;  // Redirect to login page if not authenticated
+  if (!accessToken) {
+    return <Navigate to="/login" />;
+  }
+
+  if (roles && !roles.includes(userProfile?.role)) {
+    return <Navigate to="/unauthorized" />;
+  }
+
+  return children;
 };
 
 export default PrivateRoute;

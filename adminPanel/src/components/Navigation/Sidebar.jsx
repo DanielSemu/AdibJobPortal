@@ -74,61 +74,62 @@ const Sidebar = () => {
             </li>
 
             {/* Dropdown Menu */}
-            <li>
-              <button
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                type="button"
-                className="flex items-center w-full p-2 text-base text-gray-900 rounded-lg group hover:bg-gray-100"
-              >
-                <MdOutlineWork className="w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900" />
-                <span className="flex-1 ms-3 text-left">Vacancies</span>
-                {isDropdownOpen ? (
-                  <FaAngleDown className="w-4 h-5" />
-                ) : (
-                  <FaAngleRight className="w-4 h-5" />
-                )}
-              </button>
-              {isDropdownOpen && (
-                <ul className="py-2 space-y-2">
+            {(userProfile.role ==='hr_maker' || userProfile.role ==='hr_checker') &&(
+              <>
                   <li>
-                    <Link
-                      to="/jobs"
-                      className="flex items-center w-full p-2 text-gray-900 rounded-lg pl-11 hover:bg-gray-100"
-                    >
-                      Jobs
-                    </Link>
-                  </li>
-                 
-                  <li>
-                    <Link
-                      to="/close_jobs"
-                      className="flex items-center w-full p-2 text-gray-900 rounded-lg pl-11 hover:bg-gray-100"
-                    >
-                      Close Jobs
-                    </Link>
-                  </li> 
-                  
-                  <li>
-                    <Link
-                      to="/categories"
-                      className="flex items-center w-full p-2 text-gray-900 rounded-lg pl-11 hover:bg-gray-100"
-                    >
-                      Job Categories
-                    </Link>
-                  </li>
-                  {/* <li>
-                    <a
-                      href="#"
-                      className="flex items-center w-full p-2 text-gray-900 rounded-lg pl-11 hover:bg-gray-100"
-                    >
-                      Interview Schedule
-                    </a>
-                  </li> */}
-                </ul>
-              )}
-            </li>
-
-            <li>
+                  <button
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    type="button"
+                    className="flex items-center w-full p-2 text-base text-gray-900 rounded-lg group hover:bg-gray-100"
+                  >
+                    <MdOutlineWork className="w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900" />
+                    <span className="flex-1 ms-3 text-left">Vacancies</span>
+                    {isDropdownOpen ? (
+                      <FaAngleDown className="w-4 h-5" />
+                    ) : (
+                      <FaAngleRight className="w-4 h-5" />
+                    )}
+                  </button>
+                  {isDropdownOpen && (
+                    <ul className="py-2 space-y-2">
+                      <li>
+                        <Link
+                          to="/jobs"
+                          className="flex items-center w-full p-2 text-gray-900 rounded-lg pl-11 hover:bg-gray-100"
+                        >
+                          Jobs
+                        </Link>
+                      </li>
+                     
+                      <li>
+                        <Link
+                          to="/close_jobs"
+                          className="flex items-center w-full p-2 text-gray-900 rounded-lg pl-11 hover:bg-gray-100"
+                        >
+                          Close Jobs
+                        </Link>
+                      </li> 
+                      
+                      <li>
+                        <Link
+                          to="/categories"
+                          className="flex items-center w-full p-2 text-gray-900 rounded-lg pl-11 hover:bg-gray-100"
+                        >
+                          Job Categories
+                        </Link>
+                      </li>
+                      {/* <li>
+                        <a
+                          href="#"
+                          className="flex items-center w-full p-2 text-gray-900 rounded-lg pl-11 hover:bg-gray-100"
+                        >
+                          Interview Schedule
+                        </a>
+                      </li> */}
+                    </ul>
+                  )}
+                </li>
+    <li>
               <Link
                 to="/applications"
                 className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
@@ -137,6 +138,10 @@ const Sidebar = () => {
                 <span className="ms-3">Applications</span>
               </Link>
             </li>
+                </>
+            )}
+         
+            
 
             <li>
               <a
@@ -151,7 +156,8 @@ const Sidebar = () => {
               </a>
             </li>
 
-            <li>
+            {userProfile.role ==='admin' &&(
+                <li>
               <a
                 href="#"
                 className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
@@ -160,6 +166,8 @@ const Sidebar = () => {
                 <span className="ms-3">Users</span>
               </a>
             </li>
+            )}
+          
 
             <li>
               <a
