@@ -69,7 +69,7 @@ const AddJob = () => {
           <h2 className="text-2xl font-bold">Post a Job</h2>
           <Link
             to="bulk"
-            className="flex items-center justify-center text-white bg-blue-600 px-4 py-2 rounded-lg hover:bg-blue-700 text-sm font-medium shadow-md transition duration-300 ease-in-out"
+            className="flex items-center justify-center text-white bg-primary px-4 py-2 rounded-lg hover:bg-blue-500 text-sm font-medium shadow-md transition duration-300 ease-in-out"
           >
             Upload Bulk
           </Link>
@@ -253,7 +253,7 @@ const AddJob = () => {
           <div className="col-span-2">
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+              className="w-full bg-primary text-white py-2 rounded-lg  hover:bg-blue-500 transition duration-300 ease-in-out"
             >
               Submit
             </button>

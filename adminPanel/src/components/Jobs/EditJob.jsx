@@ -218,7 +218,7 @@ const EditJob = () => {
           <h2 className="text-2xl font-bold mb-4">Upload Job Details</h2>
           <Link
             to={`/edit/job_detail/${id}`}
-            className="flex items-center justify-center text-white bg-blue-600 px-4 py-2 rounded-lg hover:bg-blue-700 text-sm font-medium shadow-md transition duration-300 ease-in-out"
+            className="flex items-center justify-center text-white bg-primary px-4 py-2 rounded-lg hover:bg-blue-500 text-sm font-medium shadow-md transition duration-300 ease-in-out"
           >
             Upload Bulk
           </Link>
@@ -282,7 +282,7 @@ const EditJob = () => {
 
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+          className="w-full bg-primary text-white py-2 rounded-lg hover:bg-blue-500"
         >
           Update Job
         </button>

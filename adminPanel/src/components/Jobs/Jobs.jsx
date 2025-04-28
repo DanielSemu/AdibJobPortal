@@ -101,7 +101,7 @@ const Jobs = () => {
           <Link
             to={"/jobs/add"}
             onClick={""}
-            className="btn bg-blue-700 text-white px-4 py-2 rounded flex items-center gap-2"
+            className="btn bg-primary text-white px-4 py-2 rounded flex items-center gap-2"
           >
             <FiPlus /> Add job
           </Link>

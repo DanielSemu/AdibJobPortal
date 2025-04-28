@@ -110,7 +110,7 @@ const Categories = () => {
         <div className="flex justify-between items-center mb-4">
           <button
             onClick={handleAddNew}
-            className="btn bg-blue-700 text-white px-4 py-2 rounded flex items-center gap-2"
+            className="btn bg-primary text-white px-4 py-2 rounded flex items-center gap-2"
           >
             <FiPlus /> Add Category
           </button>
@@ -178,7 +178,7 @@ const Categories = () => {
                   <div className="mt-4 flex justify-end">
                     <button
                       type="submit"
-                      className="btn bg-blue-600 px-4 py-2 rounded text-white"
+                      className="btn bg-primary px-4 py-2 rounded text-white"
                     >
                       Save
                     </button>
@@ -220,7 +220,7 @@ const Categories = () => {
                   <div className="mt-4 flex justify-end">
                     <button
                       type="submit"
-                      className="btn bg-blue-600 px-4 py-2 rounded text-white"
+                      className="btn bg-primary px-4 py-2 rounded text-white"
                     >
                       Add
                     </button>

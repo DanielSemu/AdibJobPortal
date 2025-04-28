@@ -59,7 +59,7 @@ const Applications = () => {
 
   return (
     <div>
-      <Link to={'/filter_applicants'} className=" bg-blue-700 text-white py-1 px-3  flex w-fit rounded-md hover:bg-blue-500 transition-all ">Filter Applicants</Link>
+      <Link to={'/filter_applicants'} className=" bg-primary text-white py-2 px-3  flex w-fit rounded-md hover:bg-blue-500 transition-all ">Filter Applicants</Link>
       <ReusableTable
         columns={columns}
         records={applicants}
