@@ -72,3 +72,11 @@ export const confirmFilteredApplicants = async (criteria, confirm, applicant_ids
 export const getUnderReviewApplicants = async ()=>{
   const response= await axiosInstance.get('/api/get_under_review_applicants/')
 }
+export const uploadBulkJobs = async (fromData)=>{
+  const response= await axiosInstance.post('/api/jobs/bulk-upload/', fromData)
+  return response.data
+}
+export const uploadBulkJobDetail = async ( id,fromData)=>{
+  const response= await axiosInstance.post(`/api/jobs/job-detail-upload/${id}/`, fromData)
+  return response.data
+}

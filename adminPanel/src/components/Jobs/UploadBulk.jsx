@@ -1,9 +1,13 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { uploadBulkJobs } from "../services/jobsService";
+import { showErrorToast, showSuccessToast } from "../../utils/toastUtils";
+import { useNavigate } from "react-router-dom";
+
 // import excelFile from '../../assets/upload_template.xlsx'
 const UploadBulk = () => {
   const [file, setFile] = useState(null);
   const [message, setMessage] = useState("");
+  const navigate=useNavigate()
 
 
   const handleDownloadTemplate = () => {
@@ -30,19 +34,12 @@ const UploadBulk = () => {
     formData.append("file", file);
 
     try {
-      const res = await axios.post(
-        "http://127.0.0.1:8000/api/jobs/bulk-upload/",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      setMessage(res.data.message);
+      const res = await uploadBulkJobs(formData)
+      showSuccessToast(res.message)
+      navigate('/jobs')
     } catch (error) {
       console.error(error);
-      setMessage(error.response?.data?.error || "Error uploading file.");
+      showErrorToast(error.response?.data?.error || "Error uploading file.")
     }
   };
 

@@ -126,7 +126,7 @@ const Step1 = ({ formData, errors, handleChange, workPlace }) => {
           ))}
   
         </select>
-        {errors.email && <p className="text-red-500">{errors.email}</p>}
+        {errors.workPlace && <p className="text-red-500">{errors.workPlace}</p>}
       </div>
     </div>
   );

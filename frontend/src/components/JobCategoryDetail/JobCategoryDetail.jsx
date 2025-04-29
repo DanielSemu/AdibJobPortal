@@ -42,7 +42,7 @@ const JobCategoryDetail = () => {
             </div>
             <div className="grid lg:grid-cols-3 md:grid-cols-2   mt-8 gap-[30px]  px-10">
               {selectedJobs.map((job, index) => {
-                const postedDate = new Date(job.posted_at);
+                const postedDate = new Date(job.post_date);
                 const deadlineDate = new Date(job.application_deadline);
                 const today = new Date();
 

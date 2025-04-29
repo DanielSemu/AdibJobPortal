@@ -23,8 +23,7 @@ const Step2 = ({
           >
             {edu.education_level}
             {" in "}
-            {edu.field_of_study}{" "}
-            {" with CGPA "} {edu.cgpa}
+            {edu.field_of_study} {" with CGPA "} {edu.cgpa}
             <span
               onClick={() => removeEntry("educations", index)}
               className="float-end ml-1 text-xl text-red-600 cursor-pointer"
@@ -57,6 +56,9 @@ const Step2 = ({
           <option value="Master’s Degree">Master’s Degree</option>
           <option value="PhD">PhD</option>
         </select>
+        {errors.education_level && (
+            <p className="text-red-500 text-sm mt-1">{errors.education_level}</p>
+          )}
       </div>
       {/* Field of Study */}
       <div>
@@ -71,6 +73,9 @@ const Step2 = ({
           className="w-full p-2 border rounded-md focus:outline-blue-500"
           required
         />
+         {errors.field_of_study && (
+            <p className="text-red-500 text-sm mt-1">{errors.field_of_study}</p>
+          )}
       </div>
       {/* Graduation Year */}
       <div>
@@ -86,6 +91,9 @@ const Step2 = ({
           className="w-full p-2 border rounded-md focus:outline-blue-500"
           required
         />
+         {errors.graduation_year && (
+            <p className="text-red-500 text-sm mt-1">{errors.graduation_year}</p>
+          )}
       </div>
       {/* Field of Study */}
       <div>
@@ -100,6 +108,9 @@ const Step2 = ({
           className="w-full p-2 border rounded-md focus:outline-blue-500"
           required
         />
+         {errors.education_organization && (
+            <p className="text-red-500 text-sm mt-1">{errors.education_organization}</p>
+          )}
       </div>
       <div className="flex flex-col md:flex-row md:space-x-6 items-center mt-3 mb-4">
         {/* CGPA */}
@@ -111,15 +122,20 @@ const Step2 = ({
             value={currentEducation.cgpa}
             onChange={(e) => handleInputChange("education", e)}
             min={0}
-            max={4.00}
+            max={4.0}
             className="p-2 border rounded-md focus:outline-blue-500 flex-grow md:flex-none"
             required
           />
+          {errors.cgpa && (
+            <p className="text-red-500 text-sm mt-1">{errors.cgpa}</p>
+          )}
         </div>
 
         {/* Age */}
         <div className="flex items-center w-full md:w-auto">
-          <label className="text-gray-700 font-semibold mr-2">Exit Exam(opt):</label>
+          <label className="text-gray-700 font-semibold mr-2">
+            Exit Exam(opt):
+          </label>
           <input
             type="number"
             name="exit_exam"
@@ -127,8 +143,11 @@ const Step2 = ({
             onChange={(e) => handleInputChange("education", e)}
             min={0}
             className="p-2 border rounded-md focus:outline-blue-500 flex-grow md:flex-none"
-            required
+            // required
           />
+          {errors.exit_exam && (
+            <p className="text-red-500 text-sm mt-1">{errors.exit_exam}</p>
+          )}
         </div>
       </div>
       <button

@@ -58,7 +58,12 @@ class JobView(APIView):
             job = get_object_or_404(Job, id=id)  # Get a single job
             serializer = JobSerializer(job)
         else:
-            jobs = Job.objects.filter(status="Active",application_deadline__gte=timezone.now().date())  # Get all jobs
+            today = timezone.now().date()
+            jobs = Job.objects.filter(
+            status="Active",
+            post_date__lte=today,
+            application_deadline__gte=today
+            )
             serializer = JobSerializer(jobs, many=True)
         
         return Response(serializer.data, status=status.HTTP_200_OK)

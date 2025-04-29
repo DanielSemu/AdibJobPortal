@@ -26,13 +26,15 @@ const Router = () => {
       <div className="main-container p-4 sm:ml-64 border-gray-200 rounded-lg dark:border-gray-700">
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="/unauthorized" element={<Unauthorized />} />
+          <Route path="/unauthorized" element={ <PrivateRoute>
+            <Unauthorized />
+            </PrivateRoute>} />
 
           {/* Dashboard - Allow all logged users */}
           <Route
             path=""
             element={
-              <PrivateRoute>
+              <PrivateRoute >
                 <Dashboard />
               </PrivateRoute>
             }
@@ -42,7 +44,7 @@ const Router = () => {
           <Route
             path="/jobs"
             element={
-              <PrivateRoute roles={["hr_checker", "hr_maker"]}>
+              <PrivateRoute >
                 <Jobs />
               </PrivateRoute>
             }
@@ -52,7 +54,7 @@ const Router = () => {
           <Route
             path="/close_jobs"
             element={
-              <PrivateRoute roles={["hr_checker"]}>
+              <PrivateRoute >
                 <CloseJobs />
               </PrivateRoute>
             }
@@ -62,7 +64,7 @@ const Router = () => {
           <Route
             path="/jobs/add"
             element={
-              <PrivateRoute roles={["hr_maker"]}>
+              <PrivateRoute >
                 <AddJob />
               </PrivateRoute>
             }
@@ -72,7 +74,7 @@ const Router = () => {
           <Route
             path="/jobs/add/bulk"
             element={
-              <PrivateRoute roles={["hr_maker"]}>
+              <PrivateRoute >
                 <UploadBulk />
               </PrivateRoute>
             }
@@ -82,7 +84,7 @@ const Router = () => {
           <Route
             path="/edit/job_detail/:id"
             element={
-              <PrivateRoute roles={["hr"]}>
+              <PrivateRoute>
                 <UploadJobDetail />
               </PrivateRoute>
             }
@@ -102,7 +104,7 @@ const Router = () => {
           <Route
             path="/edit/:id"
             element={
-              <PrivateRoute roles={["hr_maker"]}>
+              <PrivateRoute >
                 <EditJob />
               </PrivateRoute>
             }
@@ -112,7 +114,7 @@ const Router = () => {
           <Route
             path="/categories"
             element={
-              <PrivateRoute roles={["hr_maker", "hr_checker"]}>
+              <PrivateRoute >
                 <Categories />
               </PrivateRoute>
             }
@@ -122,7 +124,7 @@ const Router = () => {
           <Route
             path="/applications"
             element={
-              <PrivateRoute roles={["hr_maker", "hr_checker"]}>
+              <PrivateRoute >
                 <Applications />
               </PrivateRoute>
             }
@@ -132,7 +134,7 @@ const Router = () => {
           <Route
             path="/filter_applicants"
             element={
-              <PrivateRoute roles={["hr_checker"]}>
+              <PrivateRoute >
                 <FilterApplicants />
               </PrivateRoute>
             }
@@ -142,7 +144,7 @@ const Router = () => {
           <Route
             path="/authorize_document/:id"
             element={
-              <PrivateRoute roles={["hr_maker", "hr_checker"]}>
+              <PrivateRoute >
                 <AuthorizeDocument />
               </PrivateRoute>
             }
