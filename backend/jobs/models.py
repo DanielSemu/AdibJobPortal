@@ -22,11 +22,11 @@ class Job(models.Model):
     vacancy_number=models.CharField(max_length=50, null=True, blank=True)
     title = models.CharField(max_length=255)
     job_grade=models.CharField(max_length=100 , null=True, blank=True)
-    company = models.CharField(max_length=255, default="Addis Bank S.C")
+    company = models.CharField(max_length=255, default="Addis Bank S.C", blank=True)
     category = models.ForeignKey(JobCategory, on_delete=models.CASCADE, related_name="jobs")
     location = models.CharField(max_length=255)
     job_type = models.CharField(max_length=50, choices=[("Full-time", "Full-time"), ("Part-time", "Part-time"), ("Contract", "Contract")])
-    salary = models.CharField(max_length=255, default="As per Companies Salary Scale")
+    salary = models.CharField(max_length=255, default="As per Companies Salary Scale",blank=True)
     description = models.TextField()
     application_deadline = models.DateField()
     post_date = models.DateField(null=True, blank=True) 
@@ -104,6 +104,7 @@ class Applicant(models.Model):
     resume = models.FileField(upload_to='resumes/',blank=True ,null=True  )
     terms_accepted = models.BooleanField(default=False)
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='Pending')
+    selected_work_place=models.CharField(max_length=100, blank=True, null=True)
     def __str__(self):
         return self.full_name
 

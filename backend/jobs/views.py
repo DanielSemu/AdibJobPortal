@@ -45,6 +45,7 @@ class AdminJobView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         
+        # print("Validation errors:", serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, id=None, *args, **kwargs):
@@ -70,7 +71,8 @@ class JobView(APIView):
 class ExpiredJobView(APIView):
     permission_classes =[IsAuthenticated,ViewJobRole]
     def get(self, request, id=None, *args, **kwargs):
-        jobs = Job.objects.filter(status="Active",application_deadline__lt=timezone.now().date())
+        # jobs = Job.objects.filter(status="Active",application_deadline__lt=timezone.now().date())
+        jobs = Job.objects.filter(status="Active")
 
         serializer = JobSerializer(jobs, many=True)
         
@@ -78,57 +80,77 @@ class ExpiredJobView(APIView):
     
     
 class JobBulkUploadView(APIView):
-    permission_classes =[IsAuthenticated,ViewJobRole]
+    permission_classes = [IsAuthenticated, ViewJobRole]
+
     def post(self, request, *args, **kwargs):
         csv_file = request.FILES.get('file')
         if not csv_file:
             return Response({"error": "No file provided"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Read small sample for encoding detection
+        # Detect encoding from sample
         sample = csv_file.read(1024)
         encoding = chardet.detect(sample)['encoding'] or 'utf-8'
-
-        # Go back to beginning of file
-        csv_file.seek(0)
+        csv_file.seek(0)  # rewind
 
         decoded_file = TextIOWrapper(csv_file.file, encoding=encoding)
         reader = csv.DictReader(decoded_file)
 
         jobs_to_create = []
+        errors = []
+        row_number = 1  # for clearer error messages
 
         for row in reader:
             try:
-                category_obj = JobCategory.objects.get(name=row['category'])
-            except JobCategory.DoesNotExist:
-                return Response({"error": f"Category '{row['category']}' not found."}, status=status.HTTP_400_BAD_REQUEST)
+                row_number += 1
 
-            # 🛠 Fix the date format here
-            raw_date = row['application_deadline']
-            parsed_date = parse(raw_date, dayfirst=False).date()
+                # Check for required fields
+                required_fields = ['title', 'category', 'location', 'job_type', 'description', 'application_deadline', 'post_date']
+                for field in required_fields:
+                    if not row.get(field):
+                        raise ValueError(f"Missing required field '{field}'.")
 
-            job = Job(
-                vacancy_number=row.get('vacancy_number') or None,
-                title=row['title'],
-                job_grade=row.get('job_grade') or None,
-                company=row.get('company', 'Addis Bank S.C'),
-                category=category_obj,
-                location=row['location'],
-                job_type=row['job_type'],
-                salary=row.get('salary', 'As per Companies Salary Scale'),
-                description=row['description'],
-                application_deadline=parsed_date,
-                show_experience=row.get('show_experience', 'True').lower() == 'true',
-                status=row.get('status', 'InActive'),
-                created_at=now(),
-                updated_at=now()
+                try:
+                    category_obj = JobCategory.objects.get(name=row['category'])
+                except JobCategory.DoesNotExist:
+                    raise ValueError(f"Category '{row['category']}' not found.")
+
+                try:
+                    parsed_deadline = parse(row['application_deadline'], dayfirst=False).date()
+                    parsed_post_date = parse(row['post_date'], dayfirst=False).date()
+                except Exception:
+                    raise ValueError("Invalid date format in 'application_deadline' or 'post_date'.")
+
+                job = Job(
+                    vacancy_number=row.get('vacancy_number') or None,
+                    title=row['title'],
+                    job_grade=row.get('job_grade') or None,
+                    company=row.get('company') or "Addis Bank S.C",
+                    category=category_obj,
+                    location=row['location'],
+                    job_type=row['job_type'],
+                    salary=row.get('salary') or "As per Companies Salary Scale",
+                    description=row['description'],
+                    post_date=parsed_post_date,
+                    application_deadline=parsed_deadline,
+                    show_experience=str(row.get('show_experience', 'True')).lower() == 'true',
+                    status=row.get('status') or "InActive",
+                    created_at=now(),
+                    updated_at=now()
+                )
+
+                jobs_to_create.append(job)
+
+            except Exception as e:
+                errors.append({"row": row_number, "error": str(e)})
+
+        if errors:
+            return Response(
+                {"message": "Some rows could not be processed.", "errors": errors},
+                status=status.HTTP_400_BAD_REQUEST
             )
 
-            jobs_to_create.append(job)
-
         Job.objects.bulk_create(jobs_to_create)
-
-        return Response({"message": "Jobs uploaded successfully!"}, status=status.HTTP_201_CREATED)
-    
+        return Response({"message": f"{len(jobs_to_create)} jobs uploaded successfully!"}, status=status.HTTP_201_CREATED)
 class JobDetailBulkUploadView(APIView):
     permission_classes =[IsAuthenticated,ViewJobRole]
     def post(self, request, job_id, *args, **kwargs):
@@ -289,7 +311,8 @@ class FilterApplicantsView(APIView):
             applicants=applicants.filter(job__id=selected_job)
         
         if selected_location:
-            applicants = applicants.filter(job__location__icontains=selected_location)
+            # applicants = applicants.filter(job__location__icontains=selected_location)
+            applicants = applicants.filter(selected_work_place__icontains=selected_location)
             
         if gender:
             applicants=applicants.filter(gender=gender)

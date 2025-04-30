@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams,useNavigate } from "react-router-dom";
 import { jobs } from "../../data/jobs";
 import { FaAngleDoubleRight, FaAngleDoubleLeft, FaCheck } from "react-icons/fa";
 import Step1 from "./Step1";
@@ -12,6 +12,7 @@ import axiosInstance from "../../services/axiosInstance";
 import { showErrorToast, showSuccessToast } from "../utils/toastUtils";
 import { profile, sendOTP } from "../../api/auth";
 
+
 const ApplyJob = () => {
   const { id } = useParams();
   const [step, setStep] = useState(1);
@@ -19,6 +20,7 @@ const ApplyJob = () => {
   const [list, setList] = useState([]);
   const [verificationModal, setVerificationModal] = useState(false);
   const [userProfile, setUserProfile] = useState([]);
+  const navigate=useNavigate()
   const [formData, setFormData] = useState({
     job: id,
     full_name: "",
@@ -30,7 +32,7 @@ const ApplyJob = () => {
     cover_letter: "",
     resume: null,
     terms_accepted: false,
-    workPlace: "",
+    selected_work_place: "",
     educations: [],
     experiences: [],
     certifications: [],
@@ -242,8 +244,8 @@ const ApplyJob = () => {
     if (!formData.full_name.trim()) newErrors.full_name = "Full Name is required";
     if (!formData.email.trim()) newErrors.email = "Email is required";
     if (!formData.phone.trim()) newErrors.phone = "Phone number is required";
-    if (!formData.workPlace || formData.workPlace.trim() === "") {
-      newErrors.workPlace = "Work Place is required";
+    if (!formData.selected_work_place || formData.selected_work_place.trim() === "") {
+      newErrors.selected_work_place = "Work Place is required";
     }
     if (!formData.gender) newErrors.gender = "Gender is required";
     if (!formData.birth_date) newErrors.birth_date = "Birth date is required";
@@ -295,7 +297,8 @@ const ApplyJob = () => {
     }
 
    
-
+    console.log(formData);
+    
     const formDataToSend = new FormData();
 
     Object.keys(formData).forEach((key) => {
@@ -314,6 +317,7 @@ const ApplyJob = () => {
       });
       setErrors({});
       showSuccessToast("Application Submitted Successfully Inserted ");
+      navigate("/")
     } catch (error) {
       console.error("Error response:", error.response.data);
       setErrors({});
@@ -395,7 +399,7 @@ const ApplyJob = () => {
               formData={formData}
               errors={errors}
               handleChange={handleChange}
-              workPlace={detailedData.location}
+              selected_work_place={detailedData.location}
             />
           )}
           {step === 2 && (
