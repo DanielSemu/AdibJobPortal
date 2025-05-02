@@ -9,6 +9,19 @@ export const getExpiredJobs = async () => {
   const response = await axiosInstance.get('/api/expired_jobs/');
   return response.data;
 };
+export const getAcceptedApplicants = async () => {
+  const response = await axiosInstance.get('/api/export_applicant/');
+  return response.data;
+};
+export const exportAcceptedApplicants = async () => {
+  const response = await axiosInstance.post(
+    '/api/export_applicant/',
+    {},
+    { responseType: 'blob' } // <-- Important for downloading files
+  );
+
+  return response;
+};
 
 export const getSingleJob = async (id) => {
   const response = await axiosInstance.get(`/api/admin_jobs/${id}/`);
@@ -50,6 +63,10 @@ export const updateApplicantStatus= async (id,status)=>{
 }
 export const getSingleApplicant = async (id) => {
   const response = await axiosInstance.get(`/api/applicants/${id}/`);
+  return response.data;
+};
+export const getApplicantsByJob = async (id) => {
+  const response = await axiosInstance.get(`/api/job/applicants/${id}/`);
   return response.data;
 };
 

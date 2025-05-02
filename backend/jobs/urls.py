@@ -1,7 +1,8 @@
 from django.urls import path
-from .views import ApplicantAPIView,ExpiredJobView, JobView,getUserApplications,ContactUsAPIView,JobCategoryView,AdminJobView,JobBulkUploadView,JobDetailBulkUploadView,FilterApplicantsView,getUnderReviewApplicants,ConfirmFilteredApplicants
+from .views import ApplicantAPIView,ExpiredJobView, JobView,getUserApplications,ContactUsAPIView,JobCategoryView,AdminJobView,JobBulkUploadView,JobDetailBulkUploadView,FilterApplicantsView,getUnderReviewApplicants,ConfirmFilteredApplicants,ExportEmployeeDataView,ActiveJobApplicants
 
 urlpatterns = [
+    path('export_applicant/',ExportEmployeeDataView.as_view(),name='export_applicant'),
     # Job CRUD operations
     path('jobs/', JobView.as_view(), name='job-list'),  # Get all jobs
     path('jobs/<int:id>/', JobView.as_view(), name='job-detail'),  # Get a single job
@@ -18,6 +19,7 @@ urlpatterns = [
    
     path('applicants/', ApplicantAPIView.as_view(), name='applicants_api'),
     path('applicants/<int:id>/', ApplicantAPIView.as_view(), name='applicants_detail'),
+    path('job/applicants/<int:id>/', ActiveJobApplicants.as_view(), name='active_job_applicant'),
     path('my_applications/', getUserApplications, name="my_applications"),
     path('filter_applicants/', FilterApplicantsView.as_view(), name="filter_applicants"),
     path('confirm_filter/', ConfirmFilteredApplicants.as_view(), name="confirm_filter"),

@@ -17,6 +17,8 @@ import PrivateRoute from "./privateRoute";
 import Login from "./components/Registration/Login";
 import Dashboard from "./components/Dashboard/Dashboard";
 import Unauthorized from "./components/Registration/Unauthorized"; // Create this page
+import AcceptedApplicants from "./components/Applications/AcceptedApplicants";
+import ActiveJobs from "./components/Jobs/ActiveJobs";
 
 const Router = () => {
   return (
@@ -56,6 +58,14 @@ const Router = () => {
             element={
               <PrivateRoute >
                 <CloseJobs />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/active_jobs"
+            element={
+              <PrivateRoute >
+                <ActiveJobs />
               </PrivateRoute>
             }
           />
@@ -126,6 +136,14 @@ const Router = () => {
             element={
               <PrivateRoute >
                 <Applications />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/accepted_applicants"
+            element={
+              <PrivateRoute >
+                <AcceptedApplicants />
               </PrivateRoute>
             }
           />

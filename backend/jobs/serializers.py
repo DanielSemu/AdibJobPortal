@@ -143,3 +143,145 @@ class ContactUsSerializer(serializers.ModelSerializer):
         fields= '__all__'
     
     
+    
+#     from django.http import HttpResponse
+# from openpyxl import Workbook
+# from openpyxl.styles import Alignment, Font
+
+# def export_employee_data(request):
+#     # Sample data — replace with queryset or real data from DB
+#     applicants = [
+#         {
+#             "full_name": "John Doe",
+#             "email": "john@example.com",
+#             "phone": "1234567890",
+#             "gender": "Male",
+#             "birth_date": "1990-01-01",
+#             "selected_work_place": "Addis Ababa",
+#             "educations": [
+#                 {"institution": "Unity University", "degree": "BSc", "year": "2012"},
+#                 {"institution": "AAU", "degree": "MSc", "year": "2015"},
+#                 {"institution": "AAU", "degree": "MSc", "year": "2015"},
+#                 {"institution": "AAU", "degree": "MSc", "year": "2015"}
+#             ],
+#             "experiences": [
+#                 {"company": "XYZ Bank", "position": "Cashier", "duration": "3 years"},
+#                 {"company": "ABC Corp", "position": "Manager", "duration": "2 years"},
+#                 {"company": "ABC Corp", "position": "Manager", "duration": "2 years"},
+#             ],
+#             "certifications": [
+#                 {"title": "Project Management", "year": "2018"},
+#                 {"title": "Data Analytics", "year": "2020"}
+#             ]
+#         },
+#         {
+#             "full_name": "John Doe",
+#             "email": "john@example.com",
+#             "phone": "1234567890",
+#             "gender": "Male",
+#             "birth_date": "1990-01-01",
+#             "contact_consent": True,
+#             "cover_letter": "Looking forward to joining.",
+#             "resume": "resume_john.pdf",
+#             "terms_accepted": True,
+#             "selected_work_place": "Addis Ababa",
+#             "educations": [
+#                 {"institution": "Unity University", "degree": "BSc", "year": "2012"},
+#                 {"institution": "AAU", "degree": "MSc", "year": "2015"}
+#             ],
+#             "experiences": [
+#                 {"company": "XYZ Bank", "position": "Cashier", "duration": "3 years"},
+#                 {"company": "ABC Corp", "position": "Manager", "duration": "2 years"}
+#             ],
+#             "certifications": [
+#                 {"title": "Project Management", "year": "2018"},
+#                 {"title": "Data Analytics", "year": "2020"}
+#             ]
+#         }
+#     ]
+
+#     # Create a workbook and worksheet
+#     wb = Workbook()
+#     ws = wb.active
+#     ws.title = "Applicants"
+
+#     headers = [
+#         "Full Name", "Email", "Phone", "Gender", "Birth Date", "Preferred Branch",
+#         "Education - Institution", "Education - Degree", "Education - Year",
+#         "Experience - Company", "Experience - Position", "Experience - Duration",
+#         "Certification - Title", "Certification - Year"
+#     ]
+#     ws.append(headers)
+
+#     for col in ws.iter_cols(min_row=1, max_row=1):
+#         for cell in col:
+#             cell.font = Font(bold=True)
+#             cell.alignment = Alignment(horizontal='center', wrap_text=True)
+
+#     current_row = 2
+#     for applicant in applicants:
+#         max_rows = max(
+#             len(applicant.get("educations", [])),
+#             len(applicant.get("experiences", [])),
+#             len(applicant.get("certifications", [])),
+#             1
+#         )
+#         for i in range(max_rows):
+#             row = []
+
+#             if i == 0:
+#                 row.extend([
+#                     applicant["full_name"],
+#                     applicant["email"],
+#                     applicant["phone"],
+#                     applicant["gender"],
+#                     applicant["birth_date"],
+#                     applicant["selected_work_place"]
+#                 ])
+#             else:
+#                 row.extend([""] * 10)
+
+#             # Education
+#             if i < len(applicant["educations"]):
+#                 edu = applicant["educations"][i]
+#                 row.extend([edu["institution"], edu["degree"], edu["year"]])
+#             else:
+#                 row.extend([""] * 3)
+
+#             # Experience
+#             if i < len(applicant["experiences"]):
+#                 exp = applicant["experiences"][i]
+#                 row.extend([exp["company"], exp["position"], exp["duration"]])
+#             else:
+#                 row.extend([""] * 3)
+
+#             # Certification
+#             if i < len(applicant["certifications"]):
+#                 cert = applicant["certifications"][i]
+#                 row.extend([cert["title"], cert["year"]])
+#             else:
+#                 row.extend([""] * 2)
+
+#             ws.append(row)
+
+#         # Merge personal data columns if needed
+#         if max_rows > 1:
+#             for col in range(1, 11):
+#                 ws.merge_cells(start_row=current_row, start_column=col, end_row=current_row + max_rows - 1, end_column=col)
+#                 ws.cell(row=current_row, column=col).alignment = Alignment(vertical='top', wrap_text=True)
+
+#         current_row += max_rows
+
+#     # Adjust column widths
+#     for column_cells in ws.columns:
+#         length = max(len(str(cell.value)) if cell.value else 0 for cell in column_cells)
+#         col_letter = column_cells[0].column_letter
+#         ws.column_dimensions[col_letter].width = length + 2
+
+#     # Create HTTP response with Excel file
+#     response = HttpResponse(
+#         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+#     )
+#     response['Content-Disposition'] = 'attachment; filename="applicants.xlsx"'
+#     wb.save(response)
+#     return response

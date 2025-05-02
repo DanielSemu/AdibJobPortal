@@ -15,8 +15,100 @@ from io import BytesIO, TextIOWrapper
 import csv
 from dateutil.parser import parse
 from authApi.permissions import IsAdminRole,ViewJobRole,IsHrCheckerRole
+# sdfdsfds
+from openpyxl import Workbook
+from openpyxl.styles import Font, Alignment
+from openpyxl.utils import get_column_letter
+from django.http import HttpResponse
 
+class ExportEmployeeDataView(APIView):
+    permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        return Applicant.objects.filter(status="Accepted")
+
+    def get(self, request):
+        applications = self.get_queryset()
+        if not applications.exists():
+            return Response({"message": "No applications found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ApplicantSerializer(applications, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        applications = self.get_queryset()
+        if not applications.exists():
+            return Response({"message": "No applications found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ApplicantSerializer(applications, many=True)
+        employees = serializer.data
+
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Employees"
+
+        headers = [
+            "No", "Full Name", "Gender", "Birth Date", "Applied For", "Work Place", "Status",
+            "Edu-Organization", "Edu-Level", "Filed-Study",
+            "Job-Position", "Organization", "From", "To", "Banking Experience",
+            "Certificate-Title", "Company"
+        ]
+        ws.append(headers)
+
+        for col in range(1, len(headers) + 1):
+            ws.cell(row=1, column=col).font = Font(bold=True)
+            ws.cell(row=1, column=col).alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+
+        row_index = 2
+        for i, emp in enumerate(employees, start=1):
+            educations = emp.get("educations", [])
+            experiences = emp.get("experiences", [])
+            certifications = emp.get("certifications", [])
+
+            max_len = max(len(educations), len(experiences), len(certifications))
+
+            for j in range(max_len):
+                edu = educations[j] if j < len(educations) else {}
+                exp = experiences[j] if j < len(experiences) else {}
+                cert = certifications[j] if j < len(certifications) else {}
+
+                ws.cell(row_index, 8, edu.get("education_organization", ""))
+                ws.cell(row_index, 9, edu.get("education_level", ""))
+                ws.cell(row_index, 10, edu.get("field_of_study", ""))
+
+                ws.cell(row_index, 11, exp.get("job_title", ""))
+                ws.cell(row_index, 12, exp.get("company_name", ""))
+                ws.cell(row_index, 13, exp.get("from_date", ""))
+                ws.cell(row_index, 14, exp.get("to_date", ""))
+                ws.cell(row_index, 15, exp.get("banking_experience", ""))
+
+                ws.cell(row_index, 16, cert.get("certificate_title", ""))
+                ws.cell(row_index, 17, cert.get("awarding_company", ""))
+
+                if j == 0:
+                    ws.cell(row_index, 1, i)
+                    ws.cell(row_index, 2, emp["full_name"])
+                    ws.cell(row_index, 3, emp["gender"])
+                    ws.cell(row_index, 4, emp["birth_date"])
+                    ws.cell(row_index, 5, emp["job_name"])
+                    ws.cell(row_index, 6, emp["selected_work_place"])
+                    ws.cell(row_index, 7, emp["status"])
+
+                row_index += 1
+
+            for col in [1, 2, 3, 4, 5, 6, 7]:
+                ws.merge_cells(start_row=row_index - max_len, start_column=col, end_row=row_index - 1, end_column=col)
+                ws.cell(row=row_index - max_len, column=col).alignment = Alignment(vertical="top", wrap_text=True)
+
+        column_widths = [5, 25, 15, 15, 20, 20, 20, 25, 25, 25, 12, 20, 15, 15, 12, 20, 20]
+        for i, width in enumerate(column_widths, start=1):
+            ws.column_dimensions[get_column_letter(i)].width = width
+
+        response = HttpResponse(content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        response['Content-Disposition'] = 'attachment; filename="employee_export.xlsx"'
+        wb.save(response)
+
+        return response
 
 class AdminJobView(APIView):
     
@@ -27,7 +119,7 @@ class AdminJobView(APIView):
             job=get_object_or_404(Job, id=id)
             serializer = JobSerializer(job)
         else:
-            jobs=Job.objects.all()
+            jobs=Job.objects.all().order_by('-updated_at')
             serializer = JobSerializer(jobs, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     def post(self, request, *args, **kwargs):
@@ -293,6 +385,14 @@ def getUnderReviewApplicants(request):
     applicants=Applicant.objects.filter(status='Under Review')
     serializer=ApplicantSerializer(applicants, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+class ActiveJobApplicants(APIView):
+    def get(self, request, id=None, *args, **kwargs):
+        if id:
+            applicants = Applicant.objects.filter(job_id=id)
+            serializer = ApplicantSerializer(applicants, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        
 
 class FilterApplicantsView(APIView):
     def post(self,request):

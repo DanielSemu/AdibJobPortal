@@ -1,7 +1,14 @@
 import React, { useState } from "react";
 import { AiFillDashboard } from "react-icons/ai";
 import { FaUsers, FaRegFileAlt, FaInbox, FaSignOutAlt } from "react-icons/fa";
-import { MdOutlineWork, MdMenu, MdClose, MdKeyboardArrowDown, MdKeyboardArrowRight, MdPersonOutline } from "react-icons/md";
+import {
+  MdOutlineWork,
+  MdMenu,
+  MdClose,
+  MdKeyboardArrowDown,
+  MdKeyboardArrowRight,
+  MdPersonOutline,
+} from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
 import { logout } from "../../api/auth";
 import useAuth from "../../hooks/useAuth";
@@ -41,7 +48,9 @@ const Sidebar = () => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 z-40 w-64 h-screen transition-transform ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} sm:translate-x-0 bg-white shadow-lg`}
+        className={`fixed top-0 left-0 z-40 w-64 h-screen transition-transform ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } sm:translate-x-0 bg-white shadow-lg`}
       >
         <div className="h-full   overflow-y-auto">
           {/* Close Button (Mobile Only) */}
@@ -73,7 +82,8 @@ const Sidebar = () => {
             </li>
 
             {/* Vacancies Dropdown */}
-            {(userProfile.role === "hr_maker" || userProfile.role === "hr_checker") && (
+            {(userProfile.role === "hr_maker" ||
+              userProfile.role === "hr_checker") && (
               <>
                 <li>
                   <button
@@ -110,6 +120,14 @@ const Sidebar = () => {
                       )}
                       <li>
                         <Link
+                          to="/active_jobs"
+                          className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
+                        >
+                          Active Jobs
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
                           to="/categories"
                           className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
                         >
@@ -121,14 +139,49 @@ const Sidebar = () => {
                 </li>
 
                 {/* Applications */}
+
                 <li>
-                  <Link
-                    to="/applications"
-                    className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
+                  <button
+                    onClick={() => toggleDropdown("application")}
+                    className="flex items-center w-full p-2 text-gray-900 rounded-lg hover:bg-gray-100"
                   >
                     <FaRegFileAlt className="w-5 h-5 text-gray-500" />
-                    <span className="ms-3">Applications</span>
-                  </Link>
+                    <span className="flex-1 ms-3 text-left">Applications</span>
+                    {openDropdown === "application" ? (
+                      <MdKeyboardArrowDown className="w-5 h-5" />
+                    ) : (
+                      <MdKeyboardArrowRight className="w-5 h-5" />
+                    )}
+                  </button>
+                  {openDropdown === "application" && (
+                    <ul className="py-2 space-y-2 pl-6">
+                      <li>
+                        <Link
+                          to="/applications"
+                          className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
+                        >
+                          <span className="ms-3">Filter Applications</span>
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          to="/accepted_applicants"
+                          className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
+                        >
+                          <span className="ms-3">Accepted Applicants</span>
+                        </Link>
+                      </li>
+                      {/* <li>
+                        <Link
+                          to="/applications"
+                          className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
+                        >
+                          <span className="ms-3">Active Job Applicants</span>
+                        </Link>
+                      </li> */}
+                     
+                    </ul>
+                  )}
                 </li>
               </>
             )}
@@ -167,7 +220,9 @@ const Sidebar = () => {
                 className="flex items-center w-full p-2 text-gray-900 rounded-lg hover:bg-gray-100"
               >
                 <MdPersonOutline className="w-5 h-5 text-gray-500" />
-                <span className="flex-1 ms-3 text-left">{userProfile?.email}</span>
+                <span className="flex-1 ms-3 text-left">
+                  {userProfile?.email}
+                </span>
                 {openDropdown === "profile" ? (
                   <MdKeyboardArrowDown className="w-5 h-5" />
                 ) : (
