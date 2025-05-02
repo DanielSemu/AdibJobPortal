@@ -17,10 +17,21 @@ const ActiveJobs = () => {
         await Promise.all(
           active.map(async (job) => {
             const genderData = await getApplicantsByJob(job.id);
-            counts[job.id] = {
-              Male: genderData.find((g) => g.gender === "Male")?.count || 0,
-              Female: genderData.find((g) => g.gender === "Female")?.count || 0,
-            };
+            console.log('Job ID:', job.id, 'Gender Data:', genderData);
+            
+            const maleCount = genderData.filter(
+                (applicant) => applicant.gender?.trim().toLowerCase() === "male"
+              ).length;
+              
+              const femaleCount = genderData.filter(
+                (applicant) => applicant.gender?.trim().toLowerCase() === "female"
+              ).length;
+              
+              counts[job.id] = {
+                Male: maleCount,
+                Female: femaleCount,
+              };
+              
           })
         );
         setApplicantCounts(counts);
