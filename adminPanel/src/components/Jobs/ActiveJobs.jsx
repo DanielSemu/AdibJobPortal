@@ -17,7 +17,6 @@ const ActiveJobs = () => {
         await Promise.all(
           active.map(async (job) => {
             const genderData = await getApplicantsByJob(job.id);
-            console.log('Job ID:', job.id, 'Gender Data:', genderData);
             
             const maleCount = genderData.filter(
                 (applicant) => applicant.gender?.trim().toLowerCase() === "male"
