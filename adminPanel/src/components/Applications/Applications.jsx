@@ -75,7 +75,7 @@ const Applications = () => {
         columns={columns}
         records={applicants}
         // addAddress={"/categories/add"}
-        title={"Applicants"}
+        title={"Filtered Applicants"}
       />
     </div>
   );

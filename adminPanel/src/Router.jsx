@@ -19,6 +19,7 @@ import Dashboard from "./components/Dashboard/Dashboard";
 import Unauthorized from "./components/Registration/Unauthorized"; // Create this page
 import AcceptedApplicants from "./components/Applications/AcceptedApplicants";
 import ActiveJobs from "./components/Jobs/ActiveJobs";
+import SendSMSForAccepted from "./components/Applications/SendSMSForAccepted";
 
 const Router = () => {
   return (
@@ -144,6 +145,14 @@ const Router = () => {
             element={
               <PrivateRoute >
                 <AcceptedApplicants />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/send_sms"
+            element={
+              <PrivateRoute >
+                <SendSMSForAccepted />
               </PrivateRoute>
             }
           />
