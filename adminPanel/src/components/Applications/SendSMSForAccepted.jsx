@@ -5,7 +5,6 @@ const SendSMSForAccepted = () => {
   const [smsText, setSmsText] = useState('');
   const [filteredApplicants, setFilteredApplicants] = useState([]);
 
-  // Dummy applicant data (replace with real data or API call)
   const applicants = [
     { id: 1, name: 'Abebe Kebede', job: 'Software Engineer', status: 'underReview', phone: '+251912345678' },
     { id: 2, name: 'Almaz Tsegaye', job: 'Data Analyst', status: 'submitted', phone: '+251911112233' },
