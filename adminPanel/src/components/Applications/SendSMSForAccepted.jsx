@@ -1,21 +1,24 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { getUnderReviewApplicants } from '../services/jobsService';
 
 const SendSMSForAccepted = () => {
   const [selectedJob, setSelectedJob] = useState('');
   const [smsText, setSmsText] = useState('');
+  const [applicants,setApplicants]=useState([])
   const [filteredApplicants, setFilteredApplicants] = useState([]);
+  useEffect(()=>{
+    const fetchApplicants= async()=>{
+      
+      const response=await getUnderReviewApplicants()
+      setApplicants(response)
+    }
+    fetchApplicants()
+  },[])
 
-  const applicants = [
-    { id: 1, name: 'Abebe Kebede', job: 'Software Engineer', status: 'underReview', phone: '+251912345678' },
-    { id: 2, name: 'Almaz Tsegaye', job: 'Data Analyst', status: 'submitted', phone: '+251911112233' },
-    { id: 3, name: 'Mekdes Alemu', job: 'Software Engineer', status: 'underReview', phone: '+251923456789' },
-    { id: 4, name: 'Samuel Bekele', job: 'Software Engineer', status: 'rejected', phone: '+251911223344' },
-  ];
-
-  const jobOptions = [...new Set(applicants.map(a => a.job))]; // Unique jobs
+  const jobOptions = [...new Set(applicants.map(a => a.job_name))]; // Unique jobs
 
   const handleFilter = () => {
-    const result = applicants.filter(app => app.job === selectedJob && app.status === 'underReview');
+    const result = applicants.filter(app => app.job_name === selectedJob && app.status === 'Under Review');
     setFilteredApplicants(result);
   };
 
@@ -75,7 +78,7 @@ const SendSMSForAccepted = () => {
           <ul className="space-y-2">
             {filteredApplicants.map((applicant) => (
               <li key={applicant.id} className="p-3 border rounded bg-gray-50">
-                <span className="font-medium">{applicant.name}</span> — {applicant.phone}
+                <span className="font-medium">{applicant.full_name}</span> — {applicant.phone}
               </li>
             ))}
           </ul>

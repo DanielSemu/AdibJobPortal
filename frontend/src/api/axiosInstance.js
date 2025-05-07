@@ -2,9 +2,9 @@ import axios from 'axios';
 import { getAccessToken, setAccessToken } from './tokenStorage';
 import { refreshToken } from './auth';
 import useAuth from '../hooks/useAuth';
-// export const BASE_URL = 'http://localhost:8000';
+export const BASE_URL = 'http://localhost:8000';
 // export const BASE_URL = 'http://192.168.75.222:8000';
-export const BASE_URL = 'http://192.168.2.32:8000';
+// export const BASE_URL = 'http://192.168.2.32:8000';
 
 
 

@@ -7,6 +7,7 @@ import {
 } from "../services/jobsService";
 import ReusableTable from "../ui/ReausableTable";
 import { useNavigate } from "react-router-dom";
+import { showSuccessToast } from "../../utils/toastUtils";
 
 const FilterApplicants = () => {
   const [jobs, setJobs] = useState([]);
@@ -116,8 +117,7 @@ const navigate=useNavigate()
         emptyFiltered:
           "There Is no Applicant That Satisfies the Above Criteria",
       });
-  
-      alert("Applicants updated and criteria recorded!");
+      showSuccessToast("Applicants updated and criteria recorded!")
       navigate('/applications')
     } catch (error) {
       console.error("Confirmation error:", error);
