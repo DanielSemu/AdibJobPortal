@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 
-const Step1 = ({ formData, errors, handleChange, workPlace }) => {
+const Step1 = ({ formData, errors, handleChange, selected_work_place }) => {
   const [location, setLocation] = useState([]);
 
   useEffect(() => {
-    if (workPlace) {
-      const locationsArray = workPlace.split(",").map((loc) => loc.trim()); // optional trim
+    if (selected_work_place) {
+      const locationsArray = selected_work_place.split(",").map((loc) => loc.trim()); // optional trim
       setLocation(locationsArray);
     }
-  }, [workPlace]); // <== Depend on workPlace only
+  }, [selected_work_place]); // <== Depend on selected_work_place only
   return (
     <div>
       <h1 className="text-center text-3xl mb-2 text-gray-700 font-semibold">
@@ -114,19 +114,19 @@ const Step1 = ({ formData, errors, handleChange, workPlace }) => {
           Select Work Place:
         </label>
         <select
-          name="workPlace"
-          value={formData.workPlace}
+          name="selected_work_place"
+          value={formData.selected_work_place}
           onChange={handleChange}
           className="w-1/2 p-2 border rounded-md focus:outline-blue-500"
           required
         >
-          <option value="">-- Select Work Place --</option>
+          light 
           {location.map((loc,key)=>(
             <option value={loc}>{loc}</option>
           ))}
   
         </select>
-        {errors.email && <p className="text-red-500">{errors.email}</p>}
+        {errors.selected_work_place && <p className="text-red-500">{errors.selected_work_place}</p>}
       </div>
     </div>
   );

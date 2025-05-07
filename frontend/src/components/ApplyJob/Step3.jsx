@@ -6,6 +6,7 @@ const Step3 = ({
   formData,
   addEntry,
   removeEntry,
+  errors,
   setCurrentExperience,
 }) => {
   return (
@@ -28,8 +29,8 @@ const Step3 = ({
             >
               x
             </span>
-            <br /> {exp.company_name} - {exp.from_date} {" to "}
-            {exp.to_date} years
+            <br /> {exp.company_name} - {" from "} {exp.from_date} {" to "}
+            {exp.to_date} 
           </span>
         ))}
       </div>
@@ -46,6 +47,9 @@ const Step3 = ({
           onChange={(e) => handleInputChange("experience", e)}
           className="w-full p-2 border rounded-md focus:outline-blue-500"
         />
+        {errors.job_title && (
+            <p className="text-red-500 text-sm mt-1">{errors.job_title}</p>
+          )}
 
         <label className="block text-gray-700 font-semibold mt-3 mb-2">
           Company Name:
@@ -57,6 +61,9 @@ const Step3 = ({
           onChange={(e) => handleInputChange("experience", e)}
           className="w-full p-2 border rounded-md focus:outline-blue-500"
         />
+        {errors.company_name && (
+            <p className="text-red-500 text-sm mt-1">{errors.company_name}</p>
+          )}
 
         <label className="block text-gray-700 font-semibold mt-3 mb-2">
           Years of Experience:
@@ -75,6 +82,9 @@ const Step3 = ({
               className="w-full p-2 border rounded-md focus:outline-blue-500"
             />
           </div>
+          {errors.from_date && (
+            <p className="text-red-500 text-sm mt-1">{errors.from_date}</p>
+          )}
           <div className="flex">
             <label className="block text-gray-700 font-semibold mt-3 mb-2">
               To:
@@ -88,6 +98,9 @@ const Step3 = ({
               className="w-full p-2 border rounded-md focus:outline-blue-500"
             />
           </div>
+          {errors.to_date && (
+            <p className="text-red-500 text-sm mt-1">{errors.to_date}</p>
+          )}
           <div className="flex items-center">
             <input
               type="checkbox"

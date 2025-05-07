@@ -19,6 +19,7 @@ import JobCategoryDetail from './components/JobCategoryDetail/JobCategoryDetail'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import UserApplications from './components/Registration/UserApplications'
+import TermsConditions from './components/ApplyJob/TermsConditions'
 
 const App = () => {
   return (
@@ -42,6 +43,7 @@ const App = () => {
         <Route path='/login' element={<Login/>}/>
         <Route path='/register' element={<Register/>}/>
         <Route path='/applications' element={<UserApplications/>}/>
+        <Route path='/terms_conditions' element={<TermsConditions/>}/>
         <Route path='/detail/:id' element={<JobDetail/>}/>
         <Route path='/apply/:id' element={<ApplyJob/>}/>
         <Route path='/category/:id' element={<JobCategoryDetail/>}/>

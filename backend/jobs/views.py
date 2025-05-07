@@ -15,8 +15,100 @@ from io import BytesIO, TextIOWrapper
 import csv
 from dateutil.parser import parse
 from authApi.permissions import IsAdminRole,ViewJobRole,IsHrCheckerRole
+# sdfdsfds
+from openpyxl import Workbook
+from openpyxl.styles import Font, Alignment
+from openpyxl.utils import get_column_letter
+from django.http import HttpResponse
 
+class ExportEmployeeDataView(APIView):
+    permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        return Applicant.objects.filter(status="Accepted")
+
+    def get(self, request):
+        applications = self.get_queryset()
+        if not applications.exists():
+            return Response({"message": "No applications found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ApplicantSerializer(applications, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        applications = self.get_queryset()
+        if not applications.exists():
+            return Response({"message": "No applications found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ApplicantSerializer(applications, many=True)
+        employees = serializer.data
+
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Employees"
+
+        headers = [
+            "No", "Full Name", "Gender", "Birth Date", "Applied For", "Work Place", "Status",
+            "Edu-Organization", "Edu-Level", "Filed-Study",
+            "Job-Position", "Organization", "From", "To", "Banking Experience",
+            "Certificate-Title", "Company"
+        ]
+        ws.append(headers)
+
+        for col in range(1, len(headers) + 1):
+            ws.cell(row=1, column=col).font = Font(bold=True)
+            ws.cell(row=1, column=col).alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+
+        row_index = 2
+        for i, emp in enumerate(employees, start=1):
+            educations = emp.get("educations", [])
+            experiences = emp.get("experiences", [])
+            certifications = emp.get("certifications", [])
+
+            max_len = max(len(educations), len(experiences), len(certifications))
+
+            for j in range(max_len):
+                edu = educations[j] if j < len(educations) else {}
+                exp = experiences[j] if j < len(experiences) else {}
+                cert = certifications[j] if j < len(certifications) else {}
+
+                ws.cell(row_index, 8, edu.get("education_organization", ""))
+                ws.cell(row_index, 9, edu.get("education_level", ""))
+                ws.cell(row_index, 10, edu.get("field_of_study", ""))
+
+                ws.cell(row_index, 11, exp.get("job_title", ""))
+                ws.cell(row_index, 12, exp.get("company_name", ""))
+                ws.cell(row_index, 13, exp.get("from_date", ""))
+                ws.cell(row_index, 14, exp.get("to_date", ""))
+                ws.cell(row_index, 15, exp.get("banking_experience", ""))
+
+                ws.cell(row_index, 16, cert.get("certificate_title", ""))
+                ws.cell(row_index, 17, cert.get("awarding_company", ""))
+
+                if j == 0:
+                    ws.cell(row_index, 1, i)
+                    ws.cell(row_index, 2, emp["full_name"])
+                    ws.cell(row_index, 3, emp["gender"])
+                    ws.cell(row_index, 4, emp["birth_date"])
+                    ws.cell(row_index, 5, emp["job_name"])
+                    ws.cell(row_index, 6, emp["selected_work_place"])
+                    ws.cell(row_index, 7, emp["status"])
+
+                row_index += 1
+
+            for col in [1, 2, 3, 4, 5, 6, 7]:
+                ws.merge_cells(start_row=row_index - max_len, start_column=col, end_row=row_index - 1, end_column=col)
+                ws.cell(row=row_index - max_len, column=col).alignment = Alignment(vertical="top", wrap_text=True)
+
+        column_widths = [5, 25, 15, 15, 20, 20, 20, 25, 25, 25, 12, 20, 15, 15, 12, 20, 20]
+        for i, width in enumerate(column_widths, start=1):
+            ws.column_dimensions[get_column_letter(i)].width = width
+
+        response = HttpResponse(content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        response['Content-Disposition'] = 'attachment; filename="employee_export.xlsx"'
+        wb.save(response)
+
+        return response
 
 class AdminJobView(APIView):
     
@@ -27,7 +119,7 @@ class AdminJobView(APIView):
             job=get_object_or_404(Job, id=id)
             serializer = JobSerializer(job)
         else:
-            jobs=Job.objects.all()
+            jobs=Job.objects.all().order_by('-updated_at')
             serializer = JobSerializer(jobs, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     def post(self, request, *args, **kwargs):
@@ -45,6 +137,7 @@ class AdminJobView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         
+        # print("Validation errors:", serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, id=None, *args, **kwargs):
@@ -58,14 +151,20 @@ class JobView(APIView):
             job = get_object_or_404(Job, id=id)  # Get a single job
             serializer = JobSerializer(job)
         else:
-            jobs = Job.objects.filter(status="Active",application_deadline__gte=timezone.now().date())  # Get all jobs
+            today = timezone.now().date()
+            jobs = Job.objects.filter(
+            status="Active",
+            post_date__lte=today,
+            application_deadline__gte=today
+            )
             serializer = JobSerializer(jobs, many=True)
         
         return Response(serializer.data, status=status.HTTP_200_OK)
 class ExpiredJobView(APIView):
     permission_classes =[IsAuthenticated,ViewJobRole]
     def get(self, request, id=None, *args, **kwargs):
-        jobs = Job.objects.filter(status="Active",application_deadline__lt=timezone.now().date())
+        # jobs = Job.objects.filter(status="Active",application_deadline__lt=timezone.now().date())
+        jobs = Job.objects.filter(status="Active")
 
         serializer = JobSerializer(jobs, many=True)
         
@@ -73,57 +172,77 @@ class ExpiredJobView(APIView):
     
     
 class JobBulkUploadView(APIView):
-    permission_classes =[IsAuthenticated,ViewJobRole]
+    permission_classes = [IsAuthenticated, ViewJobRole]
+
     def post(self, request, *args, **kwargs):
         csv_file = request.FILES.get('file')
         if not csv_file:
             return Response({"error": "No file provided"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Read small sample for encoding detection
+        # Detect encoding from sample
         sample = csv_file.read(1024)
         encoding = chardet.detect(sample)['encoding'] or 'utf-8'
-
-        # Go back to beginning of file
-        csv_file.seek(0)
+        csv_file.seek(0)  # rewind
 
         decoded_file = TextIOWrapper(csv_file.file, encoding=encoding)
         reader = csv.DictReader(decoded_file)
 
         jobs_to_create = []
+        errors = []
+        row_number = 1  # for clearer error messages
 
         for row in reader:
             try:
-                category_obj = JobCategory.objects.get(name=row['category'])
-            except JobCategory.DoesNotExist:
-                return Response({"error": f"Category '{row['category']}' not found."}, status=status.HTTP_400_BAD_REQUEST)
+                row_number += 1
 
-            # 🛠 Fix the date format here
-            raw_date = row['application_deadline']
-            parsed_date = parse(raw_date, dayfirst=False).date()
+                # Check for required fields
+                required_fields = ['title', 'category', 'location', 'job_type', 'description', 'application_deadline', 'post_date']
+                for field in required_fields:
+                    if not row.get(field):
+                        raise ValueError(f"Missing required field '{field}'.")
 
-            job = Job(
-                vacancy_number=row.get('vacancy_number') or None,
-                title=row['title'],
-                job_grade=row.get('job_grade') or None,
-                company=row.get('company', 'Addis Bank S.C'),
-                category=category_obj,
-                location=row['location'],
-                job_type=row['job_type'],
-                salary=row.get('salary', 'As per Companies Salary Scale'),
-                description=row['description'],
-                application_deadline=parsed_date,
-                show_experience=row.get('show_experience', 'True').lower() == 'true',
-                status=row.get('status', 'InActive'),
-                created_at=now(),
-                updated_at=now()
+                try:
+                    category_obj = JobCategory.objects.get(name=row['category'])
+                except JobCategory.DoesNotExist:
+                    raise ValueError(f"Category '{row['category']}' not found.")
+
+                try:
+                    parsed_deadline = parse(row['application_deadline'], dayfirst=False).date()
+                    parsed_post_date = parse(row['post_date'], dayfirst=False).date()
+                except Exception:
+                    raise ValueError("Invalid date format in 'application_deadline' or 'post_date'.")
+
+                job = Job(
+                    vacancy_number=row.get('vacancy_number') or None,
+                    title=row['title'],
+                    job_grade=row.get('job_grade') or None,
+                    company=row.get('company') or "Addis Bank S.C",
+                    category=category_obj,
+                    location=row['location'],
+                    job_type=row['job_type'],
+                    salary=row.get('salary') or "As per Companies Salary Scale",
+                    description=row['description'],
+                    post_date=parsed_post_date,
+                    application_deadline=parsed_deadline,
+                    show_experience=str(row.get('show_experience', 'True')).lower() == 'true',
+                    status=row.get('status') or "InActive",
+                    created_at=now(),
+                    updated_at=now()
+                )
+
+                jobs_to_create.append(job)
+
+            except Exception as e:
+                errors.append({"row": row_number, "error": str(e)})
+
+        if errors:
+            return Response(
+                {"message": "Some rows could not be processed.", "errors": errors},
+                status=status.HTTP_400_BAD_REQUEST
             )
 
-            jobs_to_create.append(job)
-
         Job.objects.bulk_create(jobs_to_create)
-
-        return Response({"message": "Jobs uploaded successfully!"}, status=status.HTTP_201_CREATED)
-    
+        return Response({"message": f"{len(jobs_to_create)} jobs uploaded successfully!"}, status=status.HTTP_201_CREATED)
 class JobDetailBulkUploadView(APIView):
     permission_classes =[IsAuthenticated,ViewJobRole]
     def post(self, request, job_id, *args, **kwargs):
@@ -267,6 +386,14 @@ def getUnderReviewApplicants(request):
     serializer=ApplicantSerializer(applicants, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
+class ActiveJobApplicants(APIView):
+    def get(self, request, id=None, *args, **kwargs):
+        if id:
+            applicants = Applicant.objects.filter(job_id=id)
+            serializer = ApplicantSerializer(applicants, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        
+
 class FilterApplicantsView(APIView):
     def post(self,request):
         data=request.data
@@ -284,7 +411,8 @@ class FilterApplicantsView(APIView):
             applicants=applicants.filter(job__id=selected_job)
         
         if selected_location:
-            applicants = applicants.filter(job__location__icontains=selected_location)
+            # applicants = applicants.filter(job__location__icontains=selected_location)
+            applicants = applicants.filter(selected_work_place__icontains=selected_location)
             
         if gender:
             applicants=applicants.filter(gender=gender)

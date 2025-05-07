@@ -2,58 +2,59 @@ import React, { useEffect, useState } from "react";
 import ReusableTable from "../ui/ReausableTable";
 import { FiLock } from "react-icons/fi";
 import { getExpiredJobs, updateJob } from "../services/jobsService";
-import { useNavigate } from "react-router-dom";
+import ConfirmModal from "../ui/ConfirmModal";
+import { showSuccessToast } from "../../utils/toastUtils";
 
 const CloseJobs = () => {
   const [jobs, setJobs] = useState([]);
-  const navigate = useNavigate();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedJob, setSelectedJob] = useState(null);
 
   useEffect(() => {
     const fetchJobs = async () => {
       const response = await getExpiredJobs();
-      console.log();
       setJobs(response);
     };
     fetchJobs();
   }, []);
 
+  const openModal = (job) => {
+    setSelectedJob(job);
+    setModalOpen(true);
+  };
 
-  const handleAuthorization = async (row) => {
-    const confirmed = window.confirm("Are you sure you want to Close this Job?");
-    if (confirmed) {
-      try {
-        const updatedRow = { ...row, status: "Closed" };
-        await updateJob(row.id, updatedRow);
-        
-        // Refresh the jobs list
-        const response = await getExpiredJobs();
-        setJobs(response);
-  
-      } catch (error) {
-        console.error("Authorization failed:", error);
-      }
-    } else {
-      console.log("Authorization cancelled");
+  const handleConfirmClose = async () => {
+    if (!selectedJob) return;
+    try {
+      const updatedRow = { ...selectedJob, status: "Closed" };
+      await updateJob(selectedJob.id, updatedRow);
+
+      // Refresh the jobs list
+      showSuccessToast("Job Closed Successfully!")
+      const response = await getExpiredJobs();
+      setJobs(response);
+    } catch (error) {
+      console.error("Authorization failed:", error);
+    } finally {
+      setModalOpen(false);
+      setSelectedJob(null);
     }
   };
-  
-  
+
   const columns = [
-    { header: "job Title", accessor: "title" },
+    { header: "Job Title", accessor: "title" },
     { header: "Location", accessor: "location" },
     { header: "Type", accessor: "job_type" },
-    { header: "DeadLine", accessor: "application_deadline" },
+    { header: "Deadline", accessor: "application_deadline" },
     { header: "Status", accessor: "status" },
-
     {
       header: "Close",
       accessor: "actions",
       cell: (row) => (
         <div className="flex gap-2">
-          <button onClick={() => handleAuthorization(row)} className="btn">
+          <button onClick={() => openModal(row)} className="btn">
             <FiLock />
           </button>
-          
         </div>
       ),
     },
@@ -61,15 +62,16 @@ const CloseJobs = () => {
 
   return (
     <div>
-      <ReusableTable
-        columns={columns}
-        records={jobs}
-        // addAddress={"/jobs/add"}
-        title={"Close Expired Jobs"}
+      <ReusableTable columns={columns} records={jobs} title={"Close Expired Jobs"} />
+
+      <ConfirmModal
+        isOpen={modalOpen}
+        message="Are you sure you want to close this job?"
+        onConfirm={handleConfirmClose}
+        onCancel={() => setModalOpen(false)}
       />
     </div>
   );
 };
 
-
-export default CloseJobs
+export default CloseJobs;

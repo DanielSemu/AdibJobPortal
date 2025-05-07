@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams,useNavigate } from "react-router-dom";
 import { jobs } from "../../data/jobs";
 import { FaAngleDoubleRight, FaAngleDoubleLeft, FaCheck } from "react-icons/fa";
 import Step1 from "./Step1";
@@ -11,8 +11,7 @@ import { getSingleJob } from "../../services/jobsService";
 import axiosInstance from "../../services/axiosInstance";
 import { showErrorToast, showSuccessToast } from "../utils/toastUtils";
 import { profile, sendOTP } from "../../api/auth";
-import axios from "axios";
-import { useRef } from "react";
+
 
 const ApplyJob = () => {
   const { id } = useParams();
@@ -21,6 +20,7 @@ const ApplyJob = () => {
   const [list, setList] = useState([]);
   const [verificationModal, setVerificationModal] = useState(false);
   const [userProfile, setUserProfile] = useState([]);
+  const navigate=useNavigate()
   const [formData, setFormData] = useState({
     job: id,
     full_name: "",
@@ -32,7 +32,7 @@ const ApplyJob = () => {
     cover_letter: "",
     resume: null,
     terms_accepted: false,
-    workPlace: [],
+    selected_work_place: "",
     educations: [],
     experiences: [],
     certifications: [],
@@ -152,16 +152,56 @@ const ApplyJob = () => {
         break;
     }
   };
-
+  const validateEntry = (section, entry) => {
+    const errors = {};
+  
+    if (section === "experiences") {
+      if (!entry.job_title.trim()) errors.job_title = "Job title is required.";
+      if (!entry.company_name.trim()) errors.company_name = "Company name is required.";
+      if (!entry.from_date) errors.from_date = "From date is required.";
+      if (!entry.to_date) errors.to_date = "To date is required.";
+    }
+  
+    if (section === "educations") {
+      const cgpa = parseFloat(entry.cgpa);
+      const exit_exam = parseFloat(entry.exit_exam);
+  
+      if (!entry.education_level.trim()) errors.education_level = "Education level is required.";
+      if (!entry.field_of_study.trim()) errors.field_of_study = "Field of study is required.";
+      if (!entry.education_organization.trim()) errors.education_organization = "Organization is required.";
+      if (!entry.graduation_year) errors.graduation_year = "Graduation year is required.";
+  
+      if (isNaN(cgpa) || cgpa < 2 || cgpa > 4) errors.cgpa = "CGPA should be between 2 and 4.";
+      if ((exit_exam < 50 && exit_exam !=0) || exit_exam > 100) errors.exit_exam = "Exit exam should be between 50 and 100.";
+    }
+  
+    if (section === "certifications") {
+      if (!entry.certificate_title.trim()) errors.certificate_title = "Certificate title is required.";
+      if (!entry.awarding_company.trim()) errors.awarding_company = "Awarding company is required.";
+      if (!entry.awarded_date) errors.awarded_date = "Awarded date is required.";
+    }
+  
+    return errors;
+  };
+  
+  
   // const fileInputRef = useRef(null);
   const addEntry = (section, entry, setEntry) => {
-    if (Object.values(entry).some((val) => val === "")) return;
-
+    // if (Object.values(entry).some((val) => val === "")) return;
+    const errors = validateEntry(section, entry);
+    if (Object.keys(errors).length > 0) {
+      setErrors(errors);
+      showErrorToast("Please fix validation errors.");
+      return;
+    }
+  
     setFormData((prevData) => ({
       ...prevData,
       [section]: [...prevData[section], entry],
     }));
-
+  
+    setErrors({}); // clear previous errors
+  
     if (section === "experiences") {
       setEntry({
         job_title: "",
@@ -176,20 +216,18 @@ const ApplyJob = () => {
         field_of_study: "",
         education_organization: "",
         graduation_year: "",
+        cgpa: "",
+        exit_exam: "",
       });
     } else if (section === "certifications") {
       setEntry({
         certificate_title: "",
         awarding_company: "",
         awarded_date: "",
-        // certificate_file: "",
       });
     }
-
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
   };
+  
 
   const removeEntry = (section, index) => {
     setFormData((prevData) => ({
@@ -206,6 +244,9 @@ const ApplyJob = () => {
     if (!formData.full_name.trim()) newErrors.full_name = "Full Name is required";
     if (!formData.email.trim()) newErrors.email = "Email is required";
     if (!formData.phone.trim()) newErrors.phone = "Phone number is required";
+    if (!formData.selected_work_place || formData.selected_work_place.trim() === "") {
+      newErrors.selected_work_place = "Work Place is required";
+    }
     if (!formData.gender) newErrors.gender = "Gender is required";
     if (!formData.birth_date) newErrors.birth_date = "Birth date is required";
     
@@ -256,7 +297,8 @@ const ApplyJob = () => {
     }
 
    
-
+    console.log(formData);
+    
     const formDataToSend = new FormData();
 
     Object.keys(formData).forEach((key) => {
@@ -275,6 +317,7 @@ const ApplyJob = () => {
       });
       setErrors({});
       showSuccessToast("Application Submitted Successfully Inserted ");
+      navigate("/")
     } catch (error) {
       console.error("Error response:", error.response.data);
       setErrors({});
@@ -356,7 +399,7 @@ const ApplyJob = () => {
               formData={formData}
               errors={errors}
               handleChange={handleChange}
-              workPlace={detailedData.location}
+              selected_work_place={detailedData.location}
             />
           )}
           {step === 2 && (
@@ -376,6 +419,7 @@ const ApplyJob = () => {
               handleInputChange={handleInputChange}
               formData={formData}
               addEntry={addEntry}
+              errors={errors}
               removeEntry={removeEntry}
               setCurrentExperience={setCurrentExperience}
             />
@@ -387,6 +431,7 @@ const ApplyJob = () => {
               formData={formData}
               addEntry={addEntry}
               removeEntry={removeEntry}
+              errors={errors}
               setCurrentCertification={setCurrentCertification}
               // fileInputRef={fileInputRef}
             />

@@ -22,13 +22,14 @@ class Job(models.Model):
     vacancy_number=models.CharField(max_length=50, null=True, blank=True)
     title = models.CharField(max_length=255)
     job_grade=models.CharField(max_length=100 , null=True, blank=True)
-    company = models.CharField(max_length=255, default="Addis Bank S.C")
+    company = models.CharField(max_length=255, default="Addis Bank S.C", blank=True)
     category = models.ForeignKey(JobCategory, on_delete=models.CASCADE, related_name="jobs")
     location = models.CharField(max_length=255)
     job_type = models.CharField(max_length=50, choices=[("Full-time", "Full-time"), ("Part-time", "Part-time"), ("Contract", "Contract")])
-    salary = models.CharField(max_length=255, default="As per Companies Salary Scale")
+    salary = models.CharField(max_length=255, default="As per Companies Salary Scale",blank=True)
     description = models.TextField()
     application_deadline = models.DateField()
+    post_date = models.DateField(null=True, blank=True) 
     show_experience=models.BooleanField()
     status = models.CharField(
         max_length=50,
@@ -37,13 +38,9 @@ class Job(models.Model):
     )
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
-    posted_at = models.DateTimeField(null=True, blank=True)  # New field
+    
 
-    def save(self, *args, **kwargs):
-        # If the status is changing to "Active" and posted_at is not set, update it
-        if self.status == "Active" and self.posted_at is None:
-            self.posted_at = now()
-        super().save(*args, **kwargs)
+    
 
 
     def __str__(self):
@@ -107,6 +104,7 @@ class Applicant(models.Model):
     resume = models.FileField(upload_to='resumes/',blank=True ,null=True  )
     terms_accepted = models.BooleanField(default=False)
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='Pending')
+    selected_work_place=models.CharField(max_length=100, blank=True, null=True)
     def __str__(self):
         return self.full_name
 
@@ -117,7 +115,7 @@ class Education(models.Model):
     education_organization = models.CharField(max_length=255)
     graduation_year = models.DateField()
     cgpa = models.DecimalField(max_digits=10, decimal_places=2)
-    exit_exam = models.DecimalField(max_digits=10, decimal_places=2)
+    exit_exam = models.DecimalField(max_digits=10, decimal_places=2, null=True , blank=True)
 
     def __str__(self):
         return f"{self.education_level} - {self.education_organization}"

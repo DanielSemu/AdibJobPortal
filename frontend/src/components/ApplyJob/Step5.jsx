@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Step5 = ({ formData, errors, handleChange }) => {
   return (
@@ -61,9 +62,9 @@ const Step5 = ({ formData, errors, handleChange }) => {
         />
         <label className="block text-gray-700 font-semibold">
           I agree to the{" "}
-          <span className="text-blue-600 cursor-pointer">
+          <Link to='/terms_conditions' className="text-blue-600 cursor-pointer">
             Terms and Conditions
-          </span>
+          </Link>
           .
         </label>
       </div>

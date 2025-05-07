@@ -7,7 +7,7 @@ const Step4 = ({
   addEntry,
   removeEntry,
   setCurrentCertification,
-  fileInputRef
+  errors
 }) => {
   return (
     <div>
@@ -48,6 +48,9 @@ const Step4 = ({
           onChange={(e) => handleInputChange("certification", e)}
           className="w-full p-2 border rounded-md focus:outline-blue-500"
         />
+        {errors.certificate_title && (
+            <p className="text-red-500 text-sm mt-1">{errors.certificate_title}</p>
+          )}
 
         <label className="block text-gray-700 font-semibold mt-1 mb-1">
           Awarding Company:
@@ -59,6 +62,10 @@ const Step4 = ({
           onChange={(e) => handleInputChange("certification", e)}
           className="w-full p-2 border rounded-md focus:outline-blue-500"
         />
+        {errors.awarding_company && (
+            <p className="text-red-500 text-sm mt-1">{errors.awarding_company}</p>
+          )}
+
         <label className="block text-gray-700 font-semibold mt-1 mb-1">
           Awarding Date:
         </label>
@@ -70,6 +77,9 @@ const Step4 = ({
           max={new Date().toISOString().split("T")[0]}
           className="w-full p-2 border rounded-md focus:outline-blue-500"
         />
+        {errors.awarded_date && (
+            <p className="text-red-500 text-sm mt-1">{errors.awarded_date}</p>
+          )}
         {/* <label className="block text-gray-700 font-semibold mb-2">
           Upload Certificate (PDF/DOCX)
         </label>

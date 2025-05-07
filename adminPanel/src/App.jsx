@@ -1,32 +1,29 @@
 import React from "react";
-import Sidebar from "./components/Navigation/Sidebar";
-import Navbar from "./components/Navigation/Navbar";
 import { Routes, Route } from "react-router-dom";
-import Jobs from "./components/Jobs/Jobs";
-import JobDetail from "./components/Jobs/JobDetail";
-import EditJob from "./components/Jobs/EditJob";
-import AddJob from "./components/Jobs/AddJob";
-import UploadBulk from "./components/Jobs/UploadBulk";
-import UploadJobDetail from "./components/Jobs/UploadJobDetail";
-import Categories from "./components/Categories/Categories";
-import Applications from "./components/Applications/Applications";
-import FilterApplicants from "./components/Applications/FilterApplicants";
-import AuthorizeDocument from "./components/Applications/AuthorizeDocument";
-import CloseJobs from "./components/Jobs/CloseJobs";
-import PrivateRoute from "./privateRoute";
 import Login from "./components/Registration/Login";
 import Router from "./Router";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
   return (
     <>
-      
-         <Routes>
-            
-            <Route path="/login" element={<Login/>}/>
-            <Route path="/*" element={<Router/>}/>
-         </Routes>
-  
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/*" element={<Router />} />
+      </Routes>
     </>
   );
 };

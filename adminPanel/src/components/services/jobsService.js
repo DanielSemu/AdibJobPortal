@@ -9,6 +9,19 @@ export const getExpiredJobs = async () => {
   const response = await axiosInstance.get('/api/expired_jobs/');
   return response.data;
 };
+export const getAcceptedApplicants = async () => {
+  const response = await axiosInstance.get('/api/export_applicant/');
+  return response.data;
+};
+export const exportAcceptedApplicants = async () => {
+  const response = await axiosInstance.post(
+    '/api/export_applicant/',
+    {},
+    { responseType: 'blob' } // <-- Important for downloading files
+  );
+
+  return response;
+};
 
 export const getSingleJob = async (id) => {
   const response = await axiosInstance.get(`/api/admin_jobs/${id}/`);
@@ -52,6 +65,10 @@ export const getSingleApplicant = async (id) => {
   const response = await axiosInstance.get(`/api/applicants/${id}/`);
   return response.data;
 };
+export const getApplicantsByJob = async (id) => {
+  const response = await axiosInstance.get(`/api/job/applicants/${id}/`);
+  return response.data;
+};
 
 export const filterApplicants = async (criteria)=>{
   const response=await axiosInstance.post('/api/filter_applicants/', criteria)
@@ -71,4 +88,12 @@ export const confirmFilteredApplicants = async (criteria, confirm, applicant_ids
 
 export const getUnderReviewApplicants = async ()=>{
   const response= await axiosInstance.get('/api/get_under_review_applicants/')
+}
+export const uploadBulkJobs = async (fromData)=>{
+  const response= await axiosInstance.post('/api/jobs/bulk-upload/', fromData)
+  return response.data
+}
+export const uploadBulkJobDetail = async ( id,fromData)=>{
+  const response= await axiosInstance.post(`/api/jobs/job-detail-upload/${id}/`, fromData)
+  return response.data
 }
