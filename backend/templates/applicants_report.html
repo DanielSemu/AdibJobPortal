@@ -1,0 +1,28 @@
+<!-- templates/applicants_report.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: Arial, sans-serif; font-size: 14px; }
+    .applicant {
+      padding: 20px;
+      page-break-after: always;
+    }
+    .applicant:last-child {
+      page-break-after: auto;
+    }
+  </style>
+</head>
+<body>
+  {% for applicant in applicants %}
+  <div class="applicant">
+    <h2>{{ applicant.full_name }}</h2>
+    <p><strong>Email:</strong> {{ applicant.email }}</p>
+    <p><strong>Phone:</strong> {{ applicant.phone }}</p>
+    <p><strong>Experience:</strong> {{ applicant.experience }}</p>
+    <p><strong>Education:</strong> {{ applicant.education }}</p>
+    <!-- Add more fields as needed -->
+  </div>
+  {% endfor %}
+</body>
+</html>
