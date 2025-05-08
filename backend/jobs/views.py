@@ -380,7 +380,9 @@ def getUserApplications(request):
         return Response({"message": "No applications found for this user."}, status=status.HTTP_404_NOT_FOUND)
     serializer=ApplicantSerializer(applications, many=True)
     return  Response(serializer.data, status=status.HTTP_200_OK)
-    
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])  
 def getUnderReviewApplicants(request):
     applicants=Applicant.objects.filter(status='Under Review')
     serializer=ApplicantSerializer(applicants, many=True)
