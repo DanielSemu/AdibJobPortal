@@ -1,17 +1,61 @@
 import React, { useEffect, useState } from "react";
 import {
   getAcceptedApplicants,
-  exportAcceptedApplicants,
+  exportAcceptedApplicants,getJobs
 } from "../services/jobsService";
 
 const AcceptedApplicants = () => {
   const [acceptedApplicant, setAcceptedApplicant] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isExporting, setIsExporting] = useState(false);
+  const [jobs, setJobs] = useState([]);
+  const [selectedJobId, setSelectedJobId] = useState("");
 
   const fetchAcceptedApplicants = async () => {
     const response = await getAcceptedApplicants();
     setAcceptedApplicant(response);
+  };
+  const fetchJobs = async () => {
+    try {
+      const response = await getJobs();
+      const filteredJobs = response.filter((res) => res.status === "Closed");
+      setJobs(filteredJobs);
+    } catch (error) {
+      console.error("Failed to fetch jobs:", error);
+    }
+  };
+
+  const handlePdfDownload = async () => {
+    if (!selectedJobId) {
+      alert("Please select a job first.");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `http://192.168.2.32:8000/api/export_applicant_pdf/?job_id=${selectedJobId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/pdf",
+          },
+        }
+      );
+
+      if (!response.ok) throw new Error("Network response was not ok");
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "accepted_applicants.pdf";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Download failed", error);
+    }
   };
 
   const handleExportApplicants = async () => {
@@ -37,6 +81,7 @@ const AcceptedApplicants = () => {
 
   useEffect(() => {
     fetchAcceptedApplicants();
+    fetchJobs();
   }, []);
 
   const filteredApplicants = acceptedApplicant.filter((applicant) => {
@@ -47,7 +92,7 @@ const AcceptedApplicants = () => {
       applicant.selected_work_place?.toLowerCase().includes(lowerSearch)
     );
   });
-  
+
   return (
     <div className="p-8 bg-gray-50 min-h-screen">
       <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-4">
@@ -68,9 +113,36 @@ const AcceptedApplicants = () => {
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
             disabled={isExporting}
           >
-            {isExporting ? "Exporting..." : "Export Applicants"}
+            {isExporting ? "Exporting..." : "Export All Applicants"}
           </button>
         </div>
+      </div>
+      <div className="mb-2 flex">
+        <div className="flex items-center gap-2">
+          <label className="block text-gray-700 font-semibold mb-2">
+            Select Work Place:
+          </label>
+          <select
+            name="selected_job"
+            value={selectedJobId}
+            onChange={(e) => setSelectedJobId(e.target.value)}
+            className=" p-2 border rounded-md focus:outline-blue-500"
+            required
+          >
+            <option value="">-- Select Job --</option>
+            {jobs.map((job) => (
+              <option key={job.id} value={job.id}>
+                {job.title}
+              </option>
+            ))}
+          </select>
+        </div>
+        <button
+          onClick={handlePdfDownload}
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        >
+          Download Pdf
+        </button>
       </div>
 
       {filteredApplicants.length === 0 ? (
@@ -92,9 +164,7 @@ const AcceptedApplicants = () => {
               <p className="text-gray-700">
                 Birth Date: {applicant.birth_date}
               </p>
-              <p className="text-gray-700">
-                Applied For: {applicant.job_name}
-              </p>
+              <p className="text-gray-700">Applied For: {applicant.job_name}</p>
               <p className="text-gray-700 mb-3">
                 Workplace: {applicant.selected_work_place}
               </p>

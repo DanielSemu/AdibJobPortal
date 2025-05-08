@@ -21,6 +21,32 @@ from openpyxl.styles import Font, Alignment
 from openpyxl.utils import get_column_letter
 from django.http import HttpResponse
 
+from django.http import HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+import io
+
+    
+@api_view(['GET'])
+def generate_applicants_pdf(request):
+    job_id = request.GET.get("job_id")
+
+    if job_id:
+        applicants = Applicant.objects.filter(status="Accepted", job_id=job_id)
+        print(applicants)
+    else:
+        applicants = Applicant.objects.filter(status="Accepted")
+
+    template = get_template("applicants_report.html")
+    html = template.render({"applicants": applicants})
+
+    result = io.BytesIO()
+    pdf = pisa.pisaDocument(io.BytesIO(html.encode("UTF-8")), result)
+
+    if not pdf.err:
+        return HttpResponse(result.getvalue(), content_type='application/pdf')
+    return HttpResponse("PDF generation failed", status=500)
+
 class ExportEmployeeDataView(APIView):
     permission_classes = [IsAuthenticated]
 

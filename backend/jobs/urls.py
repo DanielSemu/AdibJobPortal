@@ -1,8 +1,10 @@
 from django.urls import path
-from .views import ApplicantAPIView,ExpiredJobView, JobView,getUserApplications,ContactUsAPIView,JobCategoryView,AdminJobView,JobBulkUploadView,JobDetailBulkUploadView,FilterApplicantsView,getUnderReviewApplicants,ConfirmFilteredApplicants,ExportEmployeeDataView,ActiveJobApplicants
+from .views import ApplicantAPIView,ExpiredJobView, JobView,getUserApplications,ContactUsAPIView,JobCategoryView,AdminJobView,JobBulkUploadView,JobDetailBulkUploadView,FilterApplicantsView,getUnderReviewApplicants,ConfirmFilteredApplicants,ExportEmployeeDataView,ActiveJobApplicants,generate_applicants_pdf
+
 
 urlpatterns = [
     path('export_applicant/',ExportEmployeeDataView.as_view(),name='export_applicant'),
+    path('export_applicant_pdf/',generate_applicants_pdf,name='export_applicant_pdf'),
     # Job CRUD operations
     path('jobs/', JobView.as_view(), name='job-list'),  # Get all jobs
     path('jobs/<int:id>/', JobView.as_view(), name='job-detail'),  # Get a single job
