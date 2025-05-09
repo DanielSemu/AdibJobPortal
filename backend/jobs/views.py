@@ -36,9 +36,9 @@ def generate_applicants_pdf(request):
         print(applicants)
     else:
         applicants = Applicant.objects.filter(status="Accepted")
-
+    job=Job.objects.get(id=job_id)
     template = get_template("applicants_report.html")
-    html = template.render({"applicants": applicants})
+    html = template.render({"applicants": applicants,"job":job})
 
     result = io.BytesIO()
     pdf = pisa.pisaDocument(io.BytesIO(html.encode("UTF-8")), result)

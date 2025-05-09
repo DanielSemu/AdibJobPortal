@@ -1,43 +1,116 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      font-size: 12px;
-      margin: 30px;
-      color: #000;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <title>Applicant Profile</title>
+    <style>
+      @page {
+        size: A4;
+        margin: 30px;
+      }
 
-    .applicant {
-      page-break-after: always;
-    }
+      body {
+        font-family: Arial, sans-serif;
+        font-size: 12px;
+        color: #000;
+      }
 
-    .applicant:last-child {
-      page-break-after: auto;
-    }
+      .applicant {
+        page-break-after: always;
+      }
 
-    h2 {
-      font-size: 16px;
-      margin-top: 20px;
-      margin-bottom: 10px;
-    }
+      .applicant:last-child {
+        page-break-after: auto;
+      }
 
- 
-    .section {
-      margin-top: 10px;
-    }
+      header {
+        text-align: center;
+        border-bottom: 1px solid #000;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+      }
 
-    .section p {
-      margin: 4px 0;
-    }
-  </style>
-</head>
-<body>
-  {% for applicant in applicants %}
-  <div class="applicant">
-    <h2>Personal Information</h2>
-    
+      header h1 {
+        font-size: 20px;
+        margin: 0;
+      }
+
+      header img {
+        height: 50px;
+        margin-bottom: 5px;
+      }
+
+      h2 {
+        font-size: 16px;
+        margin-top: 20px;
+        margin-bottom: 10px;
+        color: #333;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 3px;
+      }
+
+      .section {
+        margin-top: 10px;
+      }
+      .section .job {
+        display: flex;
+        gap: 10px;
+      }
+
+      .section p {
+        margin: 4px 0;
+        line-height: 1.5;
+      }
+
+      .section strong {
+        color: #000;
+      }
+
+      .experience-header {
+        margin-bottom: 10px;
+        font-style: italic;
+      }
+      .job-info {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      .job-info .job-column {
+        flex: 1;
+        min-width: 45%;
+      }
+      .no-data {
+        font-style: italic;
+        color: #555;
+      }
+    </style>
+  </head>
+  <body>
+    {% for applicant in applicants %}
+    <div class="applicant">
+      <header>
+        <h1>Addis Bank S.C.</h1>
+        <p>Applicant Summary Profile Report</p>
+      </header>
+      <h2>Job Information</h2>
+      <table width="100%" cellspacing="0" cellpadding="5" border="0">
+        <tr>
+          <td valign="top" width="50%">
+            <p><strong>Job Title:</strong> {{ job.title }}</p>
+            <p><strong>Work Place:</strong> {{ job.location }}</p>
+            <p><strong>Job Grade:</strong> {{ job.job_grade }}</p>
+          </td>
+          <td valign="top" width="50%">
+            <p><strong>Post Date:</strong> {{ job.post_date }}</p>
+            <p><strong>Application Deadline:</strong> {{ job.application_deadline}}</p>
+            <p><strong>Job Status:</strong> {{ job.status }}</p>
+          </td>
+        </tr>
+      </table>
+
+      <h2>Personal Information</h2>
       <div class="section">
         <p><strong>Full Name:</strong> {{ applicant.full_name }}</p>
         <p><strong>Email:</strong> {{ applicant.email }}</p>
@@ -48,40 +121,49 @@
         <p><strong>Work Place:</strong> {{ applicant.selected_work_place }}</p>
       </div>
 
+      <h2>Educational Background</h2>
+      <div class="section">
+        {% if applicant.educations.all %} 
+          {% for edu in applicant.educations.all%}
+          <p>
+            <strong>{{ edu.education_level }}</strong> in {{ edu.field_of_study }}
+            from {{ edu.education_organization }} ({{ edu.graduation_year }}) —
+            CGPA: {{ edu.cgpa }} {{ edu.exit_exam }}
+          </p>
+          {% endfor %} 
+        {% else %}
+        <p class="no-data">No educational background available.</p>
+        {% endif %}
+      </div>
 
-    <h2>Educational Background</h2>
-    <div class="section">
-      {% if applicant.educations.all %}
-        {% for edu in applicant.educations.all %}
-          <p><strong>{{ edu.education_level }}</strong> in {{ edu.field_of_study }} from {{ edu.education_organization }} ({{ edu.graduation_year }}), CGPA: {{ edu.cgpa }} {{edu.exit_exam}}</p>
-        {% endfor %}
-      {% else %}
-        <p>No educational background available.</p>
-      {% endif %}
-    </div>
+      <h2>Work Experience</h2>
+      <div class="section">
+        {% if applicant.experiences.all %} 
+          {% for exp in applicant.experiences.all %}
+          <p>
+            <strong>{{ exp.job_title }}</strong> at {{ exp.company_name }} ({{
+            exp.from_date }} - {{ exp.to_date }})
+          </p>
+          {% endfor %} 
+        {% else %}
+          <p class="no-data">No work experience listed.</p>
+        {% endif %}
+      </div>
 
-    <h2>Work Experience</h2>
-    <div class="section">
-      {% if applicant.experiences.all %}
-        {% for exp in applicant.experiences.all %}
-          <p><strong>{{ exp.job_title }}</strong> at {{ exp.company_name }} ({{ exp.from_date }} - {{ exp.to_date }})</p>
-        {% endfor %}
-      {% else %}
-        <p>No work experience listed.</p>
-      {% endif %}
+      <h2>Certifications</h2>
+      <div class="section">
+        {% if applicant.certifications.all %} 
+          {% for cert in applicant.certifications.all %}
+          <p>
+            <strong>{{ cert.certificate_title }}</strong> by {{
+            cert.awarding_company }} on {{ cert.awarded_date }}
+          </p>
+          {% endfor %} 
+        {% else %}
+          <p class="no-data">No certifications listed.</p>
+        {% endif %}
+      </div>
     </div>
-
-    <h2>Certifications</h2>
-    <div class="section">
-      {% if applicant.certifications.all %}
-        {% for cert in applicant.certifications.all %}
-          <p><strong>{{ cert.certificate_title }}</strong> by {{ cert.awarding_company }} on {{ cert.awarded_date }}</p>
-        {% endfor %}
-      {% else %}
-        <p>No certifications listed.</p>
-      {% endif %}
-    </div>
-  </div>
-  {% endfor %}
-</body>
+    {% endfor %}
+  </body>
 </html>

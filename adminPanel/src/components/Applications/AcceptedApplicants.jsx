@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import {
   getAcceptedApplicants,
-  exportAcceptedApplicants,getJobs
+  exportAcceptedApplicants,
+  getJobs,
 } from "../services/jobsService";
+import Select from "react-select";
 
 const AcceptedApplicants = () => {
   const [acceptedApplicant, setAcceptedApplicant] = useState([]);
@@ -10,6 +12,11 @@ const AcceptedApplicants = () => {
   const [isExporting, setIsExporting] = useState(false);
   const [jobs, setJobs] = useState([]);
   const [selectedJobId, setSelectedJobId] = useState("");
+
+  const options = jobs.map((job) => ({
+    value: job.id,
+    label: job.title,
+  }));
 
   const fetchAcceptedApplicants = async () => {
     const response = await getAcceptedApplicants();
@@ -117,29 +124,34 @@ const AcceptedApplicants = () => {
           </button>
         </div>
       </div>
-      <div className="mb-2 flex">
-        <div className="flex items-center gap-2">
-          <label className="block text-gray-700 font-semibold mb-2">
-            Select Work Place:
+      <div className="mb-2 w-full flex gap-4">
+        <div className="flex items-center gap-4">
+          <label className="block text-nowrap text-gray-700 font-semibold mb-2">
+            Select Job :
           </label>
-          <select
-            name="selected_job"
-            value={selectedJobId}
-            onChange={(e) => setSelectedJobId(e.target.value)}
-            className=" p-2 border rounded-md focus:outline-blue-500"
-            required
-          >
-            <option value="">-- Select Job --</option>
-            {jobs.map((job) => (
-              <option key={job.id} value={job.id}>
-                {job.title}
-              </option>
-            ))}
-          </select>
+          <Select
+            options={options}
+            value={options.find((opt) => opt.value === selectedJobId)}
+            onChange={(selectedOption) =>
+              setSelectedJobId(selectedOption?.value || "")
+            }
+            placeholder="-- Select Job --"
+            className="w-full"
+            styles={{
+              control: (base) => ({
+                ...base,
+                padding: "2px",
+                borderColor: "#ccc",
+                borderRadius: "6px",
+                fontSize: "1rem",
+              }),
+            }}
+            isClearable
+          />
         </div>
         <button
           onClick={handlePdfDownload}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          className="bg-blue-600 text-white px-4 py-0 rounded hover:bg-blue-700"
         >
           Download Pdf
         </button>
