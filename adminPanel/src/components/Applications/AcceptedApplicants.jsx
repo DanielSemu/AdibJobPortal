@@ -91,6 +91,13 @@ const AcceptedApplicants = () => {
     fetchJobs();
   }, []);
 
+  const handleSelectChange = (selectedOption) => {
+      setSelectedJobId(selectedOption?.value || "");
+      const result=jobs.find((job)=>job.id === selectedOption.value)
+      const searchKey=result.title
+      setSearchTerm(searchKey)
+}
+
   const filteredApplicants = acceptedApplicant.filter((applicant) => {
     const lowerSearch = searchTerm.toLowerCase();
     return (
@@ -102,8 +109,8 @@ const AcceptedApplicants = () => {
 
   return (
     <div className="p-8 bg-gray-50 min-h-screen">
-      <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-4">
-        <h1 className="text-3xl font-bold text-blue-900">
+      <div className="flex flex-col flex-wrap md:flex-row md:justify-between md:items-center mb-6 gap-4">
+        <h1 className="text-3xl text-nowrap font-bold text-blue-900">
           Accepted Applicants
         </h1>
 
@@ -125,18 +132,16 @@ const AcceptedApplicants = () => {
         </div>
       </div>
       <div className="mb-2 w-full flex gap-4">
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-4">
           <label className="block text-nowrap text-gray-700 font-semibold mb-2">
             Select Job :
           </label>
           <Select
             options={options}
             value={options.find((opt) => opt.value === selectedJobId)}
-            onChange={(selectedOption) =>
-              setSelectedJobId(selectedOption?.value || "")
-            }
+            onChange={handleSelectChange}
             placeholder="-- Select Job --"
-            className="w-full"
+            className="w-2xl"
             styles={{
               control: (base) => ({
                 ...base,
@@ -144,17 +149,19 @@ const AcceptedApplicants = () => {
                 borderColor: "#ccc",
                 borderRadius: "6px",
                 fontSize: "1rem",
+                minWidth:"300px"
               }),
             }}
             isClearable
-          />
-        </div>
-        <button
+          />  
+          <button
           onClick={handlePdfDownload}
-          className="bg-blue-600 text-white px-4 py-0 rounded hover:bg-blue-700"
+          className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
         >
           Download Pdf
         </button>
+        </div>
+      
       </div>
 
       {filteredApplicants.length === 0 ? (
