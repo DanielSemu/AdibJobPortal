@@ -57,6 +57,46 @@ export default function EcommerceMetrics() {
           </Badge>
         </div>
       </div>
+      <div className="rounded-2xl border border-gray-200 bg-white p-5   md:p-6">
+        <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl ">
+          <FaBox className="text-gray-800 size-6 " />
+        </div>
+        <div className="flex items-end justify-between mt-5">
+          <div>
+            <span className="text-sm text-gray-500 ">
+              Orders
+            </span>
+            <h4 className="mt-2 font-bold text-gray-800 text-title-sm ">
+              5,359
+            </h4>
+          </div>
+
+          <Badge color="error">
+            <FaArrowDown />
+            9.05%
+          </Badge>
+        </div>
+      </div>
+      <div className="rounded-2xl border border-gray-200 bg-white p-5   md:p-6">
+        <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl ">
+          <FaBox className="text-gray-800 size-6 " />
+        </div>
+        <div className="flex items-end justify-between mt-5">
+          <div>
+            <span className="text-sm text-gray-500 ">
+              Orders
+            </span>
+            <h4 className="mt-2 font-bold text-gray-800 text-title-sm ">
+              5,359
+            </h4>
+          </div>
+
+          <Badge color="error">
+            <FaArrowDown />
+            9.05%
+          </Badge>
+        </div>
+      </div>
       {/* <!-- Metric Item End --> */}
     </div>
   );
