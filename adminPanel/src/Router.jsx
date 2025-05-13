@@ -15,7 +15,7 @@ import AuthorizeDocument from "./components/Applications/AuthorizeDocument";
 import CloseJobs from "./components/Jobs/CloseJobs";
 import PrivateRoute from "./privateRoute";
 import Login from "./components/Registration/Login";
-import Dashboard from "./components/Dashboard/Dashboard";
+import Home from "./components/Dashboard/Home";
 import Unauthorized from "./components/Registration/Unauthorized"; // Create this page
 import AcceptedApplicants from "./components/Applications/AcceptedApplicants";
 import ActiveJobs from "./components/Jobs/ActiveJobs";
@@ -38,7 +38,7 @@ const Router = () => {
             path=""
             element={
               <PrivateRoute >
-                <Dashboard />
+                <Home />
               </PrivateRoute>
             }
           />

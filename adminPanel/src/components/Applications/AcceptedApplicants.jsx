@@ -92,11 +92,11 @@ const AcceptedApplicants = () => {
   }, []);
 
   const handleSelectChange = (selectedOption) => {
-      setSelectedJobId(selectedOption?.value || "");
-      const result=jobs.find((job)=>job.id === selectedOption.value)
-      const searchKey=result.title
-      setSearchTerm(searchKey)
-}
+    setSelectedJobId(selectedOption?.value || "");
+    const result = jobs.find((job) => job.id === selectedOption.value);
+    const searchKey = result.title;
+    setSearchTerm(searchKey);
+  };
 
   const filteredApplicants = acceptedApplicant.filter((applicant) => {
     const lowerSearch = searchTerm.toLowerCase();
@@ -149,19 +149,18 @@ const AcceptedApplicants = () => {
                 borderColor: "#ccc",
                 borderRadius: "6px",
                 fontSize: "1rem",
-                minWidth:"300px"
+                minWidth: "300px",
               }),
             }}
             isClearable
-          />  
+          />
           <button
-          onClick={handlePdfDownload}
-          className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
-        >
-          Download Pdf
-        </button>
+            onClick={handlePdfDownload}
+            className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
+          >
+            Download Pdf
+          </button>
         </div>
-      
       </div>
 
       {filteredApplicants.length === 0 ? (

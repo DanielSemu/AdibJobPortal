@@ -141,8 +141,8 @@
         {% if applicant.experiences.all %} 
           {% for exp in applicant.experiences.all %}
           <p>
-            <strong>{{ exp.job_title }}</strong> at {{ exp.company_name }} ({{
-            exp.from_date }} - {{ exp.to_date }})
+            <strong>{{ exp.job_title }}</strong> at {{ exp.company_name }} 
+            ({{exp.from_date }} - {{ exp.to_date }})
           </p>
           {% endfor %} 
         {% else %}
@@ -155,8 +155,8 @@
         {% if applicant.certifications.all %} 
           {% for cert in applicant.certifications.all %}
           <p>
-            <strong>{{ cert.certificate_title }}</strong> by {{
-            cert.awarding_company }} on {{ cert.awarded_date }}
+            <strong>{{ cert.certificate_title }}</strong> by 
+            {{cert.awarding_company }} on {{ cert.awarded_date }}
           </p>
           {% endfor %} 
         {% else %}
