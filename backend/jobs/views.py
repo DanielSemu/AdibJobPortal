@@ -26,8 +26,67 @@ from django.template.loader import get_template
 from xhtml2pdf import pisa
 import io
 
+
+import requests
+import urllib.parse
+class SendSMSView(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        recipient_data = request.data.get("recipient")
+        message = request.data.get("message")
+
+        if not recipient_data or not message:
+            return Response({"error": "Missing recipient or message"}, status=status.HTTP_400_BAD_REQUEST)
+
+        encoded_message = urllib.parse.quote(message)
+        base_url = (
+            "http://192.168.6.27:9501/api?action=sendmessage"
+            "&username=Test&password=Adib@123"
+            "&messagetype=SMS:TEXT"
+            f"&messagedata={encoded_message}"
+        )
+
+        results = []
+
+        # Handle multiple or single recipient
+        if isinstance(recipient_data, list):
+            # Multiple recipients: send one-by-one
+            for number in recipient_data:
+                url = f"{base_url}&recipient={number}"
+                try:
+                    response = requests.get(url)
+                    results.append({
+                        "recipient": number,
+                        "status": "sent",
+                        "provider_response": response.text
+                    })
+                except Exception as e:
+                    results.append({
+                        "recipient": number,
+                        "status": "failed",
+                        "error": str(e)
+                    })
+        else:
+            # Single recipient
+            url = f"{base_url}&recipient={recipient_data}"
+            try:
+                response = requests.get(url)
+                results.append({
+                    "recipient": recipient_data,
+                    "status": "sent",
+                    "provider_response": response.text
+                })
+            except Exception as e:
+                results.append({
+                    "recipient": recipient_data,
+                    "status": "failed",
+                    "error": str(e)
+                })
+
+        return Response({"status": "completed", "results": results}, status=status.HTTP_200_OK)
     
 @api_view(['GET'])
+@permission_classes([IsAuthenticated]) 
 def generate_applicants_pdf(request):
     job_id = request.GET.get("job_id")
 

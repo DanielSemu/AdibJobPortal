@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { getUnderReviewApplicants } from "../services/jobsService";
+import { getUnderReviewApplicants, SendSMS } from "../services/jobsService";
+import { showErrorToast, showSuccessToast } from "../../utils/toastUtils";
 
 const SendSMSForAccepted = () => {
   const [selectedJob, setSelectedJob] = useState("");
@@ -24,19 +25,43 @@ const SendSMSForAccepted = () => {
     setFilteredApplicants(result);
   };
 
-  const handleTestSMS = () => {
-    console.log(smsText);
-    
-    console.log(testNumber);
-  };
+const handleTestSMS = async () => {
+  try {
+    const response = await SendSMS(testNumber,smsText)
+    showSuccessToast(`Test SMS is sent to phone number ${testNumber} Successfully`)
+    console.log("📨 Backend response:", response);;
+  } catch (error) {
+    console.error("Error sending SMS:", error);
+  }
+};
 
-  const handleSendSMS = () => {
-    // Placeholder for sending logic (e.g. API request)
+const handleSendSMS = async () => {
+  const recipients = filteredApplicants
+    .map(applicant => applicant.phone)
+    .filter(Boolean); // filters out undefined, null, empty
 
-    alert(
-      `SMS sent to ${filteredApplicants.length} applicant(s): "${smsText}"`
-    );
-  };
+  if (!smsText.trim()) {
+    alert("📭 Message text is empty.");
+    return;
+  }
+
+  if (recipients.length === 0) {
+    alert("📵 No valid recipients.");
+    return;
+  }
+
+  try {
+    const response = await SendSMS(recipients, smsText);
+    showSuccessToast(`SMS sent to ${recipients.length} applicant(s).`)
+    console.log("📨 Backend response:", response);
+  } catch (error) {
+    const errorMessage = error.message || "Unknown error";
+    showErrorToast(`Failed to send SMS: ${errorMessage}`)
+    console.error("🚨 SMS Error:", error);
+  }
+};
+
+
 
   return (
     <div className="max-w-3xl mx-auto p-6">

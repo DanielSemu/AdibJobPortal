@@ -1,8 +1,10 @@
 from django.urls import path
-from .views import ApplicantAPIView,ExpiredJobView, JobView,getUserApplications,ContactUsAPIView,JobCategoryView,AdminJobView,JobBulkUploadView,JobDetailBulkUploadView,FilterApplicantsView,getUnderReviewApplicants,ConfirmFilteredApplicants,ExportEmployeeDataView,ActiveJobApplicants,generate_applicants_pdf
+from .views import SendSMSView,ApplicantAPIView,ExpiredJobView, JobView,getUserApplications,ContactUsAPIView,JobCategoryView,AdminJobView,JobBulkUploadView,JobDetailBulkUploadView,FilterApplicantsView,getUnderReviewApplicants,ConfirmFilteredApplicants,ExportEmployeeDataView,ActiveJobApplicants,generate_applicants_pdf
 
 
 urlpatterns = [
+    path("send-sms/", SendSMSView.as_view(), name='send_sms'),
+    
     path('export_applicant/',ExportEmployeeDataView.as_view(),name='export_applicant'),
     path('export_applicant_pdf/',generate_applicants_pdf,name='export_applicant_pdf'),
     # Job CRUD operations

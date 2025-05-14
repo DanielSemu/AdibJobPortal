@@ -98,3 +98,25 @@ export const uploadBulkJobDetail = async ( id,fromData)=>{
   const response= await axiosInstance.post(`/api/jobs/job-detail-upload/${id}/`, fromData)
   return response.data
 }
+
+export const SendSMS = async (recipient, message) => {
+  try {
+    const response = await axiosInstance.post("/api/send-sms/", {
+      recipient,
+      message,
+    });
+
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error(
+        `Unexpected response status: ${response.status} - ${response.statusText}`
+      );
+    }
+  } catch (error) {
+    console.error("🚨 SendSMS Error:", error.response?.data || error.message);
+    throw new Error(
+      error.response?.data?.error || "Failed to send SMS. Please try again."
+    );
+  }
+};
