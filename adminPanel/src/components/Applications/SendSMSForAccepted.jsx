@@ -29,6 +29,7 @@ const handleTestSMS = async () => {
   try {
     const response = await SendSMS(testNumber,smsText)
     showSuccessToast(`Test SMS is sent to phone number ${testNumber} Successfully`)
+    setTestNumber('')
     console.log("📨 Backend response:", response);;
   } catch (error) {
     console.error("Error sending SMS:", error);
@@ -53,6 +54,7 @@ const handleSendSMS = async () => {
   try {
     const response = await SendSMS(recipients, smsText);
     showSuccessToast(`SMS sent to ${recipients.length} applicant(s).`)
+    
     console.log("📨 Backend response:", response);
   } catch (error) {
     const errorMessage = error.message || "Unknown error";
