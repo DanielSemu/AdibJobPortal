@@ -1,12 +1,8 @@
 from django.urls import path
-from .views import SendSMSView,ApplicantAPIView,ExpiredJobView, JobView,getUserApplications,ContactUsAPIView,JobCategoryView,AdminJobView,JobBulkUploadView,JobDetailBulkUploadView,FilterApplicantsView,getUnderReviewApplicants,ConfirmFilteredApplicants,ExportEmployeeDataView,ActiveJobApplicants,generate_applicants_pdf
+from .views import ExpiredJobView, JobView,ContactUsAPIView,JobCategoryView,AdminJobView,JobBulkUploadView,JobDetailBulkUploadView
 
 
 urlpatterns = [
-    path("send-sms/", SendSMSView.as_view(), name='send_sms'),
-    
-    path('export_applicant/',ExportEmployeeDataView.as_view(),name='export_applicant'),
-    path('export_applicant_pdf/',generate_applicants_pdf,name='export_applicant_pdf'),
     # Job CRUD operations
     path('jobs/', JobView.as_view(), name='job-list'),  # Get all jobs
     path('jobs/<int:id>/', JobView.as_view(), name='job-detail'),  # Get a single job
@@ -21,14 +17,6 @@ urlpatterns = [
     path('categories/', JobCategoryView.as_view(), name='categories-list'),  # Get all jobs
     path('categories/<int:id>/', JobCategoryView.as_view(), name='category-detail'),  # Get a single job
    
-    path('applicants/', ApplicantAPIView.as_view(), name='applicants_api'),
-    path('applicants/<int:id>/', ApplicantAPIView.as_view(), name='applicants_detail'),
-    path('job/applicants/<int:id>/', ActiveJobApplicants.as_view(), name='active_job_applicant'),
-    path('my_applications/', getUserApplications, name="my_applications"),
-    path('filter_applicants/', FilterApplicantsView.as_view(), name="filter_applicants"),
-    path('confirm_filter/', ConfirmFilteredApplicants.as_view(), name="confirm_filter"),
-    path('get_under_review_applicants/', getUnderReviewApplicants, name="get_under_review_applicants"),
-    
     
     path('contacts/', ContactUsAPIView.as_view(), name='contact-list-create'),  
     path('contacts/<int:pk>/', ContactUsAPIView.as_view(), name='contact-detail'), 

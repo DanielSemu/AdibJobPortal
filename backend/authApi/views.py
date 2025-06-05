@@ -77,6 +77,7 @@ class UserProfileView(APIView):
             'gender':user.gender,
             'role':user.role
         })
+        
 class RegisterUserView(APIView):
     permission_classes = [AllowAny]
     
