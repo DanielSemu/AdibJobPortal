@@ -105,7 +105,7 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
     #  'default': {
-    #     'ENGINE': 'mssql',
+    #     'ENGINE': 'mssql',cap
     #     'NAME': 'ADIB_JobPortal',
     #     'USER': 'sa',
     #     'PASSWORD': 'Adib@Te5t',
