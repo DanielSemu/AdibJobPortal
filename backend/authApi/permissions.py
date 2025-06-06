@@ -9,6 +9,12 @@ class ViewJobRole(BasePermission):
     
     def has_permission(self,request, view):
         return request.user.is_authenticated and (request.user.role == 'hr_maker' or request.user.role == 'hr_checker')
+  
+ 
+class IsHrMakerRole(BasePermission):
+    
+    def has_permission(self,request, view):
+        return request.user.is_authenticated and request.user.role == 'hr_maker'  
     
 class IsHrCheckerRole(BasePermission):
     

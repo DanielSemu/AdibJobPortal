@@ -41,6 +41,8 @@ from .models import (
 )
 from authApi.permissions import (
     ViewJobRole,
+    IsHrMakerRole,
+    IsHrCheckerRole
 )
 
 
@@ -89,9 +91,14 @@ class JobCategoryView(APIView):
 
 #Job
 class AdminJobView(APIView):
-    
-    permission_classes =[IsAuthenticated,ViewJobRole]
-    
+    #override get_permission method 
+    def get_permissions(self):
+        if self.request.method == "GET":
+            return [IsAuthenticated(), ViewJobRole()]
+        elif self.request.method == "POST" or self.request.method == "PUT":
+            return [IsAuthenticated(), IsHrMakerRole()]
+        return super().get_permissions()
+
     def get(self, request, id=None, *args, **kwargs):
         if id:
             job = get_object_or_404(Job, id=id)
@@ -99,16 +106,19 @@ class AdminJobView(APIView):
         else:
             jobs = Job.objects.all()
 
-            # ✅ Handle status filter from query params
+            # ✅ Filter by status
             status_param = request.query_params.get("status")
             if status_param:
                 jobs = jobs.filter(status=status_param)
 
-            # Optional: Add more filters here (like job_type, category, etc.)
-            jobs = jobs.order_by("-updated_at")
+            # ✅ Filter by category
+            category_param = request.query_params.get("category")
+            if category_param:
+                jobs = jobs.filter(category=int(category_param))
 
+            jobs = jobs.order_by("-updated_at")
             serializer = JobSerializer(jobs, many=True)
-        
+
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
@@ -121,14 +131,10 @@ class AdminJobView(APIView):
     def put(self, request, id=None, *args, **kwargs):
         job = get_object_or_404(Job, id=id)
         serializer = JobSerializer(job, data=request.data, partial=True)
-        
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
-        
-        # print("Validation errors:", serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
     def delete(self, request, id=None, *args, **kwargs):
         job = get_object_or_404(Job, id=id)
         job.delete()
