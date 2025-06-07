@@ -39,7 +39,7 @@ class JobSerializer(serializers.ModelSerializer):
         instance.application_deadline = validated_data.get('application_deadline', instance.application_deadline)
         instance.post_date = validated_data.get('post_date', instance.post_date)
         instance.show_experience = validated_data.get('show_experience', instance.show_experience)
-        instance.status = validated_data.get('status', instance.status)
+        instance.status = "Draft"
         instance.save()
 
         # Update job details
