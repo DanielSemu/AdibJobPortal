@@ -141,35 +141,44 @@ class AdminJobView(APIView):
     def put(self, request, id=None, *args, **kwargs):
         job = get_object_or_404(Job, id=id)
         user = request.user
+        user_role = getattr(user, 'role', None)
 
-        user_role = getattr(user, 'role', None)  # Adjust if needed
-        # Always update operations is done status should changed to 
         if user_role == "hr_maker":
-            # Allow updating fields, but force status to "Draft"
-            data = request.data.copy()
-            data["status"] = "Draft"
-            serializer = JobSerializer(job, data=data, partial=True)
+            # If status is in the request, reject it
+            if "status" in request.data:
+                return Response(
+                    {"error": "hr_maker is not allowed to update the status field."},
+                    status=status.HTTP_403_FORBIDDEN
+                )
 
+            data = request.data.copy()
+            data["status"] = "Draft"  # Still force status to Draft on save
+
+            serializer = JobSerializer(job, data=data, partial=True)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        # Only Authorize the job 
         elif user_role == "hr_checker":
             new_status = request.data.get("status")
             if new_status != "Active":
-                return Response({"error": "hr_checker can only set status to 'Active'."},
-                        status=status.HTTP_403_FORBIDDEN)
-            # Directly update model without serializer validation
+                return Response(
+                    {"error": "hr_checker can only set status to 'Active'."},
+                    status=status.HTTP_403_FORBIDDEN
+                )
+
             job.status = "Active"
             job.save()
             serializer = JobSerializer(job)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         else:
-            return Response({"error": "You are not authorized to update this job."},
-                            status=status.HTTP_403_FORBIDDEN)
+            return Response(
+                {"error": "You are not authorized to update this job."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
 
 
     def delete(self, request, id=None, *args, **kwargs):
