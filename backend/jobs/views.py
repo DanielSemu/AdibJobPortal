@@ -3,7 +3,8 @@
 # ====================
 import csv
 from io import  TextIOWrapper
-
+import requests
+import urllib.parse
 # ====================
 # Third-Party Libraries
 # ====================
@@ -24,6 +25,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.decorators import api_view, permission_classes
 
 # ====================
 # Local App Imports
@@ -46,6 +48,8 @@ from authApi.permissions import (
 )
 
 
+
+ 
 #========================
 # Admin Manage's Job Post 
 #========================
@@ -96,7 +100,7 @@ class AdminJobView(APIView):
         if self.request.method == "GET":
             return [IsAuthenticated(), ViewJobRole()]
         elif self.request.method == "POST" or self.request.method == "PUT":
-            return [IsAuthenticated(), IsHrMakerRole()]
+            return [IsAuthenticated(), ViewJobRole()]
         return super().get_permissions()
 
     def get(self, request, id=None, *args, **kwargs):
@@ -121,20 +125,53 @@ class AdminJobView(APIView):
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, id=None, *args, **kwargs):
+        if id is not None:
+            return Response(
+                {"error": "POST request should not include an ID."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         serializer = JobSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
     def put(self, request, id=None, *args, **kwargs):
         job = get_object_or_404(Job, id=id)
-        serializer = JobSerializer(job, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
+        user = request.user
+
+        user_role = getattr(user, 'role', None)  # Adjust if needed
+        # Always update operations is done status should changed to 
+        if user_role == "hr_maker":
+            # Allow updating fields, but force status to "Draft"
+            data = request.data.copy()
+            data["status"] = "Draft"
+            serializer = JobSerializer(job, data=data, partial=True)
+
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # Only Authorize the job 
+        elif user_role == "hr_checker":
+            new_status = request.data.get("status")
+            if new_status != "Active":
+                return Response({"error": "hr_checker can only set status to 'Active'."},
+                        status=status.HTTP_403_FORBIDDEN)
+            # Directly update model without serializer validation
+            job.status = "Active"
+            job.save()
+            serializer = JobSerializer(job)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        else:
+            return Response({"error": "You are not authorized to update this job."},
+                            status=status.HTTP_403_FORBIDDEN)
+
+
     def delete(self, request, id=None, *args, **kwargs):
         job = get_object_or_404(Job, id=id)
         job.delete()
@@ -283,6 +320,177 @@ class JobView(APIView):
             serializer = JobSerializer(jobs, many=True)
         
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+
+class SendSMSView(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        recipient_data = request.data.get("recipient")
+        message = request.data.get("message")
+
+        if not recipient_data or not message:
+            return Response({"error": "Missing recipient or message"}, status=status.HTTP_400_BAD_REQUEST)
+
+        encoded_message = urllib.parse.quote(message)
+        base_url = (
+            "http://192.168.6.27:9501/api?action=sendmessage"
+            "&username=Test&password=Adib@123"
+            "&messagetype=SMS:TEXT"
+            f"&messagedata={encoded_message}"
+        )
+
+        results = []
+
+        # Handle multiple or single recipient
+        if isinstance(recipient_data, list):
+            # Multiple recipients: send one-by-one
+            for number in recipient_data:
+                url = f"{base_url}&recipient={number}"
+                
+                try:
+                    response = requests.get(url)
+                    results.append({
+                        "recipient": number,
+                        "status": "sent",
+                        "provider_response": response.text
+                    })
+                except Exception as e:
+                    results.append({
+                        "recipient": number,
+                        "status": "failed",
+                        "error": str(e)
+                    })
+        else:
+            # Single recipient
+            url = f"{base_url}&recipient={recipient_data}"
+            try:
+                response = requests.get(url)
+                results.append({
+                    "recipient": recipient_data,
+                    "status": "sent",
+                    "provider_response": response.text
+                })
+            except Exception as e:
+                results.append({
+                    "recipient": recipient_data,
+                    "status": "failed",
+                    "error": str(e)
+                })
+
+        return Response({"status": "completed", "results": results}, status=status.HTTP_200_OK)
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated]) 
+def generate_applicants_pdf(request):
+    job_id = request.GET.get("job_id")
+
+    if job_id:
+        applicants = Applicant.objects.filter(status="Accepted", job_id=job_id)
+        print(applicants)
+    else:
+        applicants = Applicant.objects.filter(status="Accepted")
+    job=Job.objects.get(id=job_id)
+    template = get_template("applicants_report.html")
+    html = template.render({"applicants": applicants,"job":job})
+
+    result = io.BytesIO()
+    pdf = pisa.pisaDocument(io.BytesIO(html.encode("UTF-8")), result)
+
+    if not pdf.err:
+        return HttpResponse(result.getvalue(), content_type='application/pdf')
+    return HttpResponse("PDF generation failed", status=500)
+
+class ExportEmployeeDataView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Applicant.objects.filter(status="Accepted")
+
+    def get(self, request):
+        applications = self.get_queryset()
+        if not applications.exists():
+            return Response({"message": "No applications found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ApplicantSerializer(applications, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        applications = self.get_queryset()
+        if not applications.exists():
+            return Response({"message": "No applications found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ApplicantSerializer(applications, many=True)
+        employees = serializer.data
+
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Employees"
+
+        headers = [
+            "No", "Full Name", "Gender", "Birth Date", "Applied For", "Work Place", "Status",
+            "Edu-Organization", "Edu-Level", "Filed-Study",
+            "Job-Position", "Organization", "From", "To", "Banking Experience",
+            "Certificate-Title", "Company"
+        ]
+        ws.append(headers)
+
+        for col in range(1, len(headers) + 1):
+            ws.cell(row=1, column=col).font = Font(bold=True)
+            ws.cell(row=1, column=col).alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+
+        row_index = 2
+        for i, emp in enumerate(employees, start=1):
+            educations = emp.get("educations", [])
+            experiences = emp.get("experiences", [])
+            certifications = emp.get("certifications", [])
+
+            max_len = max(len(educations), len(experiences), len(certifications))
+
+            for j in range(max_len):
+                edu = educations[j] if j < len(educations) else {}
+                exp = experiences[j] if j < len(experiences) else {}
+                cert = certifications[j] if j < len(certifications) else {}
+
+                ws.cell(row_index, 8, edu.get("education_organization", ""))
+                ws.cell(row_index, 9, edu.get("education_level", ""))
+                ws.cell(row_index, 10, edu.get("field_of_study", ""))
+
+                ws.cell(row_index, 11, exp.get("job_title", ""))
+                ws.cell(row_index, 12, exp.get("company_name", ""))
+                ws.cell(row_index, 13, exp.get("from_date", ""))
+                ws.cell(row_index, 14, exp.get("to_date", ""))
+                ws.cell(row_index, 15, exp.get("banking_experience", ""))
+
+                ws.cell(row_index, 16, cert.get("certificate_title", ""))
+                ws.cell(row_index, 17, cert.get("awarding_company", ""))
+
+                if j == 0:
+                    ws.cell(row_index, 1, i)
+                    ws.cell(row_index, 2, emp["full_name"])
+                    ws.cell(row_index, 3, emp["gender"])
+                    ws.cell(row_index, 4, emp["birth_date"])
+                    ws.cell(row_index, 5, emp["job_name"])
+                    ws.cell(row_index, 6, emp["selected_work_place"])
+                    ws.cell(row_index, 7, emp["status"])
+
+                row_index += 1
+
+            for col in [1, 2, 3, 4, 5, 6, 7]:
+                ws.merge_cells(start_row=row_index - max_len, start_column=col, end_row=row_index - 1, end_column=col)
+                ws.cell(row=row_index - max_len, column=col).alignment = Alignment(vertical="top", wrap_text=True)
+
+        column_widths = [5, 25, 15, 15, 20, 20, 20, 25, 25, 25, 12, 20, 15, 15, 12, 20, 20]
+        for i, width in enumerate(column_widths, start=1):
+            ws.column_dimensions[get_column_letter(i)].width = width
+
+        response = HttpResponse(content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        response['Content-Disposition'] = 'attachment; filename="employee_export.xlsx"'
+        wb.save(response)
+
+        return response
+
 
 
 
