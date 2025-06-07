@@ -53,6 +53,7 @@ class SendSMSView(APIView):
             # Multiple recipients: send one-by-one
             for number in recipient_data:
                 url = f"{base_url}&recipient={number}"
+                
                 try:
                     response = requests.get(url)
                     results.append({
