@@ -51,20 +51,13 @@ from authApi.permissions import (
     
 )
 
-#=====================#
-# User Apply For a Job
-#=====================#
-class UserApplyForJobAPIView(APIView):
-    def post():
-        return
-
 
 
 
 #========================
-#Applicant's Applicantions
+#User Apply For a Job
 #=========================
-class AdminApplicantAPIView(APIView):
+class UserApplyForJobAPIView(APIView):
     def post(self, request):
         # print(request.data)
         serializer = ApplicantSerializer(data=request.data)
@@ -79,6 +72,32 @@ class AdminApplicantAPIView(APIView):
             {"status": "error", "errors": serializer.errors},
             status=status.HTTP_400_BAD_REQUEST
         )
+    
+
+#============================#
+#=====User's Applcations=====#
+class UserApplicationAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, id=None, *args, **kwargs):
+        user = request.user
+
+        if id:
+            # Get only the applicant that belongs to the user
+            applicant = get_object_or_404(Applicant, id=id, email=user.email)
+            serializer = ApplicantSerializer(applicant)
+        else:
+            applicants = Applicant.objects.filter(email=user.email)
+            serializer = ApplicantSerializer(applicants, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+#=====================
+# Admin Applications View
+#=====================
+class AdminApplicationsAPIView(APIView):
     def get(self, request, id=None, *args, **kwargs):
         if id:
             applicants = Applicant.objects.get(id=id,status="Under Review")
@@ -110,25 +129,7 @@ class AdminApplicantAPIView(APIView):
             'applicant_id':applicant.id,
             'new_status':applicant.status,
         }, status=status.HTTP_200_OK)
-
-#==========================#
-#=====User Applcations=====#
-class UserApplicationAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, id=None, *args, **kwargs):
-        user = request.user
-
-        if id:
-            # Get only the applicant that belongs to the user
-            applicant = get_object_or_404(Applicant, id=id, email=user.email)
-            serializer = ApplicantSerializer(applicant)
-        else:
-            applicants = Applicant.objects.filter(email=user.email)
-            serializer = ApplicantSerializer(applicants, many=True)
-
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    
+   
 
 class SendSMSView(APIView):
     permission_classes = [IsAuthenticated]

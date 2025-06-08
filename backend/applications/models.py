@@ -18,12 +18,21 @@ class Applicant(models.Model):
         ('Waitlisted', 'Waitlisted'),
         ('Background Check', 'Background Check'),
     ]
-    job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='job')
+    job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='applicants')
     full_name = models.CharField(max_length=255)
     email = models.EmailField(max_length=50)
     phone = models.CharField(max_length=50)
     gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female')])
     birth_date = models.DateField()
+    # Educational Background
+    education_level = models.CharField(max_length=100)
+    field_of_study = models.CharField(max_length=100)
+    education_organization = models.CharField(max_length=255)
+    graduation_year = models.DateField()
+    cgpa = models.DecimalField(max_digits=4, decimal_places=2)  # Up to 99.99
+    exit_exam = models.DecimalField(max_digits=4, decimal_places=2)
+
+    # Other Fields
     contact_consent = models.BooleanField(default=False)
     cover_letter = models.TextField(blank=True)
     resume = models.FileField(upload_to='resumes/',blank=True ,null=True  )
@@ -33,17 +42,17 @@ class Applicant(models.Model):
     def __str__(self):
         return self.full_name
 
-class Education(models.Model):
-    applicant = models.ForeignKey(Applicant, on_delete=models.CASCADE, related_name='educations')
-    education_level = models.CharField(max_length=100)
-    field_of_study = models.CharField(max_length=100)
-    education_organization = models.CharField(max_length=255)
-    graduation_year = models.DateField()
-    cgpa = models.DecimalField(max_digits=10, decimal_places=2)
-    exit_exam = models.DecimalField(max_digits=10, decimal_places=2, null=True , blank=True)
+# class Education(models.Model):
+#     applicant = models.ForeignKey(Applicant, on_delete=models.CASCADE, related_name='educations')
+#     education_level = models.CharField(max_length=100)
+#     field_of_study = models.CharField(max_length=100)
+#     education_organization = models.CharField(max_length=255)
+#     graduation_year = models.DateField()
+#     cgpa = models.DecimalField(max_digits=10, decimal_places=2)
+#     exit_exam = models.DecimalField(max_digits=10, decimal_places=2, null=True , blank=True)
 
-    def __str__(self):
-        return f"{self.education_level} - {self.education_organization}"
+#     def __str__(self):
+#         return f"{self.education_level} - {self.education_organization}"
 
 class Experience(models.Model):
     applicant = models.ForeignKey(Applicant, on_delete=models.CASCADE, related_name='experiences')
