@@ -51,6 +51,16 @@ from authApi.permissions import (
     
 )
 
+#=====================#
+# User Apply For a Job
+#=====================#
+class UserApplyForJobAPIView(APIView):
+    def post():
+        return
+
+
+
+
 #========================
 #Applicant's Applicantions
 #=========================
@@ -119,24 +129,6 @@ class UserApplicationAPIView(APIView):
 
         return Response(serializer.data, status=status.HTTP_200_OK)
     
-# @api_view(['GET'])
-# @permission_classes([IsAuthenticated])    
-# def getUserApplications(request):
-#     user_email=request.user.email
-#     applications=Applicant.objects.filter(email=user_email)
-    
-#     if not applications.exists():
-#         return Response({"message": "No applications found for this user."}, status=status.HTTP_404_NOT_FOUND)
-#     serializer=ApplicantSerializer(applications, many=True)
-#     return  Response(serializer.data, status=status.HTTP_200_OK)
-
-# @api_view(['GET'])
-# @permission_classes([IsAuthenticated])  
-# def getUnderReviewApplicants(request):
-#     applicants=Applicant.objects.filter(status='Under Review')
-#     serializer=ApplicantSerializer(applicants, many=True)
-#     return Response(serializer.data, status=status.HTTP_200_OK)
-
 
 class SendSMSView(APIView):
     permission_classes = [IsAuthenticated]
