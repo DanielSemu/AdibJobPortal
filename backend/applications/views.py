@@ -94,19 +94,37 @@ class UserApplicationAPIView(APIView):
 
 
 
-#=====================
+#========================
 # Admin Applications View
-#=====================
+#========================
 class AdminApplicationsAPIView(APIView):
+    permission_classes=[IsAuthenticated , ViewJobRole]
+    
     def get(self, request, id=None, *args, **kwargs):
         if id:
-            applicants = Applicant.objects.get(id=id,status="Under Review")
-            serializer = ApplicantSerializer(applicants)
-        else:
-            applicants = Applicant.objects.filter(status="Under Review")
-            serializer = ApplicantSerializer(applicants, many=True)
+            applicants = Applicant.objects.filter(job_id=id)
             
+            #Filter By Applicant Status
+            status_param = request.query_params.get("status")
+            if status_param:
+                applicants=applicants.filter(status=status_param)
+                
+            #Filter By WorkPlace Selected
+            workPlace_param=request.query_params.get("workPlace")
+            if workPlace_param:
+                applicants=applicants.filter(selected_work_place=workPlace_param)
+            
+            serializer = ApplicantSerializer(applicants, many=True)
+        else:
+            applicants=Applicant.objects.all()
+            status_param=request.query_params.get("status")
+            if status_param:
+                applicants=applicants.filter(status=status_param)
+            
+            serializer=ApplicantSerializer(applicants, many=True)
+ 
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
 
     def put(self,request, id=None, *args, **kwargs):
         if not id:
@@ -130,6 +148,91 @@ class AdminApplicationsAPIView(APIView):
             'new_status':applicant.status,
         }, status=status.HTTP_200_OK)
    
+
+
+#==========================
+# Admin Filter Applications
+#==========================
+class FilterApplicantsView(APIView):
+    permission_classes=[IsAuthenticated, ViewJobRole]
+    def post(self,request):
+        data=request.data
+        
+        selected_job=data.get('selectedJob')
+        selected_location=data.get('selectedLocation')
+        min_experience_years =data.get('minExperienceYears')
+        gender=data.get('gender')
+        min_cgpa=data.get('minCGPA')
+        min_exit=data.get('minExit')
+        applicants=Applicant.objects.filter(status = 'Pending')
+        
+        if selected_job:
+            applicants=applicants.filter(job__id=selected_job)
+        
+        if selected_location:
+            # applicants = applicants.filter(job__location__icontains=selected_location)
+            applicants = applicants.filter(selected_work_place__icontains=selected_location)
+            
+        if gender:
+            applicants=applicants.filter(gender=gender)
+        
+        filtered_applicants=[]
+        for applicant in applicants:
+            total_experience_years=0
+            for experience in applicant.experiences.all():
+                if experience.from_date and experience.to_date:
+                    duration=(experience.to_date - experience.from_date).days / 365
+                    total_experience_years += duration
+            
+            
+            if min_experience_years  and total_experience_years < float(min_experience_years ):
+                continue
+            
+            educations= applicant.educations.all()
+            
+            if not educations.exists():
+                continue
+            
+            highest_education=educations.order_by('-graduation_year').first()
+            if min_cgpa and float(highest_education.cgpa) < float(min_cgpa):
+                continue
+            
+            if min_exit and float(highest_education.exit_exam) < float(min_exit):
+                continue  # Skip if Exit exam score is low
+            # applicant.status="Under Review"
+            # applicant.save()
+            filtered_applicants.append(applicant)
+        serializer = ApplicantSerializer(filtered_applicants, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class ConfirmFilteredApplicants(APIView):
+    def post(self, request):
+        data = request.data
+        confirm = data.get('confirm')
+        applicant_ids = data.get('applicant_ids', [])
+        criteria_data = data.get('criteria', {})
+        print(confirm,applicant_ids,criteria_data)
+        if not confirm or not applicant_ids:
+            return Response({'error': 'Invalid request'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Update applicants
+        updated_count = Applicant.objects.filter(id__in=applicant_ids).update(status='Under Review')
+
+        # Save criteria (you can customize your model)
+        Criteria.objects.create(
+            job_id=criteria_data.get('selectedJob'),
+            location=criteria_data.get('selectedLocation'),
+            min_experience_years=criteria_data.get('minExperienceYears'),
+            gender=criteria_data.get('gender'),
+            min_cgpa=criteria_data.get('minCGPA'),
+            min_exit_score=criteria_data.get('minExit'),
+            matched_applicants=updated_count,
+            timestamp=timezone.now()
+        )
+
+        return Response({'message': f'{updated_count} applicants updated and criteria saved.'}, status=status.HTTP_200_OK)
+
 
 class SendSMSView(APIView):
     permission_classes = [IsAuthenticated]
@@ -310,84 +413,5 @@ class ActiveJobApplicants(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
         
 
-class FilterApplicantsView(APIView):
-    def post(self,request):
-        data=request.data
-        
-        selected_job=data.get('selectedJob')
-        selected_location=data.get('selectedLocation')
-        min_experience_years =data.get('minExperienceYears')
-        gender=data.get('gender')
-        min_cgpa=data.get('minCGPA')
-        min_exit=data.get('minExit')
-        
-        applicants=Applicant.objects.filter(status = 'Pending')
-        
-        if selected_job:
-            applicants=applicants.filter(job__id=selected_job)
-        
-        if selected_location:
-            # applicants = applicants.filter(job__location__icontains=selected_location)
-            applicants = applicants.filter(selected_work_place__icontains=selected_location)
-            
-        if gender:
-            applicants=applicants.filter(gender=gender)
-        
-        filtered_applicants=[]
-        for applicant in applicants:
-            total_experience_years=0
-            for experience in applicant.experiences.all():
-                if experience.from_date and experience.to_date:
-                    duration=(experience.to_date - experience.from_date).days / 365
-                    total_experience_years += duration
-            
-            
-            if min_experience_years  and total_experience_years < float(min_experience_years ):
-                continue
-            
-            educations= applicant.educations.all()
-            
-            if not educations.exists():
-                continue
-            
-            highest_education=educations.order_by('-graduation_year').first()
-            if min_cgpa and float(highest_education.cgpa) < float(min_cgpa):
-                continue
-            
-            if min_exit and float(highest_education.exit_exam) < float(min_exit):
-                continue  # Skip if Exit exam score is low
-            # applicant.status="Under Review"
-            # applicant.save()
-            filtered_applicants.append(applicant)
-        serializer = ApplicantSerializer(filtered_applicants, many=True)
-
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-class ConfirmFilteredApplicants(APIView):
-    def post(self, request):
-        data = request.data
-        confirm = data.get('confirm')
-        applicant_ids = data.get('applicant_ids', [])
-        criteria_data = data.get('criteria', {})
-        print(confirm,applicant_ids,criteria_data)
-        if not confirm or not applicant_ids:
-            return Response({'error': 'Invalid request'}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Update applicants
-        updated_count = Applicant.objects.filter(id__in=applicant_ids).update(status='Under Review')
-
-        # Save criteria (you can customize your model)
-        Criteria.objects.create(
-            job_id=criteria_data.get('selectedJob'),
-            location=criteria_data.get('selectedLocation'),
-            min_experience_years=criteria_data.get('minExperienceYears'),
-            gender=criteria_data.get('gender'),
-            min_cgpa=criteria_data.get('minCGPA'),
-            min_exit_score=criteria_data.get('minExit'),
-            matched_applicants=updated_count,
-            timestamp=timezone.now()
-        )
-
-        return Response({'message': f'{updated_count} applicants updated and criteria saved.'}, status=status.HTTP_200_OK)
 
 
