@@ -1,11 +1,28 @@
 from django.db import models
 from jobs.models import Job
 # Create your models here.
+
+class Criteria(models.Model):
+    job = models.ForeignKey(Job, on_delete=models.SET_NULL, null=True)
+    location = models.CharField(max_length=255, blank=True, null=True)
+    min_experience_years = models.FloatField(blank=True, null=True)
+    gender = models.CharField(max_length=10, blank=True, null=True)
+    min_cgpa = models.FloatField(blank=True, null=True)
+    min_exit_score = models.FloatField(blank=True, null=True)
+    matched_applicants = models.PositiveIntegerField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"Criterias for Job: {self.job}"
+
+
+
 class Applicant(models.Model):
     STATUS_CHOICES = [
         ('Pending', 'Pending'),
         ('Under Review', 'Under Review'),
         ('Shortlisted', 'Shortlisted'),
+        ('SMS_Sent', 'SMS_Sent'),
         ('Interview Scheduled', 'Interview Scheduled'),
         ('Interviewed', 'Interviewed'),
         ('Assessment Pending', 'Assessment Pending'),
@@ -39,20 +56,10 @@ class Applicant(models.Model):
     terms_accepted = models.BooleanField(default=False)
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='Pending')
     selected_work_place=models.CharField(max_length=100, blank=True, null=True)
+    selectedCriteria=models.ForeignKey(Criteria, on_delete=models.SET_NULL , blank=True, null=True)
     def __str__(self):
         return self.full_name
 
-# class Education(models.Model):
-#     applicant = models.ForeignKey(Applicant, on_delete=models.CASCADE, related_name='educations')
-#     education_level = models.CharField(max_length=100)
-#     field_of_study = models.CharField(max_length=100)
-#     education_organization = models.CharField(max_length=255)
-#     graduation_year = models.DateField()
-#     cgpa = models.DecimalField(max_digits=10, decimal_places=2)
-#     exit_exam = models.DecimalField(max_digits=10, decimal_places=2, null=True , blank=True)
-
-#     def __str__(self):
-#         return f"{self.education_level} - {self.education_organization}"
 
 class Experience(models.Model):
     applicant = models.ForeignKey(Applicant, on_delete=models.CASCADE, related_name='experiences')
@@ -76,18 +83,6 @@ class Certification(models.Model):
         return self.certificate_title
     
 
-class Criteria(models.Model):
-    job = models.ForeignKey(Job, on_delete=models.SET_NULL, null=True)
-    location = models.CharField(max_length=255, blank=True, null=True)
-    min_experience_years = models.FloatField(blank=True, null=True)
-    gender = models.CharField(max_length=10, blank=True, null=True)
-    min_cgpa = models.FloatField(blank=True, null=True)
-    min_exit_score = models.FloatField(blank=True, null=True)
-    matched_applicants = models.PositiveIntegerField()
-    timestamp = models.DateTimeField(auto_now_add=True)
-    
-    def __str__(self):
-        return f"Criterias for Job: {self.job}"
 
 
 # models.py

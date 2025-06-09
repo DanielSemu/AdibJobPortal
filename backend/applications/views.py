@@ -154,57 +154,53 @@ class AdminApplicationsAPIView(APIView):
 # Admin Filter Applications
 #==========================
 class FilterApplicantsView(APIView):
-    permission_classes=[IsAuthenticated, ViewJobRole]
-    def post(self,request):
-        data=request.data
-        
-        selected_job=data.get('selectedJob')
-        selected_location=data.get('selectedLocation')
-        min_experience_years =data.get('minExperienceYears')
-        gender=data.get('gender')
-        min_cgpa=data.get('minCGPA')
-        min_exit=data.get('minExit')
-        applicants=Applicant.objects.filter(status = 'Pending')
-        
-        if selected_job:
-            applicants=applicants.filter(job__id=selected_job)
-        
+    permission_classes = [IsAuthenticated, ViewJobRole]
+
+    def post(self, request):
+        data = request.data
+
+        selected_job = data.get('selectedJob')
+        selected_location = data.get('selectedLocation')
+        min_experience_years = data.get('minExperienceYears')
+        gender = data.get('gender')
+        min_cgpa = data.get('minCGPA')
+        min_exit = data.get('minExit')
+
+        applicants = Applicant.objects.filter(job__id=selected_job,status='Pending')
+
         if selected_location:
-            # applicants = applicants.filter(job__location__icontains=selected_location)
-            applicants = applicants.filter(selected_work_place__icontains=selected_location)
-            
+            applicants = applicants.filter(selected_work_place=selected_location)
+
         if gender:
-            applicants=applicants.filter(gender=gender)
-        
-        filtered_applicants=[]
+            applicants = applicants.filter(gender=gender)
+
+        filtered_applicants = []
+
         for applicant in applicants:
-            total_experience_years=0
+            # Step 1: Filter by CGPA
+            if min_cgpa and float(applicant.cgpa) < float(min_cgpa):
+                continue
+
+            # Step 2: Filter by Exit Exam
+            if min_exit and float(applicant.exit_exam) < float(min_exit):
+                continue
+
+            # Step 3: Filter by experience
+            total_experience_years = 0
             for experience in applicant.experiences.all():
                 if experience.from_date and experience.to_date:
-                    duration=(experience.to_date - experience.from_date).days / 365
+                    duration = (experience.to_date - experience.from_date).days / 365
                     total_experience_years += duration
-            
-            
-            if min_experience_years  and total_experience_years < float(min_experience_years ):
-                continue
-            
-            educations= applicant.educations.all()
-            
-            if not educations.exists():
-                continue
-            
-            highest_education=educations.order_by('-graduation_year').first()
-            if min_cgpa and float(highest_education.cgpa) < float(min_cgpa):
-                continue
-            
-            if min_exit and float(highest_education.exit_exam) < float(min_exit):
-                continue  # Skip if Exit exam score is low
-            # applicant.status="Under Review"
-            # applicant.save()
-            filtered_applicants.append(applicant)
-        serializer = ApplicantSerializer(filtered_applicants, many=True)
 
+            if min_experience_years and total_experience_years < float(min_experience_years):
+                continue
+
+            # If all criteria pass, add applicant to list
+            filtered_applicants.append(applicant)
+
+        serializer = ApplicantSerializer(filtered_applicants, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class ConfirmFilteredApplicants(APIView):
     def post(self, request):
@@ -217,7 +213,7 @@ class ConfirmFilteredApplicants(APIView):
             return Response({'error': 'Invalid request'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Update applicants
-        updated_count = Applicant.objects.filter(id__in=applicant_ids).update(status='Under Review')
+        updated_count = Applicant.objects.filter(id__in=applicant_ids).update(status='Shortlisted')
 
         # Save criteria (you can customize your model)
         Criteria.objects.create(
