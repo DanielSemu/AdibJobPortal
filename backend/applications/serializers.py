@@ -1,4 +1,4 @@
-from .models import Applicant,Experience, Certification
+from .models import Applicant,Experience, Certification,Criteria
 from rest_framework import serializers
 import json
 
@@ -79,3 +79,10 @@ class ApplicantSerializer(serializers.ModelSerializer):
             return json.loads(json_field) if isinstance(json_field, str) else json_field
         except json.JSONDecodeError:
             return []
+
+
+class CriteriaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Criteria
+        fields='__all__'
+        extra_kwargs = {"applicant": {"read_only": True}}

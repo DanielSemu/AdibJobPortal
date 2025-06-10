@@ -37,6 +37,7 @@ from rest_framework.decorators import api_view, permission_classes
 # ====================
 from .serializers import (
     ApplicantSerializer,
+    CriteriaSerializer
 )
 
 from .models import (
@@ -255,21 +256,32 @@ class ConfirmFilteredApplicants(APIView):
 
         return Response({'message': f'{updated_count} applicants reverted and criteria deleted.'}, status=status.HTTP_200_OK)
 
+class CriteriasAPIView(APIView):
+    permission_classes=[IsAuthenticated, ViewJobRole]    
+    
+    def get(self,request):
+        criterias=Criteria.objects.all()
+        serializer=CriteriaSerializer(criterias, many=True)
         
+        return Response(serializer.data, status=status.HTTP_200_OK) 
         
 
 
 
-
+# Send SMS for Shortlisted Applicants  
 class SendSMSView(APIView):
     permission_classes = [IsAuthenticated]
-    def post(self, request):
-        recipient_data = request.data.get("recipient")
-        message = request.data.get("message")
 
-        if not recipient_data or not message:
+    def post(self, request):
+        selectedCriteria = request.data.get("selectedCriteria")
+        message = request.data.get("message")
+        testMessage = request.data.get("testMessage")
+        sender = request.user.phone_number
+
+        if not selectedCriteria or not message:
             return Response({"error": "Missing recipient or message"}, status=status.HTTP_400_BAD_REQUEST)
 
+        selectedApplicant = Applicant.objects.filter(selectedCriteria=selectedCriteria, status="Shortlisted")
         encoded_message = urllib.parse.quote(message)
         base_url = (
             "http://192.168.6.27:9501/api?action=sendmessage"
@@ -277,16 +289,36 @@ class SendSMSView(APIView):
             "&messagetype=SMS:TEXT"
             f"&messagedata={encoded_message}"
         )
-
         results = []
 
-        # Handle multiple or single recipient
-        if isinstance(recipient_data, list):
-            # Multiple recipients: send one-by-one
-            for number in recipient_data:
+        if testMessage:
+            # Send test message to sender
+            url = f"{base_url}&recipient={sender}"
+            try:
+                response = requests.get(url)
+                results.append({
+                    "recipient": sender,
+                    "status": "sent",
+                    "provider_response": response.text
+                })
+            except Exception as e:
+                results.append({
+                    "recipient": sender,
+                    "status": "failed",
+                    "error": str(e)
+                })
+        else:
+            # Send SMS to applicants and update status
+            for applicant in selectedApplicant:
+                number = applicant.phone
                 url = f"{base_url}&recipient={number}"
                 try:
                     response = requests.get(url)
+                    
+                    # Update status after successful SMS
+                    applicant.status = "SMS_Sent"
+                    applicant.save()
+
                     results.append({
                         "recipient": number,
                         "status": "sent",
@@ -298,25 +330,8 @@ class SendSMSView(APIView):
                         "status": "failed",
                         "error": str(e)
                     })
-        else:
-            # Single recipient
-            url = f"{base_url}&recipient={recipient_data}"
-            try:
-                response = requests.get(url)
-                results.append({
-                    "recipient": recipient_data,
-                    "status": "sent",
-                    "provider_response": response.text
-                })
-            except Exception as e:
-                results.append({
-                    "recipient": recipient_data,
-                    "status": "failed",
-                    "error": str(e)
-                })
 
         return Response({"status": "completed", "results": results}, status=status.HTTP_200_OK)
- 
  
  
  
