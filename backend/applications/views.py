@@ -203,31 +203,62 @@ class FilterApplicantsView(APIView):
 
 
 class ConfirmFilteredApplicants(APIView):
+    permission_classes = [IsAuthenticated, ViewJobRole]
+    
     def post(self, request):
         data = request.data
         confirm = data.get('confirm')
         applicant_ids = data.get('applicant_ids', [])
         criteria_data = data.get('criteria', {})
-        print(confirm,applicant_ids,criteria_data)
+
+        print(confirm, applicant_ids, criteria_data)
+
         if not confirm or not applicant_ids:
             return Response({'error': 'Invalid request'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Update applicants
-        updated_count = Applicant.objects.filter(id__in=applicant_ids).update(status='Shortlisted')
-
-        # Save criteria (you can customize your model)
-        Criteria.objects.create(
+        # Create and save Criteria
+        criteria = Criteria.objects.create(
             job_id=criteria_data.get('selectedJob'),
             location=criteria_data.get('selectedLocation'),
             min_experience_years=criteria_data.get('minExperienceYears'),
             gender=criteria_data.get('gender'),
             min_cgpa=criteria_data.get('minCGPA'),
             min_exit_score=criteria_data.get('minExit'),
-            matched_applicants=updated_count,
+            matched_applicants=len(applicant_ids),
             timestamp=timezone.now()
         )
 
+        # Update applicants with status and selectedCriteria
+        updated_count = Applicant.objects.filter(id__in=applicant_ids).update(
+            status='Shortlisted',
+            selectedCriteria=criteria
+        )
+
         return Response({'message': f'{updated_count} applicants updated and criteria saved.'}, status=status.HTTP_200_OK)
+    
+    # Revert Selected Applicants
+    def put(self, request, id=None, *args, **kwargs):
+        if not id:
+            return Response({"error": 'Criteria id is required.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Revert applicants
+        updated_count = Applicant.objects.filter(
+            selectedCriteria=id,
+            status="Shortlisted"
+        ).update(
+            status="Pending",
+            selectedCriteria=None
+        )
+
+        # Delete the criteria if it exists
+        Criteria.objects.filter(id=id).delete()
+
+        return Response({'message': f'{updated_count} applicants reverted and criteria deleted.'}, status=status.HTTP_200_OK)
+
+        
+        
+
+
 
 
 class SendSMSView(APIView):
@@ -285,6 +316,10 @@ class SendSMSView(APIView):
                 })
 
         return Response({"status": "completed", "results": results}, status=status.HTTP_200_OK)
+ 
+ 
+ 
+ 
     
 @api_view(['GET'])
 @permission_classes([IsAuthenticated]) 
