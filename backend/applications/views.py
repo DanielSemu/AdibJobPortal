@@ -178,12 +178,17 @@ class FilterApplicantsView(APIView):
         filtered_applicants = []
 
         for applicant in applicants:
+            # ✅ Get the selected education only
+            selected_education = applicant.educations.filter(user_for_application=True).first()
+            if not selected_education:
+                continue  # No selected education, skip this applicant
+
             # Step 1: Filter by CGPA
-            if min_cgpa and float(applicant.cgpa) < float(min_cgpa):
+            if min_cgpa and float(selected_education.cgpa) < float(min_cgpa):
                 continue
 
             # Step 2: Filter by Exit Exam
-            if min_exit and float(applicant.exit_exam) < float(min_exit):
+            if min_exit and float(selected_education.exit_exam) < float(min_exit):
                 continue
 
             # Step 3: Filter by experience

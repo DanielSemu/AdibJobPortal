@@ -1,14 +1,15 @@
-from .models import Applicant,Experience, Certification,Criteria
+from .models import Applicant,Experience, Certification,Criteria,Education
 from rest_framework import serializers
 import json
 
 
 
-# class EducationSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Education
-#         fields = '__all__'
-#         extra_kwargs = {"applicant": {"read_only": True}}
+class EducationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Education
+        fields = '__all__'
+        extra_kwargs = {"applicant": {"read_only": True}}
+
 
 class ExperienceSerializer(serializers.ModelSerializer):
     banking_experience = serializers.BooleanField()
@@ -32,7 +33,7 @@ class CertificationSerializer(serializers.ModelSerializer):
         
 
 class ApplicantSerializer(serializers.ModelSerializer):
-    # educations = EducationSerializer(many=True, required=False)
+    educations = EducationSerializer(many=True, required=False)
     experiences = ExperienceSerializer(many=True, required=False)
     certifications = CertificationSerializer(many=True, required=False)
     resume = serializers.FileField(required=False, allow_null=True)
@@ -47,6 +48,7 @@ class ApplicantSerializer(serializers.ModelSerializer):
         return obj.job.title  # Adjust the attribute name according to your `Job` model
 
     def create(self, validated_data):
+        educations_data = validated_data.pop('educations', [])
         experiences_data = validated_data.pop('experiences', [])
         certifications_data = validated_data.pop('certifications', [])
 
@@ -61,6 +63,10 @@ class ApplicantSerializer(serializers.ModelSerializer):
 
         # Create main Applicant object
         applicant = Applicant.objects.create(**validated_data)
+
+        # Create related Experience objects
+        for education in educations_data:
+            Education.objects.create(applicant=applicant, **education)
 
         # Create related Experience objects
         for experience in experiences_data:

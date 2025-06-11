@@ -41,14 +41,7 @@ class Applicant(models.Model):
     phone = models.CharField(max_length=50)
     gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female')])
     birth_date = models.DateField()
-    # Educational Background
-    education_level = models.CharField(max_length=100)
-    field_of_study = models.CharField(max_length=100)
-    education_organization = models.CharField(max_length=255)
-    graduation_year = models.DateField()
-    cgpa = models.DecimalField(max_digits=4, decimal_places=2)  # Up to 99.99
-    exit_exam = models.DecimalField(max_digits=4, decimal_places=2)
-
+    
     # Other Fields
     contact_consent = models.BooleanField(default=False)
     cover_letter = models.TextField(blank=True)
@@ -59,6 +52,21 @@ class Applicant(models.Model):
     selectedCriteria=models.ForeignKey(Criteria, on_delete=models.SET_NULL , blank=True, null=True)
     def __str__(self):
         return self.full_name
+
+
+class Education(models.Model):
+    # Educational Background
+    applicant = models.ForeignKey(Applicant, on_delete=models.CASCADE, related_name='educations')
+    education_level = models.CharField(max_length=100)
+    field_of_study = models.CharField(max_length=100)
+    education_organization = models.CharField(max_length=255)
+    graduation_year = models.DateField()
+    cgpa = models.DecimalField(max_digits=4, decimal_places=2)  # Up to 99.99
+    exit_exam = models.DecimalField(max_digits=4, decimal_places=2)
+    user_for_application=models.BooleanField(default=False)
+    
+    def __str__(self):
+        return f"{self.field_of_study} from {self.education_organization}"
 
 
 class Experience(models.Model):
