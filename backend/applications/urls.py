@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import SendSMSView,UserApplicationAPIView,UserApplyForJobAPIView,AdminApplicationsAPIView,FilterApplicantsView,ConfirmFilteredApplicants,CriteriasAPIView
+from .views import SendSMSView,UserApplicationAPIView,UserApplyForJobAPIView,AdminApplicationsAPIView,FilterApplicantsView,ConfirmFilteredApplicants,CriteriasAPIView,ApplicantReportAPIView,generate_applicants_pdf
 
 urlpatterns = [
     path("apply_job/", UserApplyForJobAPIView.as_view(), name='apply_job'),
@@ -16,6 +16,12 @@ urlpatterns = [
     
     #
     path("criterias/",CriteriasAPIView.as_view(), name="criterias" ),
-    
+    #
     path("send-sms/", SendSMSView.as_view(), name='send_sms'),
+    #
+    path("generatePDF/", generate_applicants_pdf, name='generate_pdf'),
+    path('report/', ApplicantReportAPIView.as_view(), name='applicant-report')
+
+    #
+    
 ]

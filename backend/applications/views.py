@@ -362,6 +362,44 @@ def generate_applicants_pdf(request):
         return HttpResponse(result.getvalue(), content_type='application/pdf')
     return HttpResponse("PDF generation failed", status=500)
 
+
+class ApplicantReportAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        status_param = request.query_params.get("status", "Accepted")
+        job_param = request.query_params.get("job_id")
+
+        # Filter applicants based on status and job_id
+        if job_param:
+            applicants = Applicant.objects.filter(status=status_param, job_id=job_param)
+        else:
+            applicants = Applicant.objects.filter(status=status_param)
+
+        # Fetch the job if job_param is provided
+        job = None
+        if job_param:
+            try:
+                job = Job.objects.get(id=job_param)
+            except Job.DoesNotExist:
+                return Response({"error": "Job not found."}, status=404)
+
+        # Render HTML using template
+        template = get_template("report.html")
+        html = template.render({
+            "applicants": applicants,
+            "job": job
+        })
+
+        # Generate PDF
+        result = io.BytesIO()
+        pdf = pisa.pisaDocument(io.BytesIO(html.encode("UTF-8")), result)
+
+        if not pdf.err:
+            return HttpResponse(result.getvalue(), content_type='application/pdf')
+
+        return Response({"error": "PDF generation failed"}, status=500)
+
 class ExportEmployeeDataView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -455,14 +493,4 @@ class ExportEmployeeDataView(APIView):
 
 
       
- 
-class ActiveJobApplicants(APIView):
-    def get(self, request, id=None, *args, **kwargs):
-        if id:
-            applicants = Applicant.objects.filter(job_id=id)
-            serializer = ApplicantSerializer(applicants, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-        
-
-
 
