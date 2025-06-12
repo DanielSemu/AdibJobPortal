@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { FaSearch } from "react-icons/fa";
 import { MdCategory } from "react-icons/md";
 import { BsBriefcaseFill } from "react-icons/bs";
-import hero from "../../assets/hero1.jpg";
+import hero from "../../assets/heroimg1.jpg";
 // import { jobs } from "../../data/jobs";
 import { Link } from "react-router-dom";
 import { getCategories, getJobs } from "../../services/jobsService";
@@ -67,13 +67,13 @@ const handleSearch = () => {
         className="relative main-container flex  justify-center bg-cover"
         style={{ backgroundImage: `url(${hero})` }}
       >
-        <div className="absolute inset-0 bg-slate-900/10"></div>
+        <div className="absolute inset-0 "></div>
         <div className="container z-10">
           <div className="grid grid-cols-1 text-center relative">
             <h4 className="lg:leading-normal leading-normal text-4xl lg:text-5xl mb-5 font-bold text-white">
               Join us &amp; Explore <br /> Our Jobs.
             </h4>
-            <p className="text-black/50 text-[20px] max-w-xl mx-auto">
+            <p className="text-black/70 text-[20px] max-w-xl mx-auto">
               Find Jobs, Employment &amp; Career Opportunities.
             </p>
 
@@ -135,7 +135,7 @@ const handleSearch = () => {
 
             {/* Search Results */}
             <div className="mt-4 flex flex-col items-center text-center">
-              <span className="text-white/80 text-2xl">
+              <span className="text-gray-900 text-2xl">
                Search Results...
               </span>
 
