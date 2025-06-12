@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { FaSearch } from "react-icons/fa";
 import { MdCategory } from "react-icons/md";
 import { BsBriefcaseFill } from "react-icons/bs";
 import hero from "../../assets/hero1.jpg";
-import { jobs } from "../../data/jobs";
+// import { jobs } from "../../data/jobs";
 import { Link } from "react-router-dom";
+import { getCategories, getJobs } from "../../services/jobsService";
 
 const Hero1 = () => {
   const [isResult, setIsResult] = useState(false);
+  const [jobs, setJobs]=useState([])
+  const [categories, setCategories]=useState([])
   const [formData, setFormData] = useState({
     search: "",
     category: "",
@@ -16,35 +19,47 @@ const Hero1 = () => {
   const [searchResult, setSearchResult] = useState([]);
 
 
-
+  useEffect(()=>{
+    const fetchJobs =async()=>{
+      const result=await getJobs()
+      setJobs(result)
+    }
+    const fetchCategories= async()=>{
+      const result=await getCategories()
+      setCategories(result)
+    }
+    fetchCategories()
+    fetchJobs()
+  },[])
   // 66httt
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSearch = () => {
-    let filteredJobs = [];
+const handleSearch = () => {
+  let filteredJobs = [...jobs]; // Start with all jobs
 
-    if (formData.search.trim() !== "") {
-      filteredJobs = jobs.filter((item) =>
-        item.jobTitle.toLowerCase().includes(formData.search.toLowerCase())
-      );
-      setSearchResult((prev) => ({ ...prev, filteredJobs }));
-    }
-    if (formData.category !== "") {
-      filteredJobs = jobs.filter((item) => item.category == formData.category);
-      setSearchResult((prev) => ({ ...prev, filteredJobs }));
-    }
+  if (formData.search.trim() !== "") {
+    filteredJobs = filteredJobs.filter((item) =>
+      item.title.toLowerCase().includes(formData.search.toLowerCase())
+    );
+  }
 
-    if (formData.jobType !== "") {
-      filteredJobs = jobs.filter((item) => item.jobType === formData.jobType);
-      setSearchResult((prev) => ({ ...prev, filteredJobs }));
-    }
+  if (formData.category !== "") {
+    console.log(formData);
+    
+    filteredJobs = filteredJobs.filter((item) => item.category == formData.category);
+  }
 
-    setSearchResult(filteredJobs);
-    setIsResult(filteredJobs.length > 0);
-  };
+  if (formData.jobType !== "") {
+    filteredJobs = filteredJobs.filter((item) => item.job_type === formData.jobType);
+  }
+  
+  setSearchResult(filteredJobs);
+  setIsResult(filteredJobs.length > 0);
+};
+
 
   return (
     <>
@@ -52,7 +67,7 @@ const Hero1 = () => {
         className="relative main-container flex justify-center items-center bg-cover"
         style={{ backgroundImage: `url(${hero})` }}
       >
-        <div className="absolute inset-0 bg-slate-900/30"></div>
+        <div className="absolute inset-0 bg-slate-900/10"></div>
         <div className="container z-10">
           <div className="grid grid-cols-1 text-center mt-10 relative">
             <h4 className="lg:leading-normal leading-normal text-4xl lg:text-6xl mb-5 font-bold text-white">
@@ -86,11 +101,10 @@ const Hero1 = () => {
                   onChange={handleChange}
                 >
                   <option value="">Select Job Category</option>
-                  <option value="1">Business Development</option>
-                  <option value="2">Marketing & Communication</option>
-                  <option value="3">Project Management</option>
-                  <option value="4">Customer Service</option>
-                  <option value="5">Information Technology</option>
+                  {categories.map((category, index)=>(
+                    <option key={index} value={category.id}>{category.name}</option>
+                  ))}
+                 
                 </select>
               </div>
 
@@ -121,9 +135,8 @@ const Hero1 = () => {
 
             {/* Search Results */}
             <div className="mt-4 flex flex-col items-center text-center">
-              <span className="text-white/60">
-                <span className="text-white">Popular Searches :</span> Branch
-                Manager, Accountant, IT Officer, Senior Engineer
+              <span className="text-white/80 text-2xl">
+               Search Results...
               </span>
 
               {isResult ? (
@@ -134,7 +147,7 @@ const Hero1 = () => {
                         to={`/detail/${item.id}`}
                         className="text-white hover:text-blue-400"
                       >
-                        {item.jobTitle}
+                        {item.title}
                       </Link>
                     </li>
                   ))}

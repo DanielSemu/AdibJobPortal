@@ -2,7 +2,7 @@ import axiosInstance from "./axiosInstance";
 
 export const getJobs =async()=>{
     try {
-        const response=await axiosInstance.get('jobs/')
+        const response=await axiosInstance.get('jobs/jobs/')
         return response.data    
     } catch (error) {
         console.error(error);
@@ -12,16 +12,15 @@ export const getJobs =async()=>{
 }
 export const getCategories =async()=>{
     try {
-        const response=await axiosInstance.get('categories/')
+        const response=await axiosInstance.get('jobs/categories/')
         return response.data    
     } catch (error) {
         console.error(error);
-        
     }
     
 }
 export const getSingleJob =async(id)=>{
-    const response=await axiosInstance.get(`jobs/${id}/`)
+    const response=await axiosInstance.get(`jobs/jobs/${id}/`)
     return response.data
 }
 

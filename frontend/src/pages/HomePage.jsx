@@ -1,4 +1,3 @@
-import React from 'react'
 import Hero1 from '../components/Hero/Hero1'
 import JobCategories from '../components/JobCategories/JobCategories'
 import Jobs from '../components/Jobs/Jobs'
