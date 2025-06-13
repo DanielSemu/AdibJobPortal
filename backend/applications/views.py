@@ -180,7 +180,6 @@ class FilterApplicantsView(APIView):
         for applicant in applicants:
             # ✅ Get the selected education only
             selected_education = applicant.educations.filter(user_for_application=True).first()
-            print(selected_education)
             if not selected_education:
                 continue  # No selected education, skip this applicant
 

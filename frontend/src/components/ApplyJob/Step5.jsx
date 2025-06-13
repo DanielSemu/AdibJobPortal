@@ -6,11 +6,27 @@ const Step5 = ({ formData, setFormData, errors, handleChange, selected_work_plac
   const [location, setLocation] = useState([]);
 
   useEffect(() => {
-    if (selected_work_place) {
-      const locationsArray = selected_work_place.split(",").map((loc) => loc.trim()); // optional trim
-      setLocation(locationsArray);
+  if (selected_work_place) {
+    const locationsArray = selected_work_place.split(",").map((loc) => loc.trim());
+    setLocation(locationsArray);
+
+    // Set first location as default if not already selected
+    if (!formData.selected_work_place && locationsArray.length > 0) {
+      setFormData((prev) => ({ ...prev, selected_work_place: locationsArray[0] }));
     }
-  }, [selected_work_place]); // <== Depend on selected_work_place only
+  }
+
+  // Set first education as default if none selected
+  const hasUserForApp = formData.educations.some((edu) => edu.user_for_application);
+  if (formData.educations.length > 0 && !hasUserForApp) {
+    const updatedEducations = formData.educations.map((edu, i) => ({
+      ...edu,
+      user_for_application: i === 0,
+    }));
+    setFormData((prev) => ({ ...prev, educations: updatedEducations }));
+  }
+}, [selected_work_place]);
+
 
   const handleApplicationEducationChange = (index) => {
     const updatedEducations = formData.educations.map((edu, i) => ({
