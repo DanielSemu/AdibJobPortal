@@ -39,7 +39,7 @@ class Applicant(models.Model):
     full_name = models.CharField(max_length=255)
     email = models.EmailField(max_length=50)
     phone = models.CharField(max_length=50)
-    gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female')])
+    gender = models.CharField(max_length=10, choices=[('M', 'Male'), ('F', 'Female')])
     birth_date = models.DateField()
     
     # Other Fields

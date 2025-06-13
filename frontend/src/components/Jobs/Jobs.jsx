@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { FaLocationDot } from "react-icons/fa6";
 import { formatDistanceToNow } from "date-fns";
 import logo from "../../assets/adb-whitebg-logo.png";
@@ -23,14 +23,14 @@ const Jobs = () => {
   }, []);
 
   return (
-    <div id="jobs" className="main-container">
+    <div id="jobs" className="main-container sm:mt-10">
       {/* Section Title */}
       <div className="grid grid-cols-1 text-center">
         <h3 className="mb-4 md:text-[30px] text-primary md:leading-normal text-2xl leading-normal font-semibold">
           Latest Jobs
         </h3>
         <p className="text-slate-500 mx-10">
-          Discover exciting career opportunities at Our Bank. We're seeking
+          Discover exciting career opportunities at Our Bank. We`re seeking
           talented and passionate individuals to join our dynamic team. Explore
           open positions that match your skills and aspirations, and take the
           next step toward a rewarding career with us.

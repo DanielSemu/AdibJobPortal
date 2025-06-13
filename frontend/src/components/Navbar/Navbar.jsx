@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { CiMenuBurger } from "react-icons/ci";
 import { FaAngleDown } from "react-icons/fa";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import logo from "../../assets/logo.png";
-import { logout, profile } from "../../api/auth";
+import logo from "../../assets/logoNew.png";
+import { logout } from "../../api/auth";
 import useAuth from "../../hooks/useAuth";
 
 const Navbar = () => {
@@ -61,7 +61,7 @@ const Navbar = () => {
   // Logout function
   const handleLogout = async() => {
     try {
-      const response=await logout()
+      await logout()
       setUserProfile(null);
       closeDropdown();
       navigate("/login");    
@@ -73,11 +73,11 @@ const Navbar = () => {
 
   return (
     <nav className="bg-[#007dda] fixed w-full z-20 top-0 start-0">
-      <div className="max-w-screen-xl block sm:flex  items-center justify-between mx-auto p-4">
+      <div className="max-w-screen-xl block sm:flex  items-center justify-between mx-auto sm:p-1">
         {/* Logo */}
         
-        <Link to="/" className="flex items-center space-x-3">
-          <img src={logo} className="h-8" alt="Addis Bank Logo" />
+        <Link to="/" className="flex items-center justify-between space-x-3">
+          <img src={logo} className="h-14" alt="Addis Bank Logo" />
           <span
             onClick={() => window.scroll(0, 0)}
             className="text-2xl font-bold text-[#ffd91e] cursor-pointer"

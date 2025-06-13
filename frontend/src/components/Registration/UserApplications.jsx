@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react'
+/* eslint-disable react/prop-types */
+import { useEffect, useState } from 'react'
 import { getMyApplications } from '../../api/auth'
 
 const ApplicationCard = ({ application }) => {
@@ -10,7 +11,7 @@ const ApplicationCard = ({ application }) => {
 
     "Shortlisted": "bg-blue-100 text-blue-600",
     "Interview Scheduled": "bg-blue-100 text-blue-600",
-    "Assessment Pending": "bg-blue-100 text-blue-600",
+    "SMS_Sent": "bg-blue-100 text-blue-600",
 
     "Offered": "bg-green-100 text-green-600",
     "Accepted": "bg-green-100 text-green-600",
@@ -47,7 +48,6 @@ const ApplicationCard = ({ application }) => {
 
 const UserApplications = () => {
   const [myApplications, setMyApplications] = useState([]) // ✅ Ensures it's always an array
-  const [error, setError] = useState(null)
 
   useEffect(() => {
     const fetchApplications = async () => {
@@ -56,7 +56,8 @@ const UserApplications = () => {
         
         setMyApplications(response || []) // ✅ Ensures fallback to empty array
       } catch (err) {
-        setError("Failed to fetch applications")
+        console.log(err);
+        
         setMyApplications([]) // ✅ Ensures no `undefined` issues
       }
     }

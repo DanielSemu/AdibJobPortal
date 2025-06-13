@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useParams,useNavigate } from "react-router-dom";
-import { jobs } from "../../data/jobs";
 import { FaAngleDoubleRight, FaAngleDoubleLeft, FaCheck } from "react-icons/fa";
 import Step1 from "./Step1";
 import Step2 from "./Step2";
@@ -10,7 +9,7 @@ import Step5 from "./Step5";
 import { getSingleJob } from "../../services/jobsService";
 import axiosInstance from "../../services/axiosInstance";
 import { showErrorToast, showSuccessToast } from "../utils/toastUtils";
-import { profile, sendOTP } from "../../api/auth";
+import { profile } from "../../api/auth";
 
 
 const ApplyJob = () => {
@@ -19,7 +18,6 @@ const ApplyJob = () => {
   const [detailedData, setDetailedData] = useState([]);
   const [list, setList] = useState([]);
   const [verificationModal, setVerificationModal] = useState(false);
-  const [userProfile, setUserProfile] = useState([]);
   const navigate=useNavigate()
   const [formData, setFormData] = useState({
     job: id,
@@ -55,6 +53,7 @@ const ApplyJob = () => {
     graduation_year: "",
     cgpa: null,
     exit_exam: null,
+    user_for_application:false,
   });
   const [currentCertification, setCurrentCertification] = useState({
     certificate_title: "",
@@ -69,7 +68,8 @@ const ApplyJob = () => {
         const response = await profile();
 
         if (response) {
-          setUserProfile(response);
+          console.log(response);
+          
           setFormData((prevFormData) => ({
             ...prevFormData,
             full_name: response.full_name || "",
@@ -79,6 +79,8 @@ const ApplyJob = () => {
             birth_date: response.birthdate || "",
           }));
         } else {
+          console.log("error");
+          
         }
       } catch (error) {
         console.error("Error fetching job:", error);
@@ -133,7 +135,7 @@ const ApplyJob = () => {
   };
 
   const handleInputChange = (section, e) => {
-    const { name, value, type, checked, files } = e.target;
+    const { name, value, type, checked } = e.target;
     
     switch (section) {
       case "experience":
@@ -310,7 +312,7 @@ const ApplyJob = () => {
       }
     });
     try {
-      const response = await axiosInstance.post("applicants/", formDataToSend, {
+      await axiosInstance.post("applications/apply_job/", formDataToSend, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -399,7 +401,7 @@ const ApplyJob = () => {
               formData={formData}
               errors={errors}
               handleChange={handleChange}
-              selected_work_place={detailedData.location}
+              
             />
           )}
           {step === 2 && (
@@ -437,7 +439,13 @@ const ApplyJob = () => {
             />
           )}
           {step === 5 && (
-            <Step5 formData={formData} errors={errors} handleChange={handleChange} />
+            <Step5 
+              formData={formData}
+              setFormData={setFormData}
+              errors={errors}
+              handleChange={handleChange}
+              selected_work_place={detailedData.location}
+             />
           )}
           {/* Fixed Buttons at the Bottom */}
           <div className="absolute bottom-0 left-0 right-0 flex justify-between px-5 pb-0">
@@ -540,6 +548,7 @@ const ApplyJob = () => {
                       <li key={index}>
                         {edu.education_level} in {edu.field_of_study} -{" "}
                         {edu.education_organization} ({edu.graduation_year})
+                        <p>Selected For Application: {edu.user_for_application?"True":"False"}</p>
                       </li>
                     ))
                   ) : (

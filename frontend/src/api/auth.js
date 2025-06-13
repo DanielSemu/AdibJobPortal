@@ -1,5 +1,5 @@
 import axios from 'axios';
-import axiosInstance, { BASE_URL, loginAxiosInstance } from './axiosInstance';
+import axiosInstance, { BASE_URL } from './axiosInstance';
 import {  setAccessToken } from './tokenStorage';
 
 
@@ -114,7 +114,7 @@ export const sendOTP = async (phone_number, otpCode, purpose) => {
 
   export const getMyApplications = async () => {
     try {
-        const response = await axiosInstance.get("/api/my_applications/");
+        const response = await axiosInstance.get("applications/user_applications/");
         return response.data;  // Assuming response.data contains the list of applications
     } catch (error) {
         // Log the full error to get better debugging information

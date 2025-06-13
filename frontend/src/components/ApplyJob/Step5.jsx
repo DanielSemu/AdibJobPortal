@@ -1,15 +1,78 @@
-import React from "react";
+/* eslint-disable react/prop-types */
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-const Step5 = ({ formData, errors, handleChange }) => {
+const Step5 = ({ formData, setFormData, errors, handleChange, selected_work_place }) => {
+  const [location, setLocation] = useState([]);
+
+  useEffect(() => {
+    if (selected_work_place) {
+      const locationsArray = selected_work_place.split(",").map((loc) => loc.trim()); // optional trim
+      setLocation(locationsArray);
+    }
+  }, [selected_work_place]); // <== Depend on selected_work_place only
+
+  const handleApplicationEducationChange = (index) => {
+    const updatedEducations = formData.educations.map((edu, i) => ({
+      ...edu,
+      user_for_application: i === index, // only selected one is true
+    }));
+    setFormData({ ...formData, educations: updatedEducations });
+  };
+
   return (
     <div>
       <h1 className="text-center text-3xl mb-2 text-gray-700 font-semibold ">
         Additional Information
       </h1>
+      <div className="flex flex-col md:flex-row md:space-x-6 items-center mt-3 mb-4 gap-x-14">
+        <div>
+          <label className="block text-gray-700 font-semibold mb-2">
+            Select Work Place:
+          </label>
+          <select
+            name="selected_work_place"
+            value={formData.selected_work_place}
+            onChange={handleChange}
+            className="w-full p-2 border rounded-md focus:outline-blue-500"
+            required
+          >
+            light
+            {location.map((loc, key) => (
+              <option key={key} value={loc}>{loc}</option>
+            ))}
+
+          </select>
+          {errors.selected_work_place && <p className="text-red-500">{errors.selected_work_place}</p>}
+        </div>
+        <div >
+          <label className="block text-gray-700 font-semibold mb-2">
+            Select Application Education:
+          </label>
+          <select
+            name="user_for_application"
+            value={
+              formData.educations.findIndex((edu) => edu.user_for_application === true)
+            }
+            onChange={(e) => handleApplicationEducationChange(Number(e.target.value))}
+            className="w-full p-2 border rounded-md focus:outline-blue-500"
+            required
+          >
+            <option value="">-- Select Education --</option>
+            {formData.educations.map((edu, index) => (
+              <option key={index} value={index}>
+                {edu.field_of_study}
+              </option>
+            ))}
+          </select>
+
+          {errors.selected_work_place && <p className="text-red-500">{errors.selected_work_place}</p>}
+        </div>
+      </div>
+
       {/* Resume Upload */}
       <div>
-      {errors.resume && (
+        {errors.resume && (
           <p className="text-red-500">{errors.resume}</p>
         )}
         <label className="block text-gray-700 font-semibold mb-2">
@@ -26,7 +89,7 @@ const Step5 = ({ formData, errors, handleChange }) => {
       </div>
       {/* Cover Letter */}
       <div>
-      {errors.cover_letter && (
+        {errors.cover_letter && (
           <p className="text-red-500">{errors.cover_letter}</p>
         )}
         <label className="block text-gray-700 font-semibold mb-2">
@@ -45,13 +108,13 @@ const Step5 = ({ formData, errors, handleChange }) => {
 
       {/* Terms and Conditions Checkbox */}
       {errors.terms_accepted && (
-          <p className="text-red-500">{errors.terms_accepted}</p>
-        )}
+        <p className="text-red-500">{errors.terms_accepted}</p>
+      )}
       {errors.contact_consent && (
-          <p className="text-red-500">{errors.contact_consent}</p>
-        )}
+        <p className="text-red-500">{errors.contact_consent}</p>
+      )}
       <div className="flex items-center">
-     
+
         <input
           type="checkbox"
           name="terms_accepted"

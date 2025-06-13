@@ -146,7 +146,7 @@ const JobDetail = () => {
             className={`mt-6 w-full px-6 py-3 text-lg font-semibold text-white rounded-lg transition-all duration-300 flex items-center justify-center ${
               applied
                 ? "bg-gray-400 cursor-not-allowed pointer-events-none"
-                : "bg-blue-600 hover:bg-blue-700 transform hover:scale-105"
+                : "bg-primary hover:bg-[rgba(0,125,218,0.8)] transform hover:scale-105"
             }`}
             onClick={applied ? (e) => e.preventDefault() : handleApply}
           >

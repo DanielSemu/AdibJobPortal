@@ -1,14 +1,7 @@
-import React, { useState, useEffect } from "react";
+/* eslint-disable react/prop-types */
 
-const Step1 = ({ formData, errors, handleChange, selected_work_place }) => {
-  const [location, setLocation] = useState([]);
-
-  useEffect(() => {
-    if (selected_work_place) {
-      const locationsArray = selected_work_place.split(",").map((loc) => loc.trim()); // optional trim
-      setLocation(locationsArray);
-    }
-  }, [selected_work_place]); // <== Depend on selected_work_place only
+const Step1 = ({formData, errors, handleChange }) => {
+ 
   return (
     <div>
       <h1 className="text-center text-3xl mb-2 text-gray-700 font-semibold">
@@ -72,8 +65,8 @@ const Step1 = ({ formData, errors, handleChange, selected_work_place }) => {
             <input
               type="radio"
               name="gender"
-              value="Male"
-              checked={formData.gender === "Male"}
+              value="M"
+              checked={formData.gender === "M"}
               onChange={handleChange}
               className="w-4 h-4"
             />
@@ -83,8 +76,8 @@ const Step1 = ({ formData, errors, handleChange, selected_work_place }) => {
             <input
               type="radio"
               name="gender"
-              value="Female"
-              checked={formData.gender === "Female"}
+              value="F"
+              checked={formData.gender === "F"}
               onChange={handleChange}
               className="w-4 h-4"
             />
@@ -109,25 +102,7 @@ const Step1 = ({ formData, errors, handleChange, selected_work_place }) => {
       {errors.gender && <p className="text-red-500">{errors.gender}</p>}
       {errors.birth_date && <p className="text-red-500">{errors.birth_date}</p>}
       {/* Email */}
-      <div>
-        <label className="block text-gray-700 font-semibold mb-2">
-          Select Work Place:
-        </label>
-        <select
-          name="selected_work_place"
-          value={formData.selected_work_place}
-          onChange={handleChange}
-          className="w-1/2 p-2 border rounded-md focus:outline-blue-500"
-          required
-        >
-          light 
-          {location.map((loc,key)=>(
-            <option value={loc}>{loc}</option>
-          ))}
-  
-        </select>
-        {errors.selected_work_place && <p className="text-red-500">{errors.selected_work_place}</p>}
-      </div>
+      
     </div>
   );
 };
