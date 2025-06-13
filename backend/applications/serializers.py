@@ -33,8 +33,8 @@ class CertificationSerializer(serializers.ModelSerializer):
         
 
 class ApplicantSerializer(serializers.ModelSerializer):
-    educations = EducationSerializer(many=True, required=False)
     experiences = ExperienceSerializer(many=True, required=False)
+    educations = EducationSerializer(many=True, required=False)
     certifications = CertificationSerializer(many=True, required=False)
     resume = serializers.FileField(required=False, allow_null=True)
     job_name = serializers.SerializerMethodField()  # Add this line to include the job name
@@ -48,9 +48,13 @@ class ApplicantSerializer(serializers.ModelSerializer):
         return obj.job.title  # Adjust the attribute name according to your `Job` model
 
     def create(self, validated_data):
-        educations_data = validated_data.pop('educations', [])
-        experiences_data = validated_data.pop('experiences', [])
-        certifications_data = validated_data.pop('certifications', [])
+        educations_data = self._parse_json_field(self.initial_data.get("educations", []))
+        experiences_data = self._parse_json_field(self.initial_data.get("experiences", []))
+        certifications_data=self._parse_json_field(self.initial_data.get("certifications",[]))
+
+        print("Educations:", educations_data)
+        print("Experiences:", experiences_data)
+        print("Certifications:", certifications_data)
 
         # Check duplicate application
         email = validated_data.get('email')
@@ -61,26 +65,20 @@ class ApplicantSerializer(serializers.ModelSerializer):
                 {"error": "You have already applied for this job."}
             )
 
-        # Create main Applicant object
-        applicant = Applicant.objects.create(**validated_data)
+        application = Applicant.objects.create(**validated_data)
 
-        # Create related Experience objects
         for education in educations_data:
-            Education.objects.create(applicant=applicant, **education)
+            Education.objects.create(applicant=application, **education)
 
-        # Create related Experience objects
         for experience in experiences_data:
-            Experience.objects.create(applicant=applicant, **experience)
+            Experience.objects.create(applicant=application, **experience)
 
-        # Create related Certification objects
         for certification in certifications_data:
-            Certification.objects.create(applicant=applicant, **certification)
+            Certification.objects.create(applicant=application, **certification)
 
-        return applicant
-
+        return application
 
     def _parse_json_field(self, json_field):
-        """Helper function to parse JSON string into Python list."""
         try:
             return json.loads(json_field) if isinstance(json_field, str) else json_field
         except json.JSONDecodeError:

@@ -299,7 +299,6 @@ const ApplyJob = () => {
     }
 
    
-    console.log(formData);
     
     const formDataToSend = new FormData();
 
@@ -522,7 +521,9 @@ const ApplyJob = () => {
                   <li>
                     <strong>Birth Date:</strong> {formData.birth_date}
                   </li>
-                  
+                   <li>
+                    <strong>Selected Work Place:</strong> {formData.selected_work_place}
+                  </li>
                   <li>
                     <strong>Cover Letter:</strong>{" "}
                     {formData.cover_letter || "Not Provided"}
