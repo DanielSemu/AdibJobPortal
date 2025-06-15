@@ -1,4 +1,3 @@
-import React from "react";
 import Sidebar from "./components/Navigation/Sidebar";
 import Navbar from "./components/Navigation/Navbar";
 import { Routes, Route } from "react-router-dom";

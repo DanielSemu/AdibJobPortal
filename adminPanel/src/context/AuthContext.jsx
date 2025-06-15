@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { createContext, useState, useEffect } from 'react';
 import  { BASE_URL} from '../api/axiosInstance';
 import { setAccessToken } from '../api/tokenStorage';
@@ -29,6 +30,7 @@ export const AuthProvider = ({ children }) => {
                 const response = await axios.post(`${BASE_URL}/auth/token/refresh/`, {}, { withCredentials: true });
                 setAccessToken(response.data.access);
             } catch (error) {
+                console.error("Error fetching :", error);
                 setAccessToken('');
                 setLoading(false);
             } finally {
@@ -39,7 +41,7 @@ export const AuthProvider = ({ children }) => {
         initializeAuth();
     }, [location.pathname]);  
     return (
-        <AuthContext.Provider value={{loading,userProfile,setUserProfile}}>
+        <AuthContext.Provider value={{loading,userProfile,setUserProfile,setLoading}}>
             {children}
         </AuthContext.Provider>
     );

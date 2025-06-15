@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { AiFillDashboard } from "react-icons/ai";
 import { FaUsers, FaRegFileAlt, FaInbox, FaSignOutAlt } from "react-icons/fa";
 import {
@@ -15,8 +15,8 @@ import useAuth from "../../hooks/useAuth";
 import logo from "../../assets/logo47.png";
 
 const Sidebar = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null); // Track which dropdown is open
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { userProfile, setUserProfile } = useAuth();
   const navigate = useNavigate();
 

@@ -28,7 +28,7 @@ export const contactUs = async (formData) => {
     console.log("Sending Data:", formData);
     
     try {
-        const response = await axiosInstance.post("contacts/", formData);
+        const response = await axiosInstance.post("jobs/contacts/", formData);
         return response;
     } catch (error) {
         if (error.response) {

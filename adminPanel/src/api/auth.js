@@ -1,5 +1,5 @@
 import axios from 'axios';
-import axiosInstance, { BASE_URL, loginAxiosInstance } from './axiosInstance';
+import axiosInstance, { BASE_URL } from './axiosInstance';
 import {  setAccessToken } from './tokenStorage';
 
 

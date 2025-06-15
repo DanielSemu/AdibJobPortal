@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import { login } from "../../api/auth";
 import { useNavigate } from "react-router-dom";
 import { showErrorToast, showSuccessToast } from "../../utils/toastUtils";
@@ -12,7 +12,7 @@ const Login = () => {
     password: "",
   });
   const navigate = useNavigate();
-  const { setUserProfile } = useAuth();
+  const { setLoading,setUserProfile } = useAuth();
 
   // Handle input changes
   const handleChange = (e) => {
@@ -27,6 +27,7 @@ const Login = () => {
       const response = await login(email, password);
       if (response.status === 200 || response.statusText === "Ok") {
         setAccessToken(response.data.access);
+        setLoading(true)
         showSuccessToast("Login successfully");
         setUserProfile(email);
         navigate("/");
