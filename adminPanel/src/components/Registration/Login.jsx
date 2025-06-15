@@ -20,7 +20,7 @@ const Login = () => {
   };
 
   // Handle form submission
-  const handleSubmit = async (e, type) => {
+  const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent page reload
     try {
       const { email, password } = formData;
