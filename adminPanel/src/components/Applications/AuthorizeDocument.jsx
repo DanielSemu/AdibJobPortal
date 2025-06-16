@@ -1,6 +1,7 @@
 import  { useEffect, useState } from "react";
 import { useParams,useNavigate } from "react-router-dom";
 import { getSingleApplicant, updateApplicantStatus } from "../services/jobsService";
+import { BASE_URL } from "../../api/axiosInstance";
 
 const AuthorizeDocument = () => {
   const { id } = useParams();
@@ -10,7 +11,6 @@ const AuthorizeDocument = () => {
   useEffect(() => {
     const fetchApplicant = async () => {
       const response = await getSingleApplicant(id);
-      console.log(response);
       setApplicant(response);
     };
     fetchApplicant();
@@ -88,7 +88,7 @@ const AuthorizeDocument = () => {
             <h3 className="text-xl font-semibold text-gray-800 mb-4">Resume</h3>
             {applicant.resume ? (
               <iframe
-                src={`http://192.168.2.32:8000${applicant.resume}`}
+                src={`${BASE_URL}${applicant.resume}`}
                 className="w-full h-[80vh]"
                 frameBorder="0"
                 title="Resume Viewer"

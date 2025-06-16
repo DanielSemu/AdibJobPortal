@@ -72,7 +72,7 @@ export const getApplicantsByJob = async (id) => {
 };
 
 export const filterApplicants = async (criteria)=>{
-  const response=await axiosInstance.post('/api/filter_applicants/', criteria)
+  const response=await axiosInstance.post('/applications/review_filter_applicants/', criteria)
   return response.data
 }
 

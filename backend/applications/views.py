@@ -103,19 +103,20 @@ class AdminApplicationsAPIView(APIView):
     
     def get(self, request, id=None, *args, **kwargs):
         if id:
-            applicants = Applicant.objects.filter(job_id=id)
-            
-            #Filter By Applicant Status
-            status_param = request.query_params.get("status")
-            if status_param:
-                applicants=applicants.filter(status=status_param)
+            # This Id job Id 
+            applicants = Applicant.objects.get(id=id)
+            # applicants = Applicant.objects.filter(job_id=id)
+            # #Filter By Applicant Status
+            # status_param = request.query_params.get("status")
+            # if status_param:
+            #     applicants=applicants.filter(status=status_param)
                 
-            #Filter By WorkPlace Selected
-            workPlace_param=request.query_params.get("workPlace")
-            if workPlace_param:
-                applicants=applicants.filter(selected_work_place=workPlace_param)
+            # #Filter By WorkPlace Selected
+            # workPlace_param=request.query_params.get("workPlace")
+            # if workPlace_param:
+            #     applicants=applicants.filter(selected_work_place=workPlace_param)
             
-            serializer = ApplicantSerializer(applicants, many=True)
+            serializer = ApplicantSerializer(applicants)
         else:
             applicants=Applicant.objects.all()
             status_param=request.query_params.get("status")

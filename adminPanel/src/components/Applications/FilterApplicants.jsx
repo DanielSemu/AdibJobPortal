@@ -21,8 +21,8 @@ const FilterApplicants = () => {
     selectedLocation: "",
     minExperienceYears: "",
     gender: "",
-    minCGPA: null,
-    minExit: null,
+    minCGPA: "",
+    minExit: "",
   });
 const navigate=useNavigate()
 
@@ -168,7 +168,7 @@ const navigate=useNavigate()
             </label>
             <select
               name="selectedLocation"
-              value={criteria.selectedLocation}
+              value={criteria.selectedLocation || ""}
               onChange={handleChange}
               className="w-full border p-2 rounded-md"
               disabled={!locations.length}
