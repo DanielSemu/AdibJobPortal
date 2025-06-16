@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import { useParams,useNavigate } from "react-router-dom";
 import { getSingleApplicant, updateApplicantStatus } from "../services/jobsService";
 
@@ -30,7 +30,7 @@ const AuthorizeDocument = () => {
 
   const handleAuthorize = async (status) => {
     try {
-      const response = await updateApplicantStatus(id, status);
+      await updateApplicantStatus(id, status);
       navigate('/applications'); // redirect after success
     } catch (error) {
       console.error('Failed to update status', error);

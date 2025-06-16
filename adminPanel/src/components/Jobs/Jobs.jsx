@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ReusableTable from "../ui/ReausableTable";
 import ConfirmModal from "../ui/ConfirmModal";
 import { FiEye, FiEdit, FiLock, FiPlus } from "react-icons/fi";
@@ -67,7 +67,7 @@ const Jobs = () => {
             accessor: "authorize",
             cell: (row) => (
               <div className="flex gap-2">
-                {row.status === "InActive" && (
+                {row.status === "Draft" && (
                   <button
                     title="Authorize and Post Job"
                     onClick={() => openAuthorizationModal(row)}
@@ -101,9 +101,9 @@ const Jobs = () => {
   ];
 
   return (
-    <div>
+    <div className="max-w-3xl mx-auto py-6 bg-white shadow-lg rounded-lg mt-10">
       {userProfile.role === "hr_maker" && (
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex justify-between items-center">
           <Link
             to={"/jobs/add"}
             className="btn bg-primary text-white px-4 py-2 rounded flex items-center gap-2"

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ReusableTable from "../ui/ReausableTable";
 import { FiEye, FiEdit, FiPlus } from "react-icons/fi";
 import {
@@ -26,7 +26,7 @@ const Categories = () => {
   const [newCategoryName, setNewCategoryName] = useState("");
   const [newIcon, setNewIcon] = useState("");
 
-  const { userProfile, setUserProfile } = useAuth();
+  const { userProfile } = useAuth();
 
   useEffect(() => {
     fetchCategories();
@@ -105,9 +105,9 @@ const Categories = () => {
   ];
 
   return (
-    <div>
+    <div className="max-w-3xl mx-auto py-6 bg-white shadow-lg rounded-lg mt-10">
       {userProfile.role === "hr_maker" && (
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex justify-between items-center">
           <button
             onClick={handleAddNew}
             className="btn bg-primary text-white px-4 py-2 rounded flex items-center gap-2"

@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   confirmFilteredApplicants,
   filterApplicants,
   getJobs,
-  getUnderReviewApplicants,
+  // getUnderReviewApplicants,
 } from "../services/jobsService";
-import ReusableTable from "../ui/ReausableTable";
 import { useNavigate } from "react-router-dom";
 import { showSuccessToast } from "../../utils/toastUtils";
 
@@ -33,10 +32,10 @@ const navigate=useNavigate()
       const filteredJobs = response.filter((res) => res.status === "Closed");
       setJobs(filteredJobs);
     };
-    const fetchApplicants = async () => {
-      const response = await getUnderReviewApplicants();
-      setFilteredApplicants(response.data);
-    };
+    // const fetchApplicants = async () => {
+    //   const response = await getUnderReviewApplicants();
+    //   setFilteredApplicants(response.data);
+    // };
     fetchJobs();
   }, [filteredApplicants]);
 
@@ -104,7 +103,7 @@ const navigate=useNavigate()
   const handleConfirmApplicants = async () => {
     try {
       const confirmed = true;
-      const response = await confirmFilteredApplicants(
+       await confirmFilteredApplicants(
         criteria,
         confirmed,
         applicants
@@ -138,7 +137,7 @@ const navigate=useNavigate()
   };
 
   return (
-    <div className="p-6">
+    <div className="max-w-3xl mx-auto py-6 px-2 bg-white shadow-lg rounded-lg mt-10">
       <form action="" onSubmit={handleSubmit}>
         <h2 className="text-2xl font-bold mb-4">Filter Applications</h2>
 

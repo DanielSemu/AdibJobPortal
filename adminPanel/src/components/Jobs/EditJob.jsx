@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { updateJob, getSingleJob, getCategories } from "../services/jobsService";
 import { showErrorToast, showSuccessToast } from "../../utils/toastUtils";
 
@@ -22,7 +22,6 @@ const EditJob = () => {
     application_deadline: "",
     post_date: "",
     show_experience: null,
-    status: "InActive",
     details: [],
   });
 
@@ -94,9 +93,9 @@ const EditJob = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const updatedFormData = { ...formData, status: "InActive" };
+      
 
-      await updateJob(id, updatedFormData);
+      await updateJob(id, formData);
       showSuccessToast("Job updated successfully!")
       navigate("/jobs");
     } catch (error) {
@@ -218,7 +217,7 @@ const EditJob = () => {
         </div>
 
        
-        <div className="flex gap-4">
+        <div className="flex items-center gap-4">
           <input
             type="checkbox"
             name="show_experience"
@@ -231,18 +230,10 @@ const EditJob = () => {
           </label>
         </div>
         <div className="col-span-2">
-          <div className="flex justify-between">
-            <h2 className="text-2xl font-bold mb-4">Upload Job Details</h2>
-            <Link
-              to={`/edit/job_detail/${id}`}
-              className="flex items-center justify-center text-white bg-primary px-4 py-2 rounded-lg hover:bg-blue-500 text-sm font-medium shadow-md transition duration-300 ease-in-out"
-            >
-              Upload Bulk
-            </Link>
-          </div>
+         
           {/* Job Details Table */}
           <div>
-            <h3 className="text-lg font-semibold">Job Details</h3>
+            <h3 className="text-2xl font-bold mb-4">Job Details</h3>
             <table className="w-full table-auto border-collapse mt-2">
               <thead>
                 <tr>

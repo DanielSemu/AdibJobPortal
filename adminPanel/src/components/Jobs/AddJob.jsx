@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
-import { postJob } from "../services/jobsService";
+import { useNavigate } from "react-router-dom";
+import { getCategories, postJob } from "../services/jobsService";
 import { showSuccessToast } from "../../utils/toastUtils";
 
 const AddJob = () => {
@@ -23,9 +23,11 @@ const AddJob = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/categories/")
-      .then((res) => res.json())
-      .then((data) => setCategories(data));
+    const fetchCategories=async()=>{
+      const response=await getCategories()
+    setCategories(response)
+    }
+    fetchCategories()
   }, []);
 
   const handleChange = (e) => {
@@ -71,13 +73,13 @@ const AddJob = () => {
   return (
     <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-10">
       <div className="flex justify-between mb-6">
-        <h2 className="text-2xl font-bold">Post a Job</h2>
-        <Link
+        <h2 className="text-2xl font-bold">Create a Job</h2>
+        {/* <Link
           to="bulk"
           className="flex items-center justify-center text-white bg-primary px-4 py-2 rounded-lg hover:bg-blue-500 text-sm font-medium shadow-md transition duration-300 ease-in-out"
         >
           Upload Bulk
-        </Link>
+        </Link> */}
       </div>
 
       <form

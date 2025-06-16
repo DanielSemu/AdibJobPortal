@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import { getUnderReviewApplicants, SendSMS } from "../services/jobsService";
 import { showErrorToast, showSuccessToast } from "../../utils/toastUtils";
 
@@ -66,7 +66,7 @@ const handleSendSMS = async () => {
 
 
   return (
-    <div className="max-w-3xl mx-auto p-6">
+    <div className="max-w-3xl mx-auto py-6 px-2 bg-white shadow-lg rounded-lg mt-10">
       <h1 className="text-2xl font-bold text-gray-800 mb-4">
         Send SMS to Applicants
       </h1>

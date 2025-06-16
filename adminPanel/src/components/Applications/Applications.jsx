@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import ReusableTable from "../ui/ReausableTable";
 import { FiCheck } from "react-icons/fi";
 import { useNavigate, Link } from "react-router-dom";
@@ -7,7 +7,7 @@ import useAuth from "../../hooks/useAuth";
 
 const Applications = () => {
   const [applicants, setApplicants] = useState([]);
-  const { userProfile, setUserProfile } = useAuth();
+  const { userProfile } = useAuth();
 
   const navigate = useNavigate();
 
@@ -61,7 +61,7 @@ const Applications = () => {
   ];
 
   return (
-    <div>
+    <div className="max-w-3xl mx-auto py-6 px-2 bg-white shadow-lg rounded-lg mt-10">
       {userProfile.role === "hr_checker" && (
         <Link
           to={"/filter_applicants"}

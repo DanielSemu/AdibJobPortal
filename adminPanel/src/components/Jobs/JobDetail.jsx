@@ -5,11 +5,11 @@ import {
   FaMoneyBillWave,
   FaRegCalendarTimes,
 } from "react-icons/fa";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { getSingleJob } from "../services/jobsService";
 
 const JobDetail = () => {
-  const [applied, setApplied] = useState(false);
+  // const [applied, setApplied] = useState(false);
   const { id } = useParams();
   const [detailedData, setDetailedData] = useState(null);
 
@@ -25,9 +25,9 @@ const JobDetail = () => {
     fetchJob();
   }, [id]);
 
-  const handleApply = () => {
-    setApplied(true);
-  };
+  // const handleApply = () => {
+  //   setApplied(true);
+  // };
 
   if (!detailedData) {
     return <div>Loading...</div>;
@@ -43,8 +43,8 @@ const JobDetail = () => {
   }, {});
 
   return (
-    <div className="main-container flex justify-center items-center min-h-screen bg-gray-100 p-6">
-      <div className="w-full max-w-3xl bg-white shadow-xl rounded-lg p-8">
+    <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-10">
+      <div>
         {/* Job Title and Company */}
         {detailedData.title && (
           <h1 className="text-4xl font-bold text-gray-900">{detailedData.title} Grade {detailedData.job_grade}</h1>

@@ -1,12 +1,13 @@
 // import axiosInstance from "./axiosInstance";
 import axiosInstance from "../../api/axiosInstance";
 
+
 export const getJobs = async () => {
-  const response = await axiosInstance.get('/api/admin_jobs/');
+  const response = await axiosInstance.get('/jobs/admin_jobs/');
   return response.data;
 };
 export const getExpiredJobs = async () => {
-  const response = await axiosInstance.get('/api/expired_jobs/');
+  const response = await axiosInstance.get('/jobs/expired_jobs/');
   return response.data;
 };
 export const getAcceptedApplicants = async () => {
@@ -24,45 +25,45 @@ export const exportAcceptedApplicants = async () => {
 };
 
 export const getSingleJob = async (id) => {
-  const response = await axiosInstance.get(`/api/admin_jobs/${id}/`);
+  const response = await axiosInstance.get(`/jobs/admin_jobs/${id}/`);
   return response.data;
 };
 
 export const updateJob = async (id, job) => {
-  const response = await axiosInstance.put(`/api/admin_jobs/${id}/`, job);
+  const response = await axiosInstance.put(`/jobs/admin_jobs/${id}/`, job);
   return response.data;
 };
 
 export const postJob = async (jobData) => {
-  const response = await axiosInstance.post('/api/admin_jobs/', jobData);
+  const response = await axiosInstance.post('/jobs/admin_jobs/', jobData);
   return response.data;
 };
 
 export const getCategories = async () => {
-  const response = await axiosInstance.get('/api/categories/');
+  const response = await axiosInstance.get('/jobs/categories/');
   return response.data;
 };
 
 export const updateCategory = async (id,data)=>{
-  const response= await axiosInstance.put(`/api/categories/${id}/`,data);
+  const response= await axiosInstance.put(`/jobs/categories/${id}/`,data);
   return response.data
 }
 export const createCategory = async (categoryData) => {
-  const response= await axiosInstance.post('/api/categories/',categoryData);
+  const response= await axiosInstance.post('/jobs/categories/',categoryData);
   return response.data
 }
 
 export const getApplications = async () => {
-  const response = await axiosInstance.get('/api/applicants/');
+  const response = await axiosInstance.get('/applications/admin_applicants/');
   return response.data;
 };
 
 export const updateApplicantStatus= async (id,status)=>{
-  const response=await axiosInstance.put(`/api/applicants/${id}/`,{status})
+  const response=await axiosInstance.put(`/applications/admin_applicants/${id}/`,{status})
   return response.data
 }
 export const getSingleApplicant = async (id) => {
-  const response = await axiosInstance.get(`/api/applicants/${id}/`);
+  const response = await axiosInstance.get(`/applications/admin_applicants/${id}/`);
   return response.data;
 };
 export const getApplicantsByJob = async (id) => {

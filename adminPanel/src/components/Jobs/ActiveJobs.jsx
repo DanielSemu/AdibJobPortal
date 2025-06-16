@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getJobs, getApplicantsByJob } from "../services/jobsService";
 
 const ActiveJobs = () => {
@@ -45,7 +45,7 @@ const ActiveJobs = () => {
   }, []);
 
   return (
-    <div className="p-8 bg-gray-50 min-h-screen">
+    <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-10">
       <h1 className="text-2xl font-bold text-blue-900 mb-6">Active Jobs</h1>
       {activeJobs.length === 0 ? (
         <p className="text-center text-gray-600">No active jobs found.</p>
@@ -66,7 +66,7 @@ const ActiveJobs = () => {
                 <p className="text-gray-700 mb-1">
                   <strong>Total Applicants:</strong> {total}
                 </p>
-                <div className="flex gap-4 text-sm text-gray-600 mt-2">
+                <div className="text-sm text-gray-600 mt-2">
                   <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
                     Male: {count.Male}
                   </span>

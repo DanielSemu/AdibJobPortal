@@ -142,6 +142,7 @@ class AdminJobView(APIView):
         job = get_object_or_404(Job, id=id)
         user = request.user
         user_role = getattr(user, 'role', None)
+        print(user_role)
 
         if user_role == "hr_maker":
             # If status is in the request, reject it
@@ -162,13 +163,8 @@ class AdminJobView(APIView):
 
         elif user_role == "hr_checker":
             new_status = request.data.get("status")
-            if new_status != "Active":
-                return Response(
-                    {"error": "hr_checker can only set status to 'Active'."},
-                    status=status.HTTP_403_FORBIDDEN
-                )
 
-            job.status = "Active"
+            job.status = new_status
             job.save()
             serializer = JobSerializer(job)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -191,8 +187,7 @@ class AdminJobView(APIView):
 class ExpiredJobView(APIView):
     permission_classes =[IsAuthenticated,ViewJobRole]
     def get(self, request, id=None, *args, **kwargs):
-        # jobs = Job.objects.filter(status="Active",application_deadline__lt=timezone.now().date())
-        jobs = Job.objects.filter(status="Active")
+        jobs = Job.objects.filter(status="Active",application_deadline__lt=timezone.now().date())
 
         serializer = JobSerializer(jobs, many=True)
         

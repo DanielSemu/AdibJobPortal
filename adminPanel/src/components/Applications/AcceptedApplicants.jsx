@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   getAcceptedApplicants,
   exportAcceptedApplicants,
@@ -108,7 +108,7 @@ const AcceptedApplicants = () => {
   });
 
   return (
-    <div className="p-8 bg-gray-50 min-h-screen">
+    <div className="max-w-3xl mx-auto py-6 px-2 bg-white shadow-lg rounded-lg mt-10">
       <div className="flex flex-col flex-wrap md:flex-row md:justify-between md:items-center mb-6 gap-4">
         <h1 className="text-3xl text-nowrap font-bold text-blue-900">
           Accepted Applicants

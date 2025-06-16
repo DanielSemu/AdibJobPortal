@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ReusableTable from "../ui/ReausableTable";
 import { FiLock } from "react-icons/fi";
 import { getExpiredJobs, updateJob } from "../services/jobsService";
@@ -45,6 +45,7 @@ const CloseJobs = () => {
     { header: "Job Title", accessor: "title" },
     { header: "Location", accessor: "location" },
     { header: "Type", accessor: "job_type" },
+    { header: "Post Date", accessor: "post_date" },
     { header: "Deadline", accessor: "application_deadline" },
     { header: "Status", accessor: "status" },
     {
@@ -61,7 +62,7 @@ const CloseJobs = () => {
   ];
 
   return (
-    <div>
+    <div className="max-w-3xl mx-auto py-6 bg-white shadow-lg rounded-lg mt-10">
       <ReusableTable columns={columns} records={jobs} title={"Close Expired Jobs"} />
 
       <ConfirmModal

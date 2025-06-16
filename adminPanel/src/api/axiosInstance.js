@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { getAccessToken, setAccessToken } from './tokenStorage';
 import { refreshToken } from './auth';
-// export const BASE_URL = 'http://localhost:8000';
+export const BASE_URL = 'http://localhost:8000';
 // export const BASE_URL = 'http://192.168.75.222:8000';
-export const BASE_URL = 'http://127.0.0.1:8000';
+// export const BASE_URL = 'http://127.0.0.1:8000';
 
 
 
@@ -13,7 +13,7 @@ export const refreshAxiosInstance = axios.create({
 
 const axiosInstance = axios.create({
     baseURL: BASE_URL,
-    withCredentials: true, // Ensures cookies are sent with each request
+    withCredentials: true, 
 });
 export const loginAxiosInstance = axios.create({
     baseURL: BASE_URL,
