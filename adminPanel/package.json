@@ -13,6 +13,7 @@
     "@material-tailwind/html": "^2.3.2",
     "apexcharts": "^4.7.0",
     "axios": "^1.7.9",
+    "date-fns": "^4.1.0",
     "react": "^19.0.0",
     "react-apexcharts": "^1.7.0",
     "react-data-table-component": "^7.6.2",

@@ -157,18 +157,26 @@ const Sidebar = () => {
                     <ul className="py-2 space-y-2 pl-6">
                       <li>
                         <Link
-                          to="/applications"
+                          to="/filter_applicants"
                           className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
                         >
-                          <span className="ms-3">Filter Applications</span>
+                          <span className="ms-3">Filter Applicants</span>
                         </Link>
                       </li>
                       <li>
                         <Link
-                          to="/send_sms"
+                          to="/selected_applicants"
                           className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
                         >
-                          <span className="ms-3">Send SMS</span>
+                          <span className="ms-3">Selected Applicants</span>
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          to="/verify_applicants"
+                          className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
+                        >
+                          <span className="ms-3">Verify Applicants</span>
                         </Link>
                       </li>
                       <li>

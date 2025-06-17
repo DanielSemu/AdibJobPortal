@@ -86,7 +86,12 @@ class ApplicantSerializer(serializers.ModelSerializer):
 
 
 class CriteriaSerializer(serializers.ModelSerializer):
+    job_name = serializers.SerializerMethodField() 
     class Meta:
         model=Criteria
         fields='__all__'
         extra_kwargs = {"applicant": {"read_only": True}}
+        
+    def get_job_name(self, obj):
+        # This method returns the name of the related job
+        return obj.job.title  # Adjust the attribute name according to your `Job` model

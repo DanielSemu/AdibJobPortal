@@ -1,238 +1,156 @@
 import { useEffect, useState } from "react";
-import {
-  getAcceptedApplicants,
-  exportAcceptedApplicants,
-  getJobs,
-} from "../services/jobsService";
-import Select from "react-select";
+import axiosInstance from "../../api/axiosInstance";
 
 const AcceptedApplicants = () => {
-  const [acceptedApplicant, setAcceptedApplicant] = useState([]);
+  const [applicants, setApplicants] = useState([]);
+  const [filtered, setFiltered] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [isExporting, setIsExporting] = useState(false);
   const [jobs, setJobs] = useState([]);
-  const [selectedJobId, setSelectedJobId] = useState("");
+  const [selectedJobId, setSelectedJobId] = useState("all");
 
-  const options = jobs.map((job) => ({
-    value: job.id,
-    label: job.title,
-  }));
+  const API_URL = "/applications/admin_applicants/?status=SMS_Sent";
 
-  const fetchAcceptedApplicants = async () => {
-    const response = await getAcceptedApplicants();
-    setAcceptedApplicant(response);
-  };
-  const fetchJobs = async () => {
-    try {
-      const response = await getJobs();
-      const filteredJobs = response.filter((res) => res.status === "Closed");
-      setJobs(filteredJobs);
-    } catch (error) {
-      console.error("Failed to fetch jobs:", error);
+  useEffect(() => {
+    const fetchApplicants = async () => {
+      try {
+        const res = await axiosInstance.get(API_URL);
+        setApplicants(res.data);
+        setFiltered(res.data);
+
+        // Extract unique jobs
+        const jobMap = new Map();
+        res.data.forEach((a) => {
+          if (a.job && a.job_name) {
+            jobMap.set(a.job, a.job_name);
+          }
+        });
+
+        setJobs([{ id: "all", name: "-- All Jobs --" }, ...Array.from(jobMap, ([id, name]) => ({ id, name }))]);
+      } catch (err) {
+        console.error("Failed to fetch applicants:", err);
+      }
+    };
+
+    fetchApplicants();
+  }, []);
+
+  const filterApplicants = (searchValue, jobId) => {
+    let filteredList = applicants;
+
+    if (jobId !== "all") {
+      filteredList = filteredList.filter((a) => String(a.job) === String(jobId));
     }
+
+    if (searchValue) {
+      filteredList = filteredList.filter((a) =>
+        [a.full_name, a.email, a.phone, a.job_name, a.selected_work_place]
+          .some(field => field?.toLowerCase().includes(searchValue.toLowerCase()))
+      );
+    }
+
+    setFiltered(filteredList);
   };
 
-  const handlePdfDownload = async () => {
-    if (!selectedJobId) {
-      alert("Please select a job first.");
+  const handleSearch = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    filterApplicants(value, selectedJobId);
+  };
+
+  const handleJobChange = (e) => {
+    const jobId = e.target.value;
+    setSelectedJobId(jobId);
+    filterApplicants(searchTerm, jobId);
+  };
+
+  const handleDownload = async () => {
+    const status = "SMS_Sent";
+    const jobId = selectedJobId !== "all" ? selectedJobId : (filtered[0]?.job || "");
+
+    if (!jobId) {
+      alert("No job ID found for download.");
       return;
     }
 
     try {
-      const response = await fetch(
-        `http://192.168.2.32:8000/api/export_applicant_pdf/?job_id=${selectedJobId}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/pdf",
-          },
-        }
+      const res = await axiosInstance.post(
+        `/applications/report/?status=${status}&job_id=${jobId}`,
+        {},
+        { responseType: "blob" }
       );
 
-      if (!response.ok) throw new Error("Network response was not ok");
-
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "accepted_applicants.pdf";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.URL.revokeObjectURL(url);
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "applicants_report.pdf");
+      document.body.appendChild(link);
+      link.click();
     } catch (error) {
-      console.error("Download failed", error);
+      console.error("Download failed:", error);
     }
   };
-
-  const handleExportApplicants = async () => {
-    try {
-      setIsExporting(true);
-      const response = await exportAcceptedApplicants();
-      const blob = new Blob([response.data], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "accepted_applicants.xlsx";
-      a.click();
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Export failed:", error);
-      alert("Failed to export applicants.");
-    } finally {
-      setIsExporting(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchAcceptedApplicants();
-    fetchJobs();
-  }, []);
-
-  const handleSelectChange = (selectedOption) => {
-    setSelectedJobId(selectedOption?.value || "");
-    const result = jobs.find((job) => job.id === selectedOption.value);
-    const searchKey = result.title;
-    setSearchTerm(searchKey);
-  };
-
-  const filteredApplicants = acceptedApplicant.filter((applicant) => {
-    const lowerSearch = searchTerm.toLowerCase();
-    return (
-      applicant.full_name?.toLowerCase().includes(lowerSearch) ||
-      applicant.job_name?.toLowerCase().includes(lowerSearch) ||
-      applicant.selected_work_place?.toLowerCase().includes(lowerSearch)
-    );
-  });
 
   return (
-    <div className="max-w-3xl mx-auto py-6 px-2 bg-white shadow-lg rounded-lg mt-10">
-      <div className="flex flex-col flex-wrap md:flex-row md:justify-between md:items-center mb-6 gap-4">
-        <h1 className="text-3xl text-nowrap font-bold text-blue-900">
-          Accepted Applicants
-        </h1>
+    <div className="max-w-6xl mx-auto p-4 bg-white rounded shadow-md mt-10">
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
+        <div className="flex flex-col sm:flex-row w-full sm:items-center gap-3">
+          <select
+            className="border p-2 rounded w-full sm:w-52"
+            value={selectedJobId}
+            onChange={handleJobChange}
+          >
+            {jobs.map((job) => (
+              <option key={job.id} value={job.id}>
+                {job.name}
+              </option>
+            ))}
+          </select>
 
-        <div className="flex flex-col md:flex-row items-center gap-3">
           <input
             type="text"
-            placeholder="Search by name..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded w-64"
+            onChange={handleSearch}
+            placeholder="Search applicants..."
+            className="w-full sm:w-64 border p-2 rounded"
           />
-          <button
-            onClick={handleExportApplicants}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-            disabled={isExporting}
-          >
-            {isExporting ? "Exporting..." : "Export All Applicants"}
-          </button>
         </div>
-      </div>
-      <div className="mb-2 w-full flex gap-4">
-        <div className="flex flex-wrap items-center gap-4">
-          <label className="block text-nowrap text-gray-700 font-semibold mb-2">
-            Select Job :
-          </label>
-          <Select
-            options={options}
-            value={options.find((opt) => opt.value === selectedJobId)}
-            onChange={handleSelectChange}
-            placeholder="-- Select Job --"
-            className="w-2xl"
-            styles={{
-              control: (base) => ({
-                ...base,
-                padding: "2px",
-                borderColor: "#ccc",
-                borderRadius: "6px",
-                fontSize: "1rem",
-                minWidth: "300px",
-              }),
-            }}
-            isClearable
-          />
-          <button
-            onClick={handlePdfDownload}
-            className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
-          >
-            Download Pdf
-          </button>
-        </div>
+
+        <button
+          onClick={handleDownload}
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        >
+          Download Report
+        </button>
       </div>
 
-      {filteredApplicants.length === 0 ? (
-        <p className="text-center text-gray-600">No applicants found.</p>
+      {filtered.length === 0 ? (
+        <p className="text-center text-gray-500">No applicants found.</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {filteredApplicants.map((applicant, index) => (
-            <div
-              key={index}
-              className="bg-white shadow-lg rounded-lg p-6 border border-gray-200"
-            >
-              <h2 className="text-xl font-semibold text-blue-700">
-                {applicant.full_name}
-              </h2>
-              <p className="text-sm text-gray-600">
-                {applicant.email} | {applicant.phone}
-              </p>
-              <p className="mt-1 text-gray-700">Gender: {applicant.gender}</p>
-              <p className="text-gray-700">
-                Birth Date: {applicant.birth_date}
-              </p>
-              <p className="text-gray-700">Applied For: {applicant.job_name}</p>
-              <p className="text-gray-700 mb-3">
-                Workplace: {applicant.selected_work_place}
-              </p>
-
-              {/* Education */}
-              <div className="mb-4">
-                <h3 className="text-md font-medium text-gray-800 mb-1">
-                  Education
-                </h3>
-                <ul className="list-disc list-inside space-y-1 text-sm text-gray-600">
-                  {applicant.educations?.map((edu, idx) => (
-                    <li key={idx}>
-                      {edu.education_level} — {edu.field_of_study} —{" "}
-                      {edu.education_organization} — CGPA —{edu.cgpa} (
-                      {edu.graduation_year})
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Experience */}
-              <div className="mb-4">
-                <h3 className="text-md font-medium text-gray-800 mb-1">
-                  Experience
-                </h3>
-                <ul className="list-disc list-inside space-y-1 text-sm text-gray-600">
-                  {applicant.experiences?.map((exp, idx) => (
-                    <li key={idx}>
-                      {exp.company_name} — {exp.job_title} ({exp.from_date} -{" "}
-                      {exp.to_date})
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Certifications */}
-              <div>
-                <h3 className="text-md font-medium text-gray-800 mb-1">
-                  Certifications
-                </h3>
-                <ul className="list-disc list-inside space-y-1 text-sm text-gray-600">
-                  {applicant.certifications?.map((cert, idx) => (
-                    <li key={idx}>
-                      {cert.certificate_title} ({cert.awarded_date})
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          ))}
+        <div className="overflow-x-auto">
+          <table className="w-full border text-sm">
+            <thead>
+              <tr className="bg-gray-100 text-left">
+                <th className="p-2 border">Full Name</th>
+                <th className="p-2 border">Email</th>
+                <th className="p-2 border">Phone</th>
+                <th className="p-2 border">Job Name</th>
+                <th className="p-2 border">Location</th>
+                <th className="p-2 border">Gender</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((applicant) => (
+                <tr key={applicant.id} className="hover:bg-gray-50">
+                  <td className="p-2 border">{applicant.full_name}</td>
+                  <td className="p-2 border">{applicant.email}</td>
+                  <td className="p-2 border">{applicant.phone}</td>
+                  <td className="p-2 border">{applicant.job_name}</td>
+                  <td className="p-2 border">{applicant.selected_work_place}</td>
+                  <td className="p-2 border">{applicant.gender}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>

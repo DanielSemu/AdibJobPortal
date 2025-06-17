@@ -18,7 +18,9 @@ import Home from "./components/Dashboard/Home";
 import Unauthorized from "./components/Registration/Unauthorized"; // Create this page
 import AcceptedApplicants from "./components/Applications/AcceptedApplicants";
 import ActiveJobs from "./components/Jobs/ActiveJobs";
-import SendSMSForAccepted from "./components/Applications/SendSMSForAccepted";
+// import SendSMSForAccepted from "./components/Applications/SendSMSForAccepted";
+import SelectedApplicants from "./components/Applications/SelectedApplicants";
+import VerifyApplicants from "./components/Applications/VerifyApplicants";
 
 const Router = () => {
   return (
@@ -132,7 +134,7 @@ const Router = () => {
 
           {/* Applications - HR and Managers */}
           <Route
-            path="/applications"
+            path="/verify_applicants"
             element={
               <PrivateRoute >
                 <Applications />
@@ -148,10 +150,10 @@ const Router = () => {
             }
           />
           <Route
-            path="/send_sms"
+            path="/verify_applicants"
             element={
               <PrivateRoute >
-                <SendSMSForAccepted />
+                <VerifyApplicants />
               </PrivateRoute>
             }
           />
@@ -162,6 +164,15 @@ const Router = () => {
             element={
               <PrivateRoute >
                 <FilterApplicants />
+              </PrivateRoute>
+            }
+          />
+          {/* Filter Applicants - Only HR */}
+          <Route
+            path="/selected_applicants"
+            element={
+              <PrivateRoute >
+                <SelectedApplicants/>
               </PrivateRoute>
             }
           />
