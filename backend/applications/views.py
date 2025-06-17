@@ -105,17 +105,6 @@ class AdminApplicationsAPIView(APIView):
         if id:
             # This Id job Id 
             applicants = Applicant.objects.get(id=id)
-            # applicants = Applicant.objects.filter(job_id=id)
-            # #Filter By Applicant Status
-            # status_param = request.query_params.get("status")
-            # if status_param:
-            #     applicants=applicants.filter(status=status_param)
-                
-            # #Filter By WorkPlace Selected
-            # workPlace_param=request.query_params.get("workPlace")
-            # if workPlace_param:
-            #     applicants=applicants.filter(selected_work_place=workPlace_param)
-            
             serializer = ApplicantSerializer(applicants)
         else:
             applicants=Applicant.objects.all()
@@ -150,6 +139,32 @@ class AdminApplicationsAPIView(APIView):
             'new_status':applicant.status,
         }, status=status.HTTP_200_OK)
    
+
+
+#===================================
+#Admin Fetch Applicants Based on Jobs
+#====================================
+class AdminFetchJobApplicants(APIView):
+    permission_classes=[IsAuthenticated, ViewJobRole]
+    
+    def get(self,request,id=None,*args, **kwargs):
+        if id:
+            applicants = Applicant.objects.filter(job_id=id)
+            #Filter By Applicant Status
+            status_param = request.query_params.get("status")
+            if status_param:
+                applicants=applicants.filter(status=status_param)
+                
+            #Filter By WorkPlace Selected
+            workPlace_param=request.query_params.get("workPlace")
+            if workPlace_param:
+                applicants=applicants.filter(selected_work_place=workPlace_param)
+            
+            serializer=ApplicantSerializer(applicants, many=True)
+            
+        return Response(serializer.data, status=status.HTTP_200_OK)
+            
+            
 
 
 #==========================

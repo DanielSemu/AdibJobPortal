@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getJobs, getApplicantsByJob } from "../services/jobsService";
+import { getActiveJobs, getApplicantsByJob } from "../services/jobsService";
 
 const ActiveJobs = () => {
   const [activeJobs, setActiveJobs] = useState([]);
@@ -7,7 +7,8 @@ const ActiveJobs = () => {
 
   const fetchActiveJobs = async () => {
     try {
-      const response = await getJobs();
+      
+      const response = await getActiveJobs();
       if (Array.isArray(response)) {
         const active = response.filter((item) => item.status === "Active");
         setActiveJobs(active);
@@ -16,14 +17,15 @@ const ActiveJobs = () => {
         const counts = {};
         await Promise.all(
           active.map(async (job) => {
+            
             const genderData = await getApplicantsByJob(job.id);
             
             const maleCount = genderData.filter(
-                (applicant) => applicant.gender?.trim().toLowerCase() === "male"
+                (applicant) => applicant.gender?.trim().toLowerCase() === "m"
               ).length;
               
               const femaleCount = genderData.filter(
-                (applicant) => applicant.gender?.trim().toLowerCase() === "female"
+                (applicant) => applicant.gender?.trim().toLowerCase() === "f"
               ).length;
               
               counts[job.id] = {
