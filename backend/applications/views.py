@@ -31,6 +31,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.parsers import JSONParser, MultiPartParser
+
 
 # ====================
 # Local App Imports
@@ -59,6 +61,7 @@ from authApi.permissions import (
 #User Apply For a Job
 #=========================
 class UserApplyForJobAPIView(APIView):
+    parser_classes = [JSONParser, MultiPartParser]
     def post(self, request):
         # print(request.data)
         serializer = ApplicantSerializer(data=request.data)
@@ -262,7 +265,9 @@ class ConfirmFilteredApplicants(APIView):
     def put(self, request, id=None, *args, **kwargs):
         if not id:
             return Response({"error": 'Criteria id is required.'}, status=status.HTTP_400_BAD_REQUEST)
-        
+        criteria=Criteria.objects.get(id=id)
+        if criteria.message_sent:
+            return Response({"errro":"Applicant with this criteria is already sned sms you cant revert it"}, status=status.HTTP_400_BAD_REQUEST)
         # Revert applicants
         updated_count = Applicant.objects.filter(
             selectedCriteria=id,
@@ -351,6 +356,8 @@ class SendSMSView(APIView):
                         "status": "failed",
                         "error": str(e)
                     })
+            Criteria.objects.filter(id=selectedCriteria).update(message_sent=True)
+
 
         return Response({"status": "completed", "results": results}, status=status.HTTP_200_OK)
  

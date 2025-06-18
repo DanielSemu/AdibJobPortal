@@ -317,6 +317,7 @@ const ApplyJob = () => {
         },
       });
       setErrors({});
+      // that is not is the solution so what will be the appropriate councle have to done in the following code according to the ability of survival introduced to us appointed to the user accross tommorow will be saint Michael yearly festival or memorial so I should go there and my hear this to the following questions accoin 
       showSuccessToast("Application Submitted Successfully Inserted ");
       navigate("/")
     } catch (error) {

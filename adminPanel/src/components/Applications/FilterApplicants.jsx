@@ -117,7 +117,7 @@ const navigate=useNavigate()
           "There Is no Applicant That Satisfies the Above Criteria",
       });
       showSuccessToast("Applicants updated and criteria recorded!")
-      navigate('/applications')
+      navigate('/selected_applicants')
     } catch (error) {
       console.error("Confirmation error:", error);
     }

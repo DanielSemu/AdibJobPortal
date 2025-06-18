@@ -82,7 +82,7 @@ export const filterApplicants = async (criteria)=>{
 
 export const confirmFilteredApplicants = async (criteria, confirm, applicant_ids) => {
   
-  const response = await axiosInstance.post('/api/confirm_filter/', {
+  const response = await axiosInstance.post('/applications/confirm_filter_applicants/', {
     criteria,
     confirm,
     applicant_ids

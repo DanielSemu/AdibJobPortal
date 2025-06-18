@@ -50,13 +50,14 @@ class ApplicantSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         educations_data = self._parse_json_field(self.initial_data.get("educations", []))
         experiences_data = self._parse_json_field(self.initial_data.get("experiences", []))
-        certifications_data=self._parse_json_field(self.initial_data.get("certifications",[]))
+        certifications_data = self._parse_json_field(self.initial_data.get("certifications", []))
 
-        print("Educations:", educations_data)
-        print("Experiences:", experiences_data)
-        print("Certifications:", certifications_data)
+        # Remove nested lists from validated_data so they don't get passed to Applicant.objects.create
+        validated_data.pop('educations', None)
+        validated_data.pop('experiences', None)
+        validated_data.pop('certifications', None)
 
-        # Check duplicate application
+        # Check duplicate application (same as your code)
         email = validated_data.get('email')
         job_id = validated_data.get('job')
 
@@ -77,10 +78,12 @@ class ApplicantSerializer(serializers.ModelSerializer):
             Certification.objects.create(applicant=application, **certification)
 
         return application
-
     def _parse_json_field(self, json_field):
+        import json
         try:
-            return json.loads(json_field) if isinstance(json_field, str) else json_field
+            if isinstance(json_field, str):
+                return json.loads(json_field)
+            return json_field
         except json.JSONDecodeError:
             return []
 

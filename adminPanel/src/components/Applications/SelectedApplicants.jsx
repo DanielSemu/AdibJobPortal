@@ -49,11 +49,15 @@ const SelectedApplicants = () => {
     };
 
 
-    const sendMessageToBackend = async () => {
+    const sendMessageToBackend = async (messageType) => {
+        const isTest=messageType === "test"
+        console.log(); 
+        
         try {
-            await axiosInstance.post("/applications/send-message/", {
-                criteria_id: selectedCriteriaId,
+            await axiosInstance.post("/applications/send-sms/", {
+                selectedCriteria: selectedCriteriaId,
                 message,
+                testMessage:isTest
             });
             alert("Message sent successfully!");
             setShowModal(false);
@@ -135,8 +139,8 @@ const SelectedApplicants = () => {
                                 <p><strong>Min Exit Score:</strong> {item.min_exit_score ?? "Any"}</p>
                                 <p><strong>Matched Applicants:</strong> {item.matched_applicants}</p>
                             </div>
-
-                            <div className="flex gap-4">
+                            {!item.message_sent &&(
+                                <div className="flex gap-4">
                                 <button
                                     onClick={() => openMessageModal(item.id)}
                                     className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
@@ -150,6 +154,8 @@ const SelectedApplicants = () => {
                                     Revert Selection
                                 </button>
                             </div>
+                            )}
+                            
                         </div>
                     ))}
                 </div>
@@ -175,13 +181,13 @@ const SelectedApplicants = () => {
                             </button>
                             <button
                                 className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
-                                onClick={() => alert("Test Message: " + message)}
+                                onClick={() => sendMessageToBackend("test")}
                             >
                                 Test
                             </button>
                             <button
                                 className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                                onClick={sendMessageToBackend}
+                                onClick={() => sendMessageToBackend("notTest")}
                             >
                                 Send
                             </button>

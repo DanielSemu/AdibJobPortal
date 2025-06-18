@@ -10,6 +10,7 @@ class Criteria(models.Model):
     min_cgpa = models.FloatField(blank=True, null=True)
     min_exit_score = models.FloatField(blank=True, null=True)
     matched_applicants = models.PositiveIntegerField()
+    message_sent=models.BooleanField(default=False)
     timestamp = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
