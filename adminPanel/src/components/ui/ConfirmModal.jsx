@@ -1,5 +1,4 @@
-// components/ui/ConfirmModal.jsx
-import React from "react";
+/* eslint-disable react/prop-types */
 
 const ConfirmModal = ({ isOpen, message, onConfirm, onCancel }) => {
   if (!isOpen) return null;

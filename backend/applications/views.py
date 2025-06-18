@@ -286,7 +286,7 @@ class CriteriasAPIView(APIView):
     permission_classes=[IsAuthenticated, ViewJobRole]    
     
     def get(self,request):
-        criterias=Criteria.objects.all()
+        criterias=Criteria.objects.all().order_by("message_sent")
         serializer=CriteriaSerializer(criterias, many=True)
         
         return Response(serializer.data, status=status.HTTP_200_OK) 

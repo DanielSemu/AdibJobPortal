@@ -1,12 +1,18 @@
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import axiosInstance from "../../api/axiosInstance";
+import ConfirmModal from "../ui/ConfirmModal";
+import { showErrorToast, showSuccessToast } from "../../utils/toastUtils";
+
 
 const SelectedApplicants = () => {
     const [criterias, setCriterias] = useState([]);
     const [filteredCriterias, setFilteredCriterias] = useState([]);
     const [jobs, setJobs] = useState([]);
     const [selectedJob, setSelectedJob] = useState("all");
+
+    const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+    const [criteriaToRevert, setCriteriaToRevert] = useState(null);
 
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
@@ -49,24 +55,35 @@ const SelectedApplicants = () => {
     };
 
 
-    const sendMessageToBackend = async (messageType) => {
-        const isTest=messageType === "test"
-        console.log(); 
-        
-        try {
-            await axiosInstance.post("/applications/send-sms/", {
-                selectedCriteria: selectedCriteriaId,
-                message,
-                testMessage:isTest
-            });
-            alert("Message sent successfully!");
-            setShowModal(false);
-            setMessage("");
-        } catch (error) {
-            console.error("Sending message failed:", error);
-            alert("Failed to send message.");
-        }
-    };
+
+const sendMessageToBackend = async (messageType) => {
+  const isTest = messageType === "test";
+
+  try {
+    const response = await axiosInstance.post("/applications/send-sms/", {
+      selectedCriteria: selectedCriteriaId,
+      message,
+      testMessage: isTest,
+    });
+
+    const count = response?.data?.results?.length || 0;
+
+    if (isTest) {
+      showSuccessToast(`Test message sent to your number. Total: ${count}`);
+    } else {
+      showSuccessToast(`Message successfully sent to ${count} applicant(s).`);
+      setShowModal(false); // hide modal after real message
+      setMessage("");       // clear textarea
+    }
+  } catch (error) {
+    console.error("Sending message failed:", error);
+    const errorMsg =
+      error?.response?.data?.error ||
+      "❌ Something went wrong while sending the message.";
+    showErrorToast(errorMsg);
+  }
+};
+
 
     const openMessageModal = (criteriaId) => {
         setSelectedCriteriaId(criteriaId);
@@ -74,8 +91,22 @@ const SelectedApplicants = () => {
     };
 
     const revertCriteriaSelection = (id) => {
-        // TODO: implement logic to undo selection
-        alert(`Revert logic to be implemented for criteria ID ${id}`);
+        setCriteriaToRevert(id);
+        setIsConfirmOpen(true);
+    };
+
+    const confirmRevert = async () => {
+        try {
+            await axiosInstance.put(`/applications/revert_filter_applicants/${criteriaToRevert}/`);
+            showSuccessToast("Criteria has been successfully reverted.");
+            setIsConfirmOpen(false);
+            setCriteriaToRevert(null);
+            fetchCriterias(); // refresh list
+        } catch (error) {
+            console.error("Revert failed:", error);
+            showErrorToast("Failed to revert criteria.");
+            setIsConfirmOpen(false);
+        }
     };
 
     useEffect(() => {
@@ -139,23 +170,23 @@ const SelectedApplicants = () => {
                                 <p><strong>Min Exit Score:</strong> {item.min_exit_score ?? "Any"}</p>
                                 <p><strong>Matched Applicants:</strong> {item.matched_applicants}</p>
                             </div>
-                            {!item.message_sent &&(
+                            {!item.message_sent && (
                                 <div className="flex gap-4">
-                                <button
-                                    onClick={() => openMessageModal(item.id)}
-                                    className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-                                >
-                                    Send Message
-                                </button>
-                                <button
-                                    onClick={() => revertCriteriaSelection(item.id)}
-                                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-                                >
-                                    Revert Selection
-                                </button>
-                            </div>
+                                    <button
+                                        onClick={() => openMessageModal(item.id)}
+                                        className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+                                    >
+                                        Send Message
+                                    </button>
+                                    <button
+                                        onClick={() => revertCriteriaSelection(item.id)}
+                                        className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                                    >
+                                        Revert Selection
+                                    </button>
+                                </div>
                             )}
-                            
+
                         </div>
                     ))}
                 </div>
@@ -195,8 +226,19 @@ const SelectedApplicants = () => {
                     </div>
                 </div>
             )}
+            <ConfirmModal
+                isOpen={isConfirmOpen}
+                message="Are you sure you want to revert this criteria?"
+                onConfirm={confirmRevert}
+                onCancel={() => {
+                    setIsConfirmOpen(false);
+                    setCriteriaToRevert(null);
+                }}
+            />
+
         </div>
     );
+
 };
 
 export default SelectedApplicants;

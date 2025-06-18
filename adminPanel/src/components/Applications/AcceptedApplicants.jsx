@@ -135,6 +135,7 @@ const AcceptedApplicants = () => {
                 <th className="p-2 border">Phone</th>
                 <th className="p-2 border">Job Name</th>
                 <th className="p-2 border">Location</th>
+                <th className="p-2 border">Status</th>
                 <th className="p-2 border">Gender</th>
               </tr>
             </thead>
@@ -146,6 +147,7 @@ const AcceptedApplicants = () => {
                   <td className="p-2 border">{applicant.phone}</td>
                   <td className="p-2 border">{applicant.job_name}</td>
                   <td className="p-2 border">{applicant.selected_work_place}</td>
+                  <td className="p-2 border">{applicant.status}</td>
                   <td className="p-2 border">{applicant.gender}</td>
                 </tr>
               ))}
