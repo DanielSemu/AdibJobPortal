@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import EcommerceMetrics from "../Report/EcommerceMetrics";
 import MonthlyTarget from "../Report/MonthlyTarget";
 
-
 // Home.jsx
 import {
   BarChart,
@@ -56,6 +55,9 @@ export default function Home() {
     (app) => app.status === "Rejected"
   ).length;
   const pending = applications.filter((app) => app.status === "Pending").length;
+  const sms_sent = applications.filter(
+    (app) => app.status === "SMS_Sent"
+  ).length;
 
   const openVacancies = activeJobs.length;
 
@@ -114,7 +116,28 @@ export default function Home() {
     },
   ];
 
-  
+  const renderCustomTick = ({ x, y, payload }) => {
+    const MAX_LENGTH = 10;
+    const label =
+      payload.value.length > MAX_LENGTH
+        ? payload.value.slice(0, MAX_LENGTH) + "..."
+        : payload.value;
+
+    return (
+      <g transform={`translate(${x},${y})`}>
+        <text
+          textAnchor="end"
+          fill="#333"
+          fontSize={14}
+          transform="rotate(-30)"
+          dy={10}
+        >
+          {label}
+        </text>
+      </g>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-4 sm:px-6 lg:px-8">
       <h1 className="text-3xl font-bold text-center text-blue-800 mb-10">
@@ -142,16 +165,15 @@ export default function Home() {
         {/* Bar Chart */}
         <div className="bg-white p-6 rounded-xl shadow">
           <h2 className="text-xl font-semibold mb-4 text-blue-700">
-            Applicants Per Vacancy
+            Applicants Per Active Vacancy
           </h2>
           <ResponsiveContainer width="100%" height={350}>
             <BarChart data={applicantsPerJob}>
               <XAxis
                 dataKey="name"
-                angle={-30}
-                textAnchor="end"
                 interval={0}
                 height={60}
+                tick={renderCustomTick}
               />
               <YAxis />
               <Tooltip />
