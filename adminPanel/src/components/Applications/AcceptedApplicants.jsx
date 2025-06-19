@@ -8,7 +8,7 @@ const AcceptedApplicants = () => {
   const [jobs, setJobs] = useState([]);
   const [selectedJobId, setSelectedJobId] = useState("all");
 
-  const API_URL = "/applications/admin_applicants/?status=SMS_Sent";
+  const API_URL = "/applications/admin_applicants/?status=Accepted";
 
   useEffect(() => {
     const fetchApplicants = async () => {
@@ -64,7 +64,7 @@ const AcceptedApplicants = () => {
   };
 
   const handleDownload = async () => {
-    const status = "SMS_Sent";
+    const status = "Accepted";
     const jobId = selectedJobId !== "all" ? selectedJobId : (filtered[0]?.job || "");
 
     if (!jobId) {

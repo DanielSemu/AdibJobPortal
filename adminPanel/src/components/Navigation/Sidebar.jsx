@@ -187,6 +187,14 @@ const Sidebar = () => {
                           <span className="ms-3">Accepted Applicants</span>
                         </Link>
                       </li>
+                      <li>
+                        <Link
+                          to="/rejected_applicants"
+                          className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
+                        >
+                          <span className="ms-3">Rejected Applicants</span>
+                        </Link>
+                      </li>
                      
                       {/* <li>
                         <Link

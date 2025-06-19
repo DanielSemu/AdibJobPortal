@@ -1,17 +1,12 @@
-import { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import ReusableTable from "../ui/ReausableTable";
-import { FiCheck } from "react-icons/fi";
-import { useNavigate, Link } from "react-router-dom";
-import useAuth from "../../hooks/useAuth";
 import axiosInstance from "../../api/axiosInstance";
 
-const VerifyApplicants = () => {
+const RejectedApplications = () => {
   const [applicants, setApplicants] = useState([]);
-  const { userProfile } = useAuth();
 
-  const navigate = useNavigate();
-
-  const API_URL = "/applications/admin_applicants/?status=SMS_Sent";
+  
+  const API_URL = "/applications/admin_applicants/?status=Rejected";
 
   useEffect(() => {
     const fetchApplicants = async () => {
@@ -26,12 +21,9 @@ const VerifyApplicants = () => {
     fetchApplicants();
   }, []);
 
-  const handleDetailView = (row) => {
-    navigate(`/authorize_document/${row.id}`);
-  };
+
 
   const columns = [
-    //   { header: "name", accessor: "name", cell:()=>("yyyy-xxxx-jjjj") },
     { header: "Full Name", accessor: "full_name" },
     { header: "Job ", accessor: "job_name" },
     { header: "Gender", accessor: "gender" },
@@ -54,31 +46,20 @@ const VerifyApplicants = () => {
     },
     { header: "Status", accessor: "status" },
 
-    {
-      header: "Verify",
-      accessor: "actions",
-      cell: (row) => (
-        <div className="flex gap-2">
-          <button onClick={() => handleDetailView(row)} className="btn">
-            <FiCheck />
-          </button>
-        </div>
-      ),
-    },
   ];
 
   return (
     <div className="mx-auto py-6 px-2 bg-white shadow-lg rounded-lg mt-10">
-    
 
       <ReusableTable
         columns={columns}
         records={applicants}
         // addAddress={"/categories/add"}
-        title={"Verify  Applicants Document"}
+        title={"Rejected  Applicants"}
       />
     </div>
   );
 };
 
-export default VerifyApplicants;
+
+export default RejectedApplications

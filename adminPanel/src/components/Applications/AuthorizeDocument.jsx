@@ -1,11 +1,18 @@
-import  { useEffect, useState } from "react";
-import { useParams,useNavigate } from "react-router-dom";
-import { getSingleApplicant, updateApplicantStatus } from "../services/jobsService";
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import {
+  getSingleApplicant,
+  updateApplicantStatus,
+} from "../services/jobsService";
 import { BASE_URL } from "../../api/axiosInstance";
+import ConfirmModal from "../ui/ConfirmModal";
 
 const AuthorizeDocument = () => {
   const { id } = useParams();
   const [applicant, setApplicant] = useState({});
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [pendingStatus, setPendingStatus] = useState(null);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,28 +23,40 @@ const AuthorizeDocument = () => {
     fetchApplicant();
   }, [id]);
 
-  const calculateAge = (birthDate)=>{
-    if(!birthDate) return ''
-    const birth= new Date(birthDate)
-    const today=new Date()
-    let age = today.getFullYear() - birth.getFullYear()
-    const m= today.getMonth() - birth.getMonth()
-    if(m<0 || ( m===0 && today.getDate() <birth.getDate())){
-      age--
+  const calculateAge = (birthDate) => {
+    if (!birthDate) return "";
+    const birth = new Date(birthDate);
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    const m = today.getMonth() - birth.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+      age--;
     }
-    return age
-  }
+    return age;
+  };
 
-  const handleAuthorize = async (status) => {
+  const handleConfirm = async () => {
+    if (!pendingStatus) return;
     try {
-      await updateApplicantStatus(id, status);
-      navigate('/applications'); // redirect after success
+      await updateApplicantStatus(id, pendingStatus);
+      navigate("/accepted_applicants");
     } catch (error) {
-      console.error('Failed to update status', error);
+      console.error("Failed to update status", error);
+    } finally {
+      setIsModalOpen(false);
+      setPendingStatus(null);
     }
   };
-  
 
+  const openConfirmModal = (status) => {
+    setPendingStatus(status);
+    setIsModalOpen(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+    setPendingStatus(null);
+  };
 
   return (
     <div className="w-full px-4 md:px-10 py-8 bg-gray-100 min-h-screen">
@@ -150,10 +169,10 @@ const AuthorizeDocument = () => {
                   <p>
                     <strong>To:</strong> {experience.to_date}
                   </p>
-                  {experience.banking_experience&&(
+                  {experience.banking_experience && (
                     <p>
-                    <strong>Worked at Banking Industry</strong>{" "}
-                  </p>
+                      <strong>Worked at Banking Industry</strong>{" "}
+                    </p>
                   )}
                 </div>
               ))}
@@ -183,28 +202,31 @@ const AuthorizeDocument = () => {
           </div>
           {/* Button Group */}
           <div className="mt-10 flex gap-6 justify-center">
-        <button
-          onClick={()=>handleAuthorize("Accepted")}
-          className="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition"
-        >
-          Authorize
-        </button>
-        <button
-          onClick={()=>handleAuthorize("Rejected")}
-          className="bg-red-600 text-white px-8 py-3 rounded-lg hover:bg-red-700 transition"
-        >
-          Reject
-        </button>
-      </div>
+            <button
+              onClick={() => openConfirmModal("Accepted")}
+              className="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition"
+            >
+              Authorize
+            </button>
+            <button
+              onClick={() => openConfirmModal("Rejected")}
+              className="bg-red-600 text-white px-8 py-3 rounded-lg hover:bg-red-700 transition"
+            >
+              Reject
+            </button>
+          </div>
+          <ConfirmModal
+            isOpen={isModalOpen}
+            message={`Are you sure you want to ${pendingStatus?.toLowerCase()} this applicant?`}
+            onConfirm={handleConfirm}
+            onCancel={handleCancel}
+          />
         </div>
       ) : (
         <p className="text-red-600 font-semibold text-center mt-10">
           No data provided.
         </p>
       )}
-
-      
-     
     </div>
   );
 };

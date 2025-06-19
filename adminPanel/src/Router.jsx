@@ -8,7 +8,6 @@ import AddJob from "./components/Jobs/AddJob";
 import UploadBulk from "./components/Jobs/UploadBulk";
 import UploadJobDetail from "./components/Jobs/UploadJobDetail";
 import Categories from "./components/Categories/Categories";
-import Applications from "./components/Applications/Applications";
 import FilterApplicants from "./components/Applications/FilterApplicants";
 import AuthorizeDocument from "./components/Applications/AuthorizeDocument";
 import CloseJobs from "./components/Jobs/CloseJobs";
@@ -21,6 +20,7 @@ import ActiveJobs from "./components/Jobs/ActiveJobs";
 // import SendSMSForAccepted from "./components/Applications/SendSMSForAccepted";
 import SelectedApplicants from "./components/Applications/SelectedApplicants";
 import VerifyApplicants from "./components/Applications/VerifyApplicants";
+import RejectedApplications from "./components/Applications/RejectedApplications";
 
 const Router = () => {
   return (
@@ -133,14 +133,7 @@ const Router = () => {
           />
 
           {/* Applications - HR and Managers */}
-          <Route
-            path="/verify_applicants"
-            element={
-              <PrivateRoute >
-                <Applications />
-              </PrivateRoute>
-            }
-          />
+         
           <Route
             path="/accepted_applicants"
             element={
@@ -173,6 +166,15 @@ const Router = () => {
             element={
               <PrivateRoute >
                 <SelectedApplicants/>
+              </PrivateRoute>
+            }
+          />
+          {/* Filter Applicants - Only HR */}
+          <Route
+            path="/rejected_applicants"
+            element={
+              <PrivateRoute >
+                <RejectedApplications/>
               </PrivateRoute>
             }
           />
