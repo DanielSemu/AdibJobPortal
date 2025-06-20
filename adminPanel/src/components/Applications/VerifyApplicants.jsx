@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
 import ReusableTable from "../ui/ReausableTable";
 import { FiCheck } from "react-icons/fi";
-import { useNavigate, Link } from "react-router-dom";
-import useAuth from "../../hooks/useAuth";
+import { useNavigate} from "react-router-dom";
 import axiosInstance from "../../api/axiosInstance";
 
 const VerifyApplicants = () => {
   const [applicants, setApplicants] = useState([]);
-  const { userProfile } = useAuth();
 
   const navigate = useNavigate();
 

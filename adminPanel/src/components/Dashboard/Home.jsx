@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import EcommerceMetrics from "../Report/EcommerceMetrics";
-import MonthlyTarget from "../Report/MonthlyTarget";
+// import EcommerceMetrics from "../Report/EcommerceMetrics";
+// import MonthlyTarget from "../Report/MonthlyTarget";
 
 // Home.jsx
 import {
@@ -55,9 +55,9 @@ export default function Home() {
     (app) => app.status === "Rejected"
   ).length;
   const pending = applications.filter((app) => app.status === "Pending").length;
-  const sms_sent = applications.filter(
-    (app) => app.status === "SMS_Sent"
-  ).length;
+  // const sms_sent = applications.filter(
+  //   (app) => app.status === "SMS_Sent"
+  // ).length;
 
   const openVacancies = activeJobs.length;
 
