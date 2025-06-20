@@ -114,6 +114,11 @@ class AdminApplicationsAPIView(APIView):
             status_param=request.query_params.get("status")
             if status_param:
                 applicants=applicants.filter(status=status_param)
+            #Filter By Criteria
+            criteria_selected=request.query_params.get("criteria")
+            if criteria_selected:
+                print(criteria_selected)
+                applicants=applicants.filter(selectedCriteria=criteria_selected)
             
             serializer=ApplicantSerializer(applicants, many=True)
  
@@ -162,6 +167,7 @@ class AdminFetchJobApplicants(APIView):
             workPlace_param=request.query_params.get("workPlace")
             if workPlace_param:
                 applicants=applicants.filter(selected_work_place=workPlace_param)
+            
             
             serializer=ApplicantSerializer(applicants, many=True)
             

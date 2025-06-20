@@ -90,6 +90,12 @@ export const confirmFilteredApplicants = async (criteria, confirm, applicant_ids
   return response.data;
 };
 
+export const getApplicantsByCriteria = async (criteria)=>{
+  
+  const response= await axiosInstance.get(`/applications/admin_applicants/?criteria=${criteria}`)
+  return response.data
+}
+
 
 export const getUnderReviewApplicants = async ()=>{
   const response= await axiosInstance.get('/api/get_under_review_applicants/')
