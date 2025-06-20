@@ -26,7 +26,7 @@ const Hero1 = () => {
     }
     const fetchCategories= async()=>{
       const result=await getCategories()
-      setCategories(result)
+      setCategories(result ||[])
     }
     fetchCategories()
     fetchJobs()
