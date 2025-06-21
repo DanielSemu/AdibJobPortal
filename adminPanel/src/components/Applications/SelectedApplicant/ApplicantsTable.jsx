@@ -13,7 +13,7 @@ const ApplicantsTable = ({ applicants = [], loading }) => {
         setSelectedApplicantId(id);
         setModalOpen(true);
     };
-
+// there is update on 
     const handleConfirmRemove = async () => {
         try {
             await axiosInstance.post("/api/remove-applicant", {
