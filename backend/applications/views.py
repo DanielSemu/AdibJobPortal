@@ -146,8 +146,23 @@ class AdminApplicationsAPIView(APIView):
             'applicant_id':applicant.id,
             'new_status':applicant.status,
         }, status=status.HTTP_200_OK)
-   
 
+
+class AdminRemoveApplicant(APIView):
+    permission_classes=[IsAuthenticated, ViewJobRole]
+    
+    def put(self, request, id=None, *args, **kwargs):
+        try:
+            applicant=get_object_or_404(Applicant, id=id)
+            remark=request.data.get("remark")
+           
+            applicant.status="Rejected"
+            applicant.remark=remark
+            applicant.save()
+            return Response({"message": "Applicant updated successfully."}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 #===================================
 #Admin Fetch Applicants Based on Jobs

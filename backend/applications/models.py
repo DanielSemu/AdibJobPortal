@@ -51,6 +51,7 @@ class Applicant(models.Model):
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='Pending')
     selected_work_place=models.CharField(max_length=100, blank=True, null=True)
     selectedCriteria=models.ForeignKey(Criteria, on_delete=models.SET_NULL , blank=True, null=True)
+    remark=models.TextField(null=True, blank=True)
     def __str__(self):
         return self.full_name
 

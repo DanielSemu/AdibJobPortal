@@ -66,6 +66,13 @@ export const updateApplicantStatus= async (id,status)=>{
   const response=await axiosInstance.put(`/applications/admin_applicants/${id}/`,{status})
   return response.data
 }
+export const removeApplicant= async (id,remark)=>{
+  const response=await axiosInstance.put(`/applications/remove-applicant/${id}/`, {
+      remark,
+    });
+  return response.data
+}
+
 export const getSingleApplicant = async (id) => {
   const response = await axiosInstance.get(`/applications/admin_applicants/${id}/`);
   return response.data;
@@ -92,7 +99,7 @@ export const confirmFilteredApplicants = async (criteria, confirm, applicant_ids
 
 export const getApplicantsByCriteria = async (criteria)=>{
   
-  const response= await axiosInstance.get(`/applications/admin_applicants/?criteria=${criteria}`)
+  const response= await axiosInstance.get(`/applications/admin_applicants/?criteria=${criteria}&status=Shortlisted`)
   return response.data
 }
 

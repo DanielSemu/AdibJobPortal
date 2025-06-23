@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { differenceInMonths, parseISO } from "date-fns";
 import RemoveModal from "./RemoveModal";
-import axiosInstance from "../../../api/axiosInstance"; // adjust path as needed
 import { showSuccessToast, showErrorToast } from "../../../utils/toastUtils"; // optional
+import { removeApplicant } from "../../services/jobsService";
 
 const ApplicantsTable = ({ applicants = [], loading }) => {
     const [isModalOpen, setModalOpen] = useState(false);
@@ -15,11 +15,12 @@ const ApplicantsTable = ({ applicants = [], loading }) => {
     };
 // there is update on 
     const handleConfirmRemove = async () => {
-        try {
-            await axiosInstance.post("/api/remove-applicant", {
-                applicantId: selectedApplicantId,
-                remark,
-            });
+        if (remark !="") {
+             try {
+            console.log(selectedApplicantId);
+            
+            await removeApplicant( selectedApplicantId,remark)
+               
             showSuccessToast("Applicant removed successfully");
             setModalOpen(false);
             setRemark("");
@@ -27,6 +28,11 @@ const ApplicantsTable = ({ applicants = [], loading }) => {
             console.error("Removal failed", error);
             showErrorToast("Failed to remove applicant");
         }
+        }
+        else{
+            showErrorToast("You Must add a remark to remove an applicant");
+        }
+       
     };
 
     const calculateExperience = (experiences = []) => {
@@ -56,6 +62,7 @@ const ApplicantsTable = ({ applicants = [], loading }) => {
                         <th className="border px-2 py-1 text-left">Name</th>
                         <th className="border px-2 py-1 text-left">Gender</th>
                         <th className="border px-2 py-1 text-left">Phone</th>
+                        <th className="border px-2 py-1 text-left">status</th>
                         <th className="border px-2 py-1 text-left">Education</th>
                         <th className="border px-2 py-1 text-left">CGPA</th>
                         <th className="border px-2 py-1 text-left">Exit Exam</th>
@@ -73,6 +80,7 @@ const ApplicantsTable = ({ applicants = [], loading }) => {
                                 <td className="border px-2 py-1">{app.full_name}</td>
                                 <td className="border px-2 py-1">{app.gender}</td>
                                 <td className="border px-2 py-1">{app.phone}</td>
+                                <td className="border px-2 py-1">{app.status}</td>
                                 <td className="border px-2 py-1">
                                     {selectedEdu
                                         ? `${selectedEdu.field_of_study} (${selectedEdu.education_level})`
