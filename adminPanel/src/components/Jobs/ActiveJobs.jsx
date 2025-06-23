@@ -47,7 +47,7 @@ const ActiveJobs = () => {
   }, []);
 
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-10">
+    <div className="p-6 bg-white shadow-lg rounded-lg mt-10">
       <h1 className="text-2xl font-bold text-blue-900 mb-6">Active Jobs</h1>
       {activeJobs.length === 0 ? (
         <p className="text-center text-gray-600">No active jobs found.</p>
