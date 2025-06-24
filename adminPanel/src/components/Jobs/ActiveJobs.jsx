@@ -12,7 +12,7 @@ const ActiveJobs = () => {
       if (Array.isArray(response)) {
         const active = response.filter((item) => item.status === "Active");
         setActiveJobs(active);
-
+        // Active Jobs
         // Fetch applicant counts per job
         const counts = {};
         await Promise.all(
