@@ -27,7 +27,7 @@ const ActiveJobs = () => {
               const femaleCount = genderData.filter(
                 (applicant) => applicant.gender?.trim().toLowerCase() === "f"
               ).length;
-              
+                
               counts[job.id] = {
                 Male: maleCount,
                 Female: femaleCount,
