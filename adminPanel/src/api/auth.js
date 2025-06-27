@@ -37,12 +37,12 @@ export const registerUser = async (formData) => {
     }
 };
 
-export const login = async (email, password) => {
+export const login = async (username, password) => {
     try {
         
         const response = await axios.post(
             `${BASE_URL}/auth/token/`, 
-            { email, password }, 
+            { username, password }, 
             {
                 withCredentials: true, // Ensures cookies are sent with the request
             }

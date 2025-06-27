@@ -8,7 +8,7 @@ import logo from "../../assets/logo47.png";
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    email: "",
+    username: "",
     password: "",
   });
   const navigate = useNavigate();
@@ -23,13 +23,13 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent page reload
     try {
-      const { email, password } = formData;
-      const response = await login(email, password);
+      const { username, password } = formData;
+      const response = await login(username, password);
       if (response.status === 200 || response.statusText === "Ok") {
         setAccessToken(response.data.access);
         setLoading(true)
         showSuccessToast("Login successfully");
-        setUserProfile(email);
+        setUserProfile(username);
         navigate("/");
       } else if (
         response.status === 401 ||
@@ -75,18 +75,18 @@ const Login = () => {
             <form onSubmit={(e) => handleSubmit(e)} className="space-y-6">
               <div>
                 <label
-                  htmlFor="email"
+                  htmlFor="username"
                   className="block mb-2 text-sm font-medium text-gray-700"
                 >
-                  Your Email
+                  Your Username
                 </label>
                 <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
+                  type="text"
+                  name="username"
+                  value={formData.username}
                   onChange={handleChange}
                   className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#007dda]"
-                  placeholder="email@example.com"
+                  placeholder="test.user"
                   required
                 />
               </div>

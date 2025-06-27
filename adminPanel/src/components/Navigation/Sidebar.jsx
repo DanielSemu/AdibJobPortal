@@ -246,7 +246,7 @@ const Sidebar = () => {
               >
                 <MdPersonOutline className="w-5 h-5 text-gray-500" />
                 <span className="flex-1 ms-3 text-left">
-                  {userProfile?.email}
+                  {userProfile?.username}
                 </span>
                 {openDropdown === "profile" ? (
                   <MdKeyboardArrowDown className="w-5 h-5" />

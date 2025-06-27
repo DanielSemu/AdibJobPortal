@@ -8,9 +8,9 @@ let refreshSubscribers = [];  // Queue of requests that are waiting for a refres
 
 export const registerUser = async (formData) => {
     try {
-        const { full_name, email, birthdate, phone_number, password } = formData;
-        const response = await axios.post(`${BASE_URL}/auth/register/`, {
-            full_name, email, birthdate, phone_number, password
+        const { full_name, email, birthdate,gender, phone_number, password } = formData;
+        const response = await axios.post(`${BASE_URL}/auth/applicant/register/`, {
+            full_name, email,gender, birthdate, phone_number, password
         });
         return response.data;  // Return success response data
     } catch (error) {
@@ -41,7 +41,7 @@ export const login = async (email, password) => {
     try {
         
         const response = await axios.post(
-            `${BASE_URL}/auth/token/`, 
+            `${BASE_URL}/auth/applicant/login/`, 
             { email, password }, 
             {
                 withCredentials: true, // Ensures cookies are sent with the request
@@ -57,7 +57,7 @@ export const login = async (email, password) => {
 };
 
 export const profile = async () => {
-    const response = await axiosInstance.get('/auth/profile/');
+    const response = await axiosInstance.get('/auth/applicant/profile/');
     return response.data;
 };
 
