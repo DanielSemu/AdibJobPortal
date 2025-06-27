@@ -51,8 +51,8 @@ from authApi.permissions import (
     IsAdminRole,
     ViewJobRole,
     IsHrCheckerRole,
-    
 )
+from authApi.backends import ApplicantJWTAuthentication
 
 
 
@@ -80,14 +80,15 @@ class UserApplyForJobAPIView(APIView):
 
 #============================#
 #=====User's Applcations=====#
+
 class UserApplicationAPIView(APIView):
+    authentication_classes = [ApplicantJWTAuthentication]  # 🔥 critical!
     permission_classes = [IsAuthenticated]
 
     def get(self, request, id=None, *args, **kwargs):
-        user = request.user
+        user = request.user  # now this will be the correct ApplicantUser
 
         if id:
-            # Get only the applicant that belongs to the user
             applicant = get_object_or_404(Applicant, id=id, email=user.email)
             serializer = ApplicantSerializer(applicant)
         else:
@@ -95,6 +96,7 @@ class UserApplicationAPIView(APIView):
             serializer = ApplicantSerializer(applicants, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 
 

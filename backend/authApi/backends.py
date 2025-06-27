@@ -2,6 +2,20 @@ from django.contrib.auth import get_user_model
 from django_auth_ldap.backend import LDAPBackend
 from ldap import LDAPError
 import logging
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from .models import ApplicantUser
+
+from rest_framework_simplejwt.settings import api_settings
+
+class ApplicantJWTAuthentication(JWTAuthentication):
+    def get_user(self, validated_token):
+        try:
+            user_id_claim = api_settings.USER_ID_CLAIM
+            user_id = validated_token[user_id_claim]
+            return ApplicantUser.objects.get(id=user_id)
+        except ApplicantUser.DoesNotExist:
+            return None
+
 
 logger = logging.getLogger(__name__)
 UserModel = get_user_model()
@@ -35,3 +49,7 @@ class RegisteredLDAPBackend(LDAPBackend):
         except Exception as e:
             logger.error(f"Unexpected error during authentication: {e}")
             return None
+
+
+
+

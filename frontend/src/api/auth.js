@@ -8,9 +8,9 @@ let refreshSubscribers = [];  // Queue of requests that are waiting for a refres
 
 export const registerUser = async (formData) => {
     try {
-        const { full_name, email, birthdate,gender, phone_number, password } = formData;
+        const { full_name, email, birthdate,gender, phone_number, password,confirm_password } = formData;
         const response = await axios.post(`${BASE_URL}/auth/applicant/register/`, {
-            full_name, email,gender, birthdate, phone_number, password
+            full_name, email,gender, birthdate, phone_number, password,confirm_password
         });
         return response.data;  // Return success response data
     } catch (error) {
@@ -70,7 +70,7 @@ export const refreshToken = async () => {
 
     isRefreshing = true;
     try {
-        const response = await axios.post(`${BASE_URL}/auth/token/refresh/`, {}, { withCredentials: true });
+        const response = await axios.post(`${BASE_URL}/auth/applicant/token/refresh/`, {}, { withCredentials: true });
         const newAccessToken = response.data.access;
         setAccessToken(newAccessToken);
 
@@ -115,6 +115,7 @@ export const sendOTP = async (phone_number, otpCode, purpose) => {
   export const getMyApplications = async () => {
     try {
         const response = await axiosInstance.get("applications/user_applications/");
+        
         return response.data;  // Assuming response.data contains the list of applications
     } catch (error) {
         // Log the full error to get better debugging information
@@ -128,7 +129,7 @@ export const sendOTP = async (phone_number, otpCode, purpose) => {
 
 export const logout =async ()=>{
     try {
-        const response=await axiosInstance.post('/auth/logout/')
+        const response=await axiosInstance.post('/auth/applicant/logout/')
         setAccessToken(null)
         return response
     } catch (error) {

@@ -5,9 +5,10 @@ from rest_framework.permissions import IsAuthenticated,AllowAny # type: ignore
 from rest_framework import status # type: ignore
 from django.contrib.auth.hashers import make_password # type: ignore
 from rest_framework_simplejwt.views import TokenObtainPairView,TokenRefreshView # type: ignore
-from rest_framework_simplejwt.tokens import RefreshToken # type: ignore
+from rest_framework_simplejwt.tokens import RefreshToken,TokenError # type: ignore
 from .models import ApplicantUser 
 from django.contrib.auth.hashers import check_password
+from .backends import ApplicantJWTAuthentication
 
 from django.contrib.auth import get_user_model
 
@@ -196,51 +197,60 @@ class ApplicantTokenObtainPairView(APIView):
     def post(self, request, *args, **kwargs):
         email = request.data.get('email')
         password = request.data.get('password')
+
         if not email or not password:
             return Response({'detail': 'Email and password are required.'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             user = ApplicantUser.objects.get(email=email)
-            
+
             if not user.is_active:
                 return Response({'detail': 'This user is inactive.'}, status=status.HTTP_403_FORBIDDEN)
 
             if not check_password(password, user.password):
                 return Response({'detail': 'Invalid email or password.'}, status=status.HTTP_401_UNAUTHORIZED)
-            print(user)
+
         except ApplicantUser.DoesNotExist:
             return Response({'detail': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
 
         refresh = RefreshToken.for_user(user)
-        response = Response({
-            'access': str(refresh.access_token),
-        })
+        access_token = str(refresh.access_token)
 
+        response = Response({
+            'access': access_token
+        }, status=status.HTTP_200_OK)
+
+        # Set refresh token as HttpOnly cookie
         response.set_cookie(
             key='refresh_token',
             value=str(refresh),
             httponly=True,
-            # secure=True,
-            # samesite='Lax'
+            secure=False,  # change to True in production (HTTPS only)
+            samesite='Lax',  # or 'Strict' if you want stricter CSRF protection
+            max_age=7 * 24 * 60 * 60,  # 7 days
+            path='/auth/applicant/refresh/'  # Optional: restrict refresh usage to one endpoint
         )
+
         return response
 
-
-class ApplicantTokenRefreshView(TokenRefreshView):
+class ApplicantTokenRefreshView(APIView):
     def post(self, request, *args, **kwargs):
         refresh_token = request.COOKIES.get('refresh_token')
+
         if not refresh_token:
             return Response({'error': 'No refresh token found'}, status=status.HTTP_400_BAD_REQUEST)
 
-        request.data['refresh'] = refresh_token
-        response = super().post(request, *args, **kwargs)
+        try:
+            refresh = RefreshToken(refresh_token)
+            access = str(refresh.access_token)
 
-        if response.status_code == 200:
             return Response({
-                'access': response.data['access']
-            })
+                'access': access
+            }, status=status.HTTP_200_OK)
 
-        return response
+        except TokenError as e:
+            return Response({'error': 'Invalid or expired refresh token'}, status=status.HTTP_401_UNAUTHORIZED)
+
     
 class ApplicantRegisterView(APIView):
     permission_classes = [AllowAny]
@@ -271,18 +281,19 @@ class ApplicantRegisterView(APIView):
             phone_number=data.get('phone_number', ''),
             gender=data.get('gender'),
         )
-        return Response({'detail': 'Applicant registered successfully.'}, status=status.HTTP_201_CREATED)
+        return Response({
+            'success': True,
+            'message': 'Applicant registered successfully.'
+        }, status=status.HTTP_201_CREATED)
+
 
    
 class ApplicantProfileView(APIView):
-    permission_classes = [IsAuthenticated]  # Only authenticated users
+    authentication_classes = [ApplicantJWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         user = request.user
-        print(user)
-        if not isinstance(user, ApplicantUser):
-            return Response({'detail': 'Invalid user type.'}, status=status.HTTP_403_FORBIDDEN)
-
         return Response({
             'email': user.email,
             'full_name': user.full_name,
@@ -291,3 +302,21 @@ class ApplicantProfileView(APIView):
             'gender': user.gender,
             'is_active': user.is_active,
         })
+        
+class ApplicantLogoutView(APIView):
+    permission_classes = [AllowAny]  # ✅ This allows unauthenticated requests
+
+    def post(self, request):
+        response = Response({
+            'success': True,
+            'message': 'Logged out successfully.'
+        }, status=status.HTTP_200_OK)
+
+        # Clear cookies
+        response.delete_cookie(
+            key='refresh_token',
+            path='/auth/applicant/refresh/'  # must match how it was set
+        )
+        response.delete_cookie('access_token')  # if you ever set it
+
+        return response

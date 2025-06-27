@@ -61,6 +61,8 @@ const Register = () => {
     if (otp === generatedOtp) {
       try {
         const response = await registerUser(formData);
+        console.log(response);
+        
         if (!response.success) {
           showErrorToast(`Registration failed: ${response.message}`);
         } else {
