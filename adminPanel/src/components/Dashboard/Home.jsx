@@ -19,12 +19,14 @@ import {
   getApplications,
   getJobs,
   getActiveJobs,
+  getExpiredJobs,
 } from "../services/jobsService";
 
 export default function Home() {
   const [jobs, setJobs] = useState([]);
   const [applications, setApplications] = useState([]);
   const [activeJobs, setActiveJobs] = useState([]);
+  const [expiredJobs, setExpiredJobs]=useState([])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,10 +34,12 @@ export default function Home() {
         const jobsData = await getJobs();
         const appsData = await getApplications();
         const active = await getActiveJobs();
+        const expired=await getExpiredJobs()
 
         setJobs(jobsData);
         setApplications(appsData);
         setActiveJobs(active);
+        setExpiredJobs(expired)
       } catch (error) {
         console.error("Error loading dashboard data", error);
       }
@@ -60,6 +64,7 @@ export default function Home() {
   // ).length;
 
   const openVacancies = activeJobs.length;
+  const expiredVacancies=expiredJobs.length;
 
   // 📊 Applicants per job for bar chart
   const applicantsPerJob = activeJobs.map((job) => {
@@ -84,11 +89,29 @@ export default function Home() {
       icon: "📌",
       color: "text-blue-600",
     },
+     {
+      label: "Vacancies Open Now",
+      value: openVacancies,
+      icon: "📅",
+      color: "text-purple-600",
+    },
+     {
+    label: "Expired Jobs",
+    value: expiredVacancies,
+    icon: "⏳",
+    color: "text-gray-600",
+  },
     {
       label: "Total Applicants",
       value: totalApplicants,
       icon: "👤",
       color: "text-indigo-600",
+    },
+     {
+      label: "Pending Applications",
+      value: pending,
+      icon: "🕓",
+      color: "text-yellow-500",
     },
     {
       label: "Applications Approved",
@@ -102,18 +125,8 @@ export default function Home() {
       icon: "❌",
       color: "text-red-600",
     },
-    {
-      label: "Pending Applications",
-      value: pending,
-      icon: "🕓",
-      color: "text-yellow-500",
-    },
-    {
-      label: "Vacancies Open Now",
-      value: openVacancies,
-      icon: "📅",
-      color: "text-purple-600",
-    },
+   
+   
   ];
 
   const renderCustomTick = ({ x, y, payload }) => {

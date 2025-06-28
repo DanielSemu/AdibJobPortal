@@ -62,7 +62,7 @@ const CloseJobs = () => {
   ];
 
   return (
-    <div className="max-w-3xl mx-auto py-6 bg-white shadow-lg rounded-lg mt-10">
+    <div className="py-6 bg-white shadow-lg rounded-lg mt-10">
       <ReusableTable columns={columns} records={jobs} title={"Close Expired Jobs"} />
 
       <ConfirmModal

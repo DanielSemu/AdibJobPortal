@@ -105,7 +105,7 @@ const Categories = () => {
   ];
 
   return (
-    <div className="max-w-3xl mx-auto py-6 bg-white shadow-lg rounded-lg mt-10">
+    <div className="py-6 bg-white shadow-lg rounded-lg mt-10">
       {userProfile.role === "hr_maker" && (
         <div className="flex justify-between items-center">
           <button
