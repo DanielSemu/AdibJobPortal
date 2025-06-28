@@ -98,7 +98,7 @@ const Step2 = ({
       {/* Field of Study */}
       <div>
         <label className="block text-gray-700 font-semibold mb-2">
-          Education Organization:
+          Educational Organization:
         </label>
         <input
           type="text"

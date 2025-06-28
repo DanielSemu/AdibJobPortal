@@ -12,5 +12,5 @@ urlpatterns = [
     path('applicant/token/refresh/', ApplicantTokenRefreshView.as_view(), name='applicant_Login'),
     path('applicant/register/', ApplicantRegisterView.as_view(), name='applicant_register'),
     path('applicant/profile/', ApplicantProfileView.as_view(), name='applicant_profile'),
-    path('applicant/logout/', ApplicantLogoutView.as_view(), name='applicant_profile')
+    path('applicant/logout/', ApplicantLogoutView.as_view(), name='applicant_logout')
 ]

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import axiosInstance, { BASE_URL } from './axiosInstance';
+import axiosInstance, { BASE_URL, loginAxiosInstance } from './axiosInstance';
 import {  setAccessToken } from './tokenStorage';
 
 
@@ -129,7 +129,8 @@ export const sendOTP = async (phone_number, otpCode, purpose) => {
 
 export const logout =async ()=>{
     try {
-        const response=await axiosInstance.post('/auth/applicant/logout/')
+        
+        const response=await loginAxiosInstance.post('/auth/applicant/logout/')
         setAccessToken(null)
         return response
     } catch (error) {

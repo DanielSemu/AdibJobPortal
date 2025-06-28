@@ -222,20 +222,19 @@ class ApplicantTokenObtainPairView(APIView):
 
         # Set refresh token as HttpOnly cookie
         response.set_cookie(
-            key='refresh_token',
+            key='refreshToken',
             value=str(refresh),
             httponly=True,
             secure=False,  # change to True in production (HTTPS only)
             samesite='Lax',  # or 'Strict' if you want stricter CSRF protection
             max_age=7 * 24 * 60 * 60,  # 7 days
-            path='/auth/applicant/refresh/'  # Optional: restrict refresh usage to one endpoint
         )
 
         return response
 
 class ApplicantTokenRefreshView(APIView):
     def post(self, request, *args, **kwargs):
-        refresh_token = request.COOKIES.get('refresh_token')
+        refresh_token = request.COOKIES.get('refreshToken')
 
         if not refresh_token:
             return Response({'error': 'No refresh token found'}, status=status.HTTP_400_BAD_REQUEST)
@@ -304,19 +303,18 @@ class ApplicantProfileView(APIView):
         })
         
 class ApplicantLogoutView(APIView):
-    permission_classes = [AllowAny]  # ✅ This allows unauthenticated requests
 
     def post(self, request):
         response = Response({
             'success': True,
             'message': 'Logged out successfully.'
         }, status=status.HTTP_200_OK)
-
+        response.delete_cookie('refreshToken')
         # Clear cookies
         response.delete_cookie(
-            key='refresh_token',
-            path='/auth/applicant/refresh/'  # must match how it was set
+            key='refreshToken',
         )
         response.delete_cookie('access_token')  # if you ever set it
+         # if you ever set it
 
         return response
