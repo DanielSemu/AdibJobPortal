@@ -13,13 +13,9 @@ const ApplicantStats = ({ applicant = [], selectedWorkPlace }) => {
   });
 
   const extractStats = () => {
-    console.log(applicant);
-    console.log(selectedWorkPlace);
     const filtered = applicant.filter(
       (a) => a.selected_work_place === selectedWorkPlace
     );
-    console.log(filtered);
-    
 
     const newStats = {
       total: filtered.length,

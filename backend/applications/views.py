@@ -208,6 +208,7 @@ class FilterApplicantsView(APIView):
         gender = data.get('gender')
         min_cgpa = data.get('minCGPA')
         min_exit = data.get('minExit')
+        print(selected_job,selected_location,min_cgpa)
 
         applicants = Applicant.objects.filter(job__id=selected_job,status='Pending')
 
@@ -245,7 +246,7 @@ class FilterApplicantsView(APIView):
 
             # If all criteria pass, add applicant to list
             filtered_applicants.append(applicant)
-
+        print(filtered_applicants)
         serializer = ApplicantSerializer(filtered_applicants, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

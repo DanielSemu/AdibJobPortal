@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { showSuccessToast } from "../../../utils/toastUtils";
+import { showErrorToast, showSuccessToast } from "../../../utils/toastUtils";
 import {
   filterApplicants,
   confirmFilteredApplicants,
@@ -30,62 +30,61 @@ const FilterForm = ({ selectedJobId, workPlace }) => {
     setCriteria({ ...criteria, [name]: value });
   };
 
-  const validateForm = () => {
-    let newErrors = {};
+  
 
-    if (!criteria.selectedLocation) {
-      newErrors.selectedLocation = "Location is required.";
+const handleApplyFilter = async (e) => {
+  e.preventDefault();
+setCriteria((prev) => ({
+    ...prev,
+    selectedJob: selectedJobId,
+  }));
+  // 🔒 Check if selectedLocation is empty
+  if (!selectedJobId) {
+    showErrorToast("Location Have to be Selected First")
+    return; // stop execution
+  }
+  if (!criteria.selectedJob) { 
+    showErrorToast("Job Have to be Selected First")
+    return; // stop execution
+  }
+//  console.log(criteria.selectedJob)
+//  console.log(selectedJobId);
+  try {
+    const response = await filterApplicants(criteria);
+    if (response.length === 0) {
+      setErrors({
+        ...errors,
+        emptyFiltered:
+          "There is no applicant that satisfies the above criteria.",
+      });
+      setFilteredApplicants(0);
+    } else {
+      const ids = response.map((app) => app.id);
+      setApplicants(ids);
+      setFilteredApplicants(response.length);
+      setErrors({});
+      showSuccessToast("Applicants filtered successfully!");
     }
-    if (criteria.minExperienceYears && isNaN(criteria.minExperienceYears)) {
-      newErrors.minExperienceYears = "Experience must be a number.";
-    }
-    if (criteria.maxExperienceYears && isNaN(criteria.maxExperienceYears)) {
-      newErrors.maxExperienceYears = "Experience must be a number.";
-    }
-    if (criteria.minCGPA && isNaN(criteria.minCGPA)) {
-      newErrors.minCGPA = "CGPA must be a number.";
-    }
-    if (criteria.minExit && isNaN(criteria.minExit)) {
-      newErrors.minExit = "Exit score must be a number.";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleApplyFilter = async (e) => {
-    e.preventDefault();
-    if (!validateForm()) return;
-
-    try {
-      const response = await filterApplicants(selectedJobId, criteria);
-      if (response.length === 0) {
-        setErrors({
-          ...errors,
-          emptyFiltered: "There Is no Applicant That Satisfies the Above Criteria",
-        });
-        setFilteredApplicants(0);
-      } else {
-        const ids = response.map((app) => app.id);
-        setApplicants(ids);
-        setFilteredApplicants(response.length);
-        setErrors({});
-        showSuccessToast("Applicants filtered successfully!");
-      }
-    } catch (error) {
-      console.error("Filter error:", error);
-    }
-  };
+  } catch (error) {
+    console.error("Filter error:", error);
+  }
+};
 
   const handleConfirmApplicants = async () => {
     try {
       const confirmed = true;
-      await confirmFilteredApplicants(selectedJobId, criteria, confirmed, applicants);
+      await confirmFilteredApplicants(
+        selectedJobId,
+        criteria,
+        confirmed,
+        applicants
+      );
 
       setApplicants([]);
       setFilteredApplicants(0);
       setErrors({
-        emptyFiltered: "There Is no Applicant That Satisfies the Above Criteria",
+        emptyFiltered:
+          "There Is no Applicant That Satisfies the Above Criteria",
       });
 
       showSuccessToast("Applicants updated and criteria recorded!");
@@ -146,38 +145,82 @@ const FilterForm = ({ selectedJobId, workPlace }) => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-md shadow">
+              {/* Min CGPA */}
               <div>
-                <label>Min CGPA</label>
+                <label
+                  htmlFor="minCGPA"
+                  className="block font-medium text-gray-700"
+                >
+                  Min CGPA
+                </label>
                 <input
+                  id="minCGPA"
                   name="minCGPA"
                   type="text"
                   value={criteria.minCGPA}
                   onChange={handleChange}
-                  className="border border-gray-300 rounded-md p-2 w-full"
+                  className={`border rounded-md p-2 w-full ${
+                    errors.minCGPA ? "border-red-500" : "border-gray-300"
+                  }`}
+                  placeholder="Enter minimum CGPA"
                 />
+                {errors.minCGPA && (
+                  <p className="text-red-500 text-xs mt-1">{errors.minCGPA}</p>
+                )}
               </div>
+
+              {/* Min Exit Exam */}
               <div>
-                <label>Min Exit Exam</label>
+                <label
+                  htmlFor="minExit"
+                  className="block font-medium text-gray-700"
+                >
+                  Min Exit Exam
+                </label>
                 <input
+                  id="minExit"
                   name="minExit"
                   type="text"
                   value={criteria.minExit}
                   onChange={handleChange}
-                  className="border border-gray-300 rounded-md p-2 w-full"
+                  className={`border rounded-md p-2 w-full ${
+                    errors.minExit ? "border-red-500" : "border-gray-300"
+                  }`}
+                  placeholder="Enter minimum exit exam score"
                 />
+                {errors.minExit && (
+                  <p className="text-red-500 text-xs mt-1">{errors.minExit}</p>
+                )}
               </div>
+
+              {/* Graduation Year */}
               <div>
-                <label>Graduation Year</label>
+                <label
+                  htmlFor="graduationYear"
+                  className="block font-medium text-gray-700"
+                >
+                  Graduation Year
+                </label>
                 <input
+                  id="graduationYear"
                   name="graduationYear"
                   type="date"
+                  value={criteria.graduationYear}
                   onChange={handleChange}
                   className="border border-gray-300 rounded-md p-2 w-full"
                 />
               </div>
+
+              {/* Gender */}
               <div>
-                <label>Gender</label>
+                <label
+                  htmlFor="gender"
+                  className="block font-medium text-gray-700"
+                >
+                  Gender
+                </label>
                 <select
+                  id="gender"
                   name="gender"
                   value={criteria.gender}
                   onChange={handleChange}
@@ -188,29 +231,73 @@ const FilterForm = ({ selectedJobId, workPlace }) => {
                   <option value="F">Female</option>
                 </select>
               </div>
+
+              {/* Min Experience */}
               <div>
-                <label>Min Experience</label>
+                <label
+                  htmlFor="minExperienceYears"
+                  className="block font-medium text-gray-700"
+                >
+                  Min Experience
+                </label>
                 <input
+                  id="minExperienceYears"
                   name="minExperienceYears"
                   type="text"
                   value={criteria.minExperienceYears}
                   onChange={handleChange}
-                  className="border border-gray-300 rounded-md p-2 w-full"
+                  className={`border rounded-md p-2 w-full ${
+                    errors.minExperienceYears
+                      ? "border-red-500"
+                      : "border-gray-300"
+                  }`}
+                  placeholder="Enter minimum years"
                 />
+                {errors.minExperienceYears && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.minExperienceYears}
+                  </p>
+                )}
               </div>
+
+              {/* Max Experience */}
               <div>
-                <label>Max Experience</label>
+                <label
+                  htmlFor="maxExperienceYears"
+                  className="block font-medium text-gray-700"
+                >
+                  Max Experience
+                </label>
                 <input
+                  id="maxExperienceYears"
                   name="maxExperienceYears"
                   type="text"
                   value={criteria.maxExperienceYears}
                   onChange={handleChange}
-                  className="border border-gray-300 rounded-md p-2 w-full"
+                  className={`border rounded-md p-2 w-full ${
+                    errors.maxExperienceYears
+                      ? "border-red-500"
+                      : "border-gray-300"
+                  }`}
+                  placeholder="Enter maximum years"
                 />
+                {errors.maxExperienceYears && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.maxExperienceYears}
+                  </p>
+                )}
               </div>
+
+              {/* Program */}
               <div>
-                <label>Program</label>
+                <label
+                  htmlFor="program"
+                  className="block font-medium text-gray-700"
+                >
+                  Program
+                </label>
                 <select
+                  id="program"
                   name="program"
                   value={criteria.program}
                   onChange={handleChange}
@@ -222,9 +309,17 @@ const FilterForm = ({ selectedJobId, workPlace }) => {
                   <option value="extension">Extension</option>
                 </select>
               </div>
+
+              {/* Institution */}
               <div>
-                <label>Institution</label>
+                <label
+                  htmlFor="institution"
+                  className="block font-medium text-gray-700"
+                >
+                  Institution
+                </label>
                 <select
+                  id="institution"
                   name="institution"
                   value={criteria.institution}
                   onChange={handleChange}

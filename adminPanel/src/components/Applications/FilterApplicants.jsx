@@ -3,6 +3,7 @@ import { getApplicantsByJob, getJobs } from "../services/jobsService";
 import { showSuccessToast } from "../../utils/toastUtils";
 import FilterForm from "./FilterApplications/FilterForm";
 import ApplicantStats from "./FilterApplications/ApplicantStats";
+import SelectedApplicants from "./SelectedApplicants";
 
 const FilterApplicants = () => {
   const [jobs, setJobs] = useState([]);
@@ -39,7 +40,7 @@ const FilterApplicants = () => {
       }
 
       const applicant = await getApplicantsByJob(selectedJobId);
-      const app = applicant.filter((res) => res.status === "Shortlisted");
+      const app = applicant.filter((res) => res.status === "Pending");
       setApplicant(app);
     } else {
       setWorkPlace([]);
@@ -90,29 +91,7 @@ const FilterApplicants = () => {
           <FilterForm selectedJobId={selectedJobId} workPlace={workPlace} />
 
           {/* Bottom: Table with 5 columns */}
-          <div className="overflow-auto bg-white border rounded-md shadow mt-4">
-            <table className="w-full text-sm text-left border-collapse">
-              <thead className="bg-gray-200 text-gray-700">
-                <tr>
-                  <th className="px-4 py-2 border">#</th>
-                  <th className="px-4 py-2 border">Column 1</th>
-                  <th className="px-4 py-2 border">Column 2</th>
-                  <th className="px-4 py-2 border">Column 3</th>
-                  <th className="px-4 py-2 border">Column 4</th>
-                </tr>
-              </thead>
-              <tbody>
-                {/* Sample Row */}
-                <tr>
-                  <td className="px-4 py-2 border">1</td>
-                  <td className="px-4 py-2 border">Data 1</td>
-                  <td className="px-4 py-2 border">Data 2</td>
-                  <td className="px-4 py-2 border">Data 3</td>
-                  <td className="px-4 py-2 border">Data 4</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+         
         </div>
 
         {/* Right Section */}
@@ -142,6 +121,9 @@ const FilterApplicants = () => {
           />
         </div>
       </div>
+
+      {/* Selected Criteria */}
+      <SelectedApplicants/>
     </div>
   );
 };
