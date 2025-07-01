@@ -14,6 +14,7 @@ export const getExpiredJobs = async () => {
   const response = await axiosInstance.get('/jobs/expired_jobs/');
   return response.data;
 };
+
 export const getAcceptedApplicants = async () => {
   const response = await axiosInstance.get('/api/export_applicant/');
   return response.data;
@@ -58,6 +59,10 @@ export const createCategory = async (categoryData) => {
 }
 
 export const getApplications = async () => {
+  const response = await axiosInstance.get('/applications/admin_applicants/');
+  return response.data;
+};
+export const getApplicantsByJobId = async () => {
   const response = await axiosInstance.get('/applications/admin_applicants/');
   return response.data;
 };
