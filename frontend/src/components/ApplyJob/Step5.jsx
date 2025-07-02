@@ -2,31 +2,43 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-const Step5 = ({ formData, setFormData, errors, handleChange, selected_work_place }) => {
+const Step5 = ({
+  formData,
+  setFormData,
+  errors,
+  handleChange,
+  selected_work_place,
+}) => {
   const [location, setLocation] = useState([]);
 
   useEffect(() => {
-  if (selected_work_place) {
-    const locationsArray = selected_work_place.split(",").map((loc) => loc.trim());
-    setLocation(locationsArray);
+    if (selected_work_place) {
+      const locationsArray = selected_work_place
+        .split(",")
+        .map((loc) => loc.trim());
+      setLocation(locationsArray);
 
-    // Set first location as default if not already selected
-    if (!formData.selected_work_place && locationsArray.length > 0) {
-      setFormData((prev) => ({ ...prev, selected_work_place: locationsArray[0] }));
+      // Set first location as default if not already selected
+      if (!formData.selected_work_place && locationsArray.length > 0) {
+        setFormData((prev) => ({
+          ...prev,
+          selected_work_place: locationsArray[0],
+        }));
+      }
     }
-  }
 
-  // Set first education as default if none selected
-  const hasUserForApp = formData.educations.some((edu) => edu.user_for_application);
-  if (formData.educations.length > 0 && !hasUserForApp) {
-    const updatedEducations = formData.educations.map((edu, i) => ({
-      ...edu,
-      user_for_application: i === 0,
-    }));
-    setFormData((prev) => ({ ...prev, educations: updatedEducations }));
-  }
-}, [selected_work_place]);
-
+    // Set first education as default if none selected
+    const hasUserForApp = formData.educations.some(
+      (edu) => edu.user_for_application
+    );
+    if (formData.educations.length > 0 && !hasUserForApp) {
+      const updatedEducations = formData.educations.map((edu, i) => ({
+        ...edu,
+        user_for_application: i === 0,
+      }));
+      setFormData((prev) => ({ ...prev, educations: updatedEducations }));
+    }
+  }, [selected_work_place]);
 
   const handleApplicationEducationChange = (index) => {
     const updatedEducations = formData.educations.map((edu, i) => ({
@@ -41,8 +53,8 @@ const Step5 = ({ formData, setFormData, errors, handleChange, selected_work_plac
       <h1 className="text-center text-3xl mb-2 text-gray-700 font-semibold ">
         Additional Information
       </h1>
-      <div className="flex flex-col md:flex-row md:space-x-6 items-center mt-3 mb-4 gap-x-14">
-        <div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3 mb-4">
+        <div className="w-full">
           <label className="block text-gray-700 font-semibold mb-2">
             Select Work Place:
           </label>
@@ -53,24 +65,29 @@ const Step5 = ({ formData, setFormData, errors, handleChange, selected_work_plac
             className="w-full p-2 border rounded-md focus:outline-blue-500"
             required
           >
-            light
             {location.map((loc, key) => (
-              <option key={key} value={loc}>{loc}</option>
+              <option key={key} value={loc}>
+                {loc}
+              </option>
             ))}
-
           </select>
-          {errors.selected_work_place && <p className="text-red-500">{errors.selected_work_place}</p>}
+          {errors.selected_work_place && (
+            <p className="text-red-500">{errors.selected_work_place}</p>
+          )}
         </div>
-        <div >
+
+        <div className="w-full">
           <label className="block text-gray-700 font-semibold mb-2">
             Select Application Education:
           </label>
           <select
             name="user_for_application"
-            value={
-              formData.educations.findIndex((edu) => edu.user_for_application === true)
+            value={formData.educations.findIndex(
+              (edu) => edu.user_for_application === true
+            )}
+            onChange={(e) =>
+              handleApplicationEducationChange(Number(e.target.value))
             }
-            onChange={(e) => handleApplicationEducationChange(Number(e.target.value))}
             className="w-full p-2 border rounded-md focus:outline-blue-500"
             required
           >
@@ -81,16 +98,15 @@ const Step5 = ({ formData, setFormData, errors, handleChange, selected_work_plac
               </option>
             ))}
           </select>
-
-          {errors.selected_work_place && <p className="text-red-500">{errors.selected_work_place}</p>}
+          {errors.selected_work_place && (
+            <p className="text-red-500">{errors.selected_work_place}</p>
+          )}
         </div>
       </div>
 
       {/* Resume Upload */}
       <div>
-        {errors.resume && (
-          <p className="text-red-500">{errors.resume}</p>
-        )}
+        {errors.resume && <p className="text-red-500">{errors.resume}</p>}
         <label className="block text-gray-700 font-semibold mb-2">
           Upload Resume (PDF)
         </label>
@@ -130,7 +146,6 @@ const Step5 = ({ formData, setFormData, errors, handleChange, selected_work_plac
         <p className="text-red-500">{errors.contact_consent}</p>
       )}
       <div className="flex items-center">
-
         <input
           type="checkbox"
           name="terms_accepted"
@@ -141,7 +156,7 @@ const Step5 = ({ formData, setFormData, errors, handleChange, selected_work_plac
         />
         <label className="block text-gray-700 font-semibold">
           I agree to the{" "}
-          <Link to='/terms_conditions' className="text-blue-600 cursor-pointer">
+          <Link to="/terms_conditions" className="text-blue-600 cursor-pointer">
             Terms and Conditions
           </Link>
           .

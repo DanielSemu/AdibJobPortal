@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { CiMenuBurger } from "react-icons/ci";
 import { FaAngleDown } from "react-icons/fa";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import logo from "../../assets/logoNew.png";
+import logo from "../../assets/logo.png";
 import { logout } from "../../api/auth";
 import useAuth from "../../hooks/useAuth";
 
@@ -76,23 +76,23 @@ const Navbar = () => {
       <div className="max-w-screen-xl block sm:flex  items-center justify-between mx-auto sm:p-1">
         {/* Logo */}
         
-        <Link to="/" className="flex items-center justify-between space-x-3">
-          <img src={logo} className="h-14" alt="Addis Bank Logo" />
+        <Link to="/" className="flex items-center p-2 justify-between space-x-3">
+          <img src={logo} className="h-8 md:h-10" alt="Addis Bank Logo" />
           <span
             onClick={() => window.scroll(0, 0)}
-            className="text-2xl font-bold text-[#ffd91e] cursor-pointer"
+            className="text-[25px] md:text-[35px] font-bold  text-[#ffd91c] cursor-pointer"
           >
             Addis Bank Job Portal
           </span>
         </Link>
 
         {/* Register / Login Button */}
-        <div className="flex mt-5 sm:mt-0 justify-end md:order-2 space-x-3">
+        <div className="flex mt-1 sm:mt-0 justify-end md:order-2 space-x-3">
           {userProfile ? (
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={toggleDropdown}
-                className="text-primary bg-[#ffd91e] border-2 flex items-center border-transparent hover:bg-[#007dda] hover:text-[#ffd91e] hover:border-[#ffd91e] font-medium rounded-lg text-sm px-4 py-2 transition-all duration-300"
+                className="text-primary bg-[#ffd91e] border-2 flex items-center border-transparent hover:bg-[#007dda] hover:text-[#ffd91e] hover:border-[#ffd91e] font-medium rounded-lg text-sm px-4 transition-all duration-300"
               >
                 {userProfile.email} <FaAngleDown />
               </button>

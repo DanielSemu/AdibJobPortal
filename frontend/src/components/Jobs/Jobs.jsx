@@ -25,7 +25,7 @@ const Jobs = () => {
   return (
     <div id="jobs" className="main-container sm:mt-10">
       {/* Section Title */}
-      <div className="grid grid-cols-1 text-center">
+      <div className="grid grid-cols-1 md:px-16 text-center">
         <h3 className="mb-4 md:text-[30px] text-primary md:leading-normal text-2xl leading-normal font-semibold">
           Latest Jobs
         </h3>
