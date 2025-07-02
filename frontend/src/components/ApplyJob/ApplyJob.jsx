@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams,useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { FaAngleDoubleRight, FaAngleDoubleLeft, FaCheck } from "react-icons/fa";
 import Step1 from "./Step1";
 import Step2 from "./Step2";
@@ -11,14 +11,13 @@ import axiosInstance from "../../services/axiosInstance";
 import { showErrorToast, showSuccessToast } from "../utils/toastUtils";
 import { profile } from "../../api/auth";
 
-
 const ApplyJob = () => {
   const { id } = useParams();
   const [step, setStep] = useState(1);
   const [detailedData, setDetailedData] = useState([]);
   const [list, setList] = useState([]);
   const [verificationModal, setVerificationModal] = useState(false);
-  const navigate=useNavigate()
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     job: id,
     full_name: "",
@@ -51,11 +50,11 @@ const ApplyJob = () => {
     field_of_study: "",
     education_organization: "",
     graduation_year: "",
-    program:"",
-    institution:"",
+    program: "",
+    institution: "",
     cgpa: null,
     exit_exam: null,
-    user_for_application:false,
+    user_for_application: false,
   });
   const [currentCertification, setCurrentCertification] = useState({
     certificate_title: "",
@@ -71,7 +70,7 @@ const ApplyJob = () => {
 
         if (response) {
           console.log(response);
-          
+
           setFormData((prevFormData) => ({
             ...prevFormData,
             full_name: response.full_name || "",
@@ -82,7 +81,6 @@ const ApplyJob = () => {
           }));
         } else {
           console.log("error");
-          
         }
       } catch (error) {
         console.error("Error fetching job:", error);
@@ -113,7 +111,7 @@ const ApplyJob = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
-    
+
     if (type === "file" && files && files[0]) {
       const file = files[0];
       const uniqueIdentifier = Date.now();
@@ -138,7 +136,7 @@ const ApplyJob = () => {
 
   const handleInputChange = (section, e) => {
     const { name, value, type, checked } = e.target;
-    
+
     switch (section) {
       case "experience":
         setCurrentExperience((prev) => ({
@@ -158,39 +156,50 @@ const ApplyJob = () => {
   };
   const validateEntry = (section, entry) => {
     const errors = {};
-  
+
     if (section === "experiences") {
       if (!entry.job_title.trim()) errors.job_title = "Job title is required.";
-      if (!entry.company_name.trim()) errors.company_name = "Company name is required.";
+      if (!entry.company_name.trim())
+        errors.company_name = "Company name is required.";
       if (!entry.from_date) errors.from_date = "From date is required.";
       if (!entry.to_date) errors.to_date = "To date is required.";
     }
-  
+
     if (section === "educations") {
       const cgpa = parseFloat(entry.cgpa);
       const exit_exam = parseFloat(entry.exit_exam);
-  
-      if (!entry.education_level.trim()) errors.education_level = "Education level is required.";
-      if (!entry.field_of_study.trim()) errors.field_of_study = "Field of study is required.";
-      if (!entry.education_organization.trim()) errors.education_organization = "Organization is required.";
-      if (!entry.program.trim()) errors.program = "Education Program is required.";
-      if (!entry.institution.trim()) errors.institution = "Institution Type is required.";
-      if (!entry.graduation_year) errors.graduation_year = "Graduation year is required.";
-  
-      if (isNaN(cgpa) || cgpa < 2 || cgpa > 4) errors.cgpa = "CGPA should be between 2 and 4.";
-      if ((exit_exam < 50 && exit_exam !=0) || exit_exam > 100) errors.exit_exam = "Exit exam should be between 50 and 100.";
+
+      if (!entry.education_level.trim())
+        errors.education_level = "Education level is required.";
+      if (!entry.field_of_study.trim())
+        errors.field_of_study = "Field of study is required.";
+      if (!entry.education_organization.trim())
+        errors.education_organization = "Organization is required.";
+      if (!entry.program.trim())
+        errors.program = "Education Program is required.";
+      if (!entry.institution.trim())
+        errors.institution = "Institution Type is required.";
+      if (!entry.graduation_year)
+        errors.graduation_year = "Graduation year is required.";
+
+      if (isNaN(cgpa) || cgpa < 2 || cgpa > 4)
+        errors.cgpa = "CGPA should be between 2 and 4.";
+      if ((exit_exam < 50 && exit_exam != 0) || exit_exam > 100)
+        errors.exit_exam = "Exit exam should be between 50 and 100.";
     }
-  
+
     if (section === "certifications") {
-      if (!entry.certificate_title.trim()) errors.certificate_title = "Certificate title is required.";
-      if (!entry.awarding_company.trim()) errors.awarding_company = "Awarding company is required.";
-      if (!entry.awarded_date) errors.awarded_date = "Awarded date is required.";
+      if (!entry.certificate_title.trim())
+        errors.certificate_title = "Certificate title is required.";
+      if (!entry.awarding_company.trim())
+        errors.awarding_company = "Awarding company is required.";
+      if (!entry.awarded_date)
+        errors.awarded_date = "Awarded date is required.";
     }
-  
+
     return errors;
   };
-  
-  
+
   // const fileInputRef = useRef(null);
   const addEntry = (section, entry, setEntry) => {
     // if (Object.values(entry).some((val) => val === "")) return;
@@ -200,14 +209,14 @@ const ApplyJob = () => {
       showErrorToast("Please fix validation errors.");
       return;
     }
-  
+
     setFormData((prevData) => ({
       ...prevData,
       [section]: [...prevData[section], entry],
     }));
-  
+
     setErrors({}); // clear previous errors
-  
+
     if (section === "experiences") {
       setEntry({
         job_title: "",
@@ -235,7 +244,6 @@ const ApplyJob = () => {
       });
     }
   };
-  
 
   const removeEntry = (section, index) => {
     setFormData((prevData) => ({
@@ -244,38 +252,49 @@ const ApplyJob = () => {
     }));
   };
 
-
-
   const validateForm = () => {
     let newErrors = {};
-  
-    if (!formData.full_name.trim()) newErrors.full_name = "Full Name is required";
+
+    if (!formData.full_name.trim())
+      newErrors.full_name = "Full Name is required";
     if (!formData.email.trim()) newErrors.email = "Email is required";
-    if (!formData.phone.trim()) newErrors.phone = "Phone number is required";
-    if (!formData.selected_work_place || formData.selected_work_place.trim() === "") {
+
+    if (!formData.phone.trim()) {
+      newErrors.phone = "Phone number is required";
+    } else {
+      const phoneRegex = /^(\+251[79]\d{8}|0[79]\d{8})$/;
+      if (!phoneRegex.test(formData.phone)) {
+        newErrors.phone =
+          "Please enter a valid Ethiopian phone number (07/09 or +2517/+2519)";
+      }
+    }
+
+    if (
+      !formData.selected_work_place ||
+      formData.selected_work_place.trim() === ""
+    ) {
       newErrors.selected_work_place = "Work Place is required";
     }
+
     if (!formData.gender) newErrors.gender = "Gender is required";
     if (!formData.birth_date) newErrors.birth_date = "Birth date is required";
-    
+
     if (!formData.contact_consent)
       newErrors.contact_consent = "You must give consent to be contacted";
-  
-    if (!formData.cover_letter.trim()) 
+
+    if (!formData.cover_letter.trim())
       newErrors.cover_letter = "Cover letter is required";
-  
+
     if (!formData.resume) newErrors.resume = "Resume is required";
-  
+
     if (!formData.terms_accepted)
       newErrors.terms_accepted = "You must accept the terms and conditions";
-  
+
     if (formData.educations.length === 0)
       newErrors.educations = "At least one education entry is required";
-  
-    
+
     return newErrors;
   };
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -293,19 +312,16 @@ const ApplyJob = () => {
         return setStep(1);
       } else if (newErrors.educations || newErrors.experiences) {
         return setStep(2);
-      }
-      else if (
+      } else if (
         newErrors.terms_accepted ||
         newErrors.resume ||
         newErrors.cover_letter ||
         newErrors.contact_consent
-      ){
-       return setStep(5);
+      ) {
+        return setStep(5);
       }
     }
 
-   
-    
     const formDataToSend = new FormData();
 
     Object.keys(formData).forEach((key) => {
@@ -323,9 +339,9 @@ const ApplyJob = () => {
         },
       });
       setErrors({});
-      // that is not is the solution so what will be the appropriate councle have to done in the following code according to the ability of survival introduced to us appointed to the user accross tommorow will be saint Michael yearly festival or memorial so I should go there and my hear this to the following questions accoin 
+      // that is not is the solution so what will be the appropriate councle have to done in the following code according to the ability of survival introduced to us appointed to the user accross tommorow will be saint Michael yearly festival or memorial so I should go there and my hear this to the following questions accoin
       showSuccessToast("Application Submitted Successfully Inserted ");
-      navigate("/")
+      navigate("/");
     } catch (error) {
       console.error("Error response:", error.response.data);
       setErrors({});
@@ -407,7 +423,6 @@ const ApplyJob = () => {
               formData={formData}
               errors={errors}
               handleChange={handleChange}
-              
             />
           )}
           {step === 2 && (
@@ -445,13 +460,13 @@ const ApplyJob = () => {
             />
           )}
           {step === 5 && (
-            <Step5 
+            <Step5
               formData={formData}
               setFormData={setFormData}
               errors={errors}
               handleChange={handleChange}
               selected_work_place={detailedData.location}
-             />
+            />
           )}
           {/* Fixed Buttons at the Bottom */}
           <div className="absolute bottom-0 left-0 right-0 flex justify-between px-5 pb-0">
@@ -485,16 +500,15 @@ const ApplyJob = () => {
               </button>
             )}
 
-            {step === 5 &&
-              (
-                <button
-                  type="button"
-                  onClick={() => setVerificationModal(true)}
-                  className="px-4 py-1 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 flex items-center transition duration-200 ml-auto"
-                >
-                  Verify <FaCheck className="ml-1" />
-                </button>
-              )}
+            {step === 5 && (
+              <button
+                type="button"
+                onClick={() => setVerificationModal(true)}
+                className="px-4 py-1 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 flex items-center transition duration-200 ml-auto"
+              >
+                Verify <FaCheck className="ml-1" />
+              </button>
+            )}
           </div>
         </form>
 
@@ -528,8 +542,9 @@ const ApplyJob = () => {
                   <li>
                     <strong>Birth Date:</strong> {formData.birth_date}
                   </li>
-                   <li>
-                    <strong>Selected Work Place:</strong> {formData.selected_work_place}
+                  <li>
+                    <strong>Selected Work Place:</strong>{" "}
+                    {formData.selected_work_place}
                   </li>
                   <li>
                     <strong>Cover Letter:</strong>{" "}
@@ -556,7 +571,10 @@ const ApplyJob = () => {
                       <li key={index}>
                         {edu.education_level} in {edu.field_of_study} -{" "}
                         {edu.education_organization} ({edu.graduation_year})
-                        <p>Selected For Application: {edu.user_for_application?"True":"False"}</p>
+                        <p>
+                          Selected For Application:{" "}
+                          {edu.user_for_application ? "True" : "False"}
+                        </p>
                       </li>
                     ))
                   ) : (

@@ -35,7 +35,7 @@ const Step2 = ({
         ))}
       </div>
       {/* Education */}
-
+      {errors.educations && <p className="text-red-500">{errors.educations}</p>}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
         {/* Highest Education */}
         <div>
