@@ -51,6 +51,8 @@ const ApplyJob = () => {
     field_of_study: "",
     education_organization: "",
     graduation_year: "",
+    program:"",
+    institution:"",
     cgpa: null,
     exit_exam: null,
     user_for_application:false,
@@ -171,6 +173,8 @@ const ApplyJob = () => {
       if (!entry.education_level.trim()) errors.education_level = "Education level is required.";
       if (!entry.field_of_study.trim()) errors.field_of_study = "Field of study is required.";
       if (!entry.education_organization.trim()) errors.education_organization = "Organization is required.";
+      if (!entry.program.trim()) errors.program = "Education Program is required.";
+      if (!entry.institution.trim()) errors.institution = "Institution Type is required.";
       if (!entry.graduation_year) errors.graduation_year = "Graduation year is required.";
   
       if (isNaN(cgpa) || cgpa < 2 || cgpa > 4) errors.cgpa = "CGPA should be between 2 and 4.";
@@ -218,6 +222,8 @@ const ApplyJob = () => {
         field_of_study: "",
         education_organization: "",
         graduation_year: "",
+        program: "",
+        institution: "",
         cgpa: "",
         exit_exam: "",
       });

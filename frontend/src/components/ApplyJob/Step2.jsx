@@ -35,87 +35,141 @@ const Step2 = ({
         ))}
       </div>
       {/* Education */}
-      <div>
-        {errors.educations && (
-          <p className="text-red-500">{errors.educations}</p>
-        )}
-        <label className="block text-gray-700 font-semibold mb-2">
-          Highest Education:
-        </label>
-        <select
-          name="education_level"
-          value={currentEducation.education_level}
-          onChange={(e) => handleInputChange("education", e)}
-          className="w-full p-2 border rounded-md focus:outline-blue-500"
-          required
-        >
-          <option value="">Select</option>
-          <option value="High School">High School</option>
-          <option value="Diploma">Diploma</option>
-          <option value="Bachelor’s Degree">Bachelor’s Degree</option>
-          <option value="Master’s Degree">Master’s Degree</option>
-          <option value="PhD">PhD</option>
-        </select>
-        {errors.education_level && (
-            <p className="text-red-500 text-sm mt-1">{errors.education_level}</p>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+        {/* Highest Education */}
+        <div>
+          <label className="block text-gray-700 font-semibold mb-2">
+            Highest Education:
+          </label>
+          <select
+            name="education_level"
+            value={currentEducation.education_level}
+            onChange={(e) => handleInputChange("education", e)}
+            className="w-full p-2 border rounded-md focus:outline-blue-500"
+            required
+          >
+            <option value="">Select</option>
+            <option value="High School">High School</option>
+            <option value="Diploma">Diploma</option>
+            <option value="Bachelor’s Degree">Bachelor’s Degree</option>
+            <option value="Master’s Degree">Master’s Degree</option>
+            <option value="PhD">PhD</option>
+          </select>
+          {errors.education_level && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.education_level}
+            </p>
           )}
-      </div>
-      {/* Field of Study */}
-      <div>
-        <label className="block text-gray-700 font-semibold mb-2">
-          Field of Study:
-        </label>
-        <input
-          type="text"
-          name="field_of_study"
-          value={currentEducation.field_of_study}
-          onChange={(e) => handleInputChange("education", e)}
-          className="w-full p-2 border rounded-md focus:outline-blue-500"
-          required
-        />
-         {errors.field_of_study && (
+        </div>
+
+        {/* Field of Study */}
+        <div>
+          <label className="block text-gray-700 font-semibold mb-2">
+            Field of Study:
+          </label>
+          <input
+            type="text"
+            name="field_of_study"
+            value={currentEducation.field_of_study}
+            onChange={(e) => handleInputChange("education", e)}
+            className="w-full p-2 border rounded-md focus:outline-blue-500"
+            required
+          />
+          {errors.field_of_study && (
             <p className="text-red-500 text-sm mt-1">{errors.field_of_study}</p>
           )}
-      </div>
-      {/* Graduation Year */}
-      <div>
-        <label className="block text-gray-700 font-semibold mb-2">
-          Graduation Year:
-        </label>
-        <input
-          type="date"
-          name="graduation_year"
-          value={currentEducation.graduation_year}
-          onChange={(e) => handleInputChange("education", e)}
-          max={new Date().toISOString().split("T")[0]}
-          className="w-full p-2 border rounded-md focus:outline-blue-500"
-          required
-        />
-         {errors.graduation_year && (
-            <p className="text-red-500 text-sm mt-1">{errors.graduation_year}</p>
+        </div>
+
+        {/* Graduation Year */}
+        <div>
+          <label className="block text-gray-700 font-semibold mb-2">
+            Graduation Year:
+          </label>
+          <input
+            type="date"
+            name="graduation_year"
+            value={currentEducation.graduation_year}
+            onChange={(e) => handleInputChange("education", e)}
+            max={new Date().toISOString().split("T")[0]}
+            className="w-full p-2 border rounded-md focus:outline-blue-500"
+            required
+          />
+          {errors.graduation_year && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.graduation_year}
+            </p>
           )}
-      </div>
-      {/* Field of Study */}
-      <div>
-        <label className="block text-gray-700 font-semibold mb-2">
-          Educational Organization:
-        </label>
-        <input
-          type="text"
-          name="education_organization"
-          value={currentEducation.education_organization}
-          onChange={(e) => handleInputChange("education", e)}
-          className="w-full p-2 border rounded-md focus:outline-blue-500"
-          required
-        />
-         {errors.education_organization && (
-            <p className="text-red-500 text-sm mt-1">{errors.education_organization}</p>
+        </div>
+
+        {/* Educational Organization */}
+        <div>
+          <label className="block text-gray-700 font-semibold mb-2">
+            Educational Organization:
+          </label>
+          <input
+            type="text"
+            name="education_organization"
+            value={currentEducation.education_organization}
+            onChange={(e) => handleInputChange("education", e)}
+            className="w-full p-2 border rounded-md focus:outline-blue-500"
+            required
+          />
+          {errors.education_organization && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.education_organization}
+            </p>
           )}
-      </div>
-      <div className="flex flex-col md:flex-row md:space-x-6 items-center mt-3 mb-4">
+        </div>
+
+        {/* Program */}
+        <div>
+          <label className="block text-gray-700 font-semibold mb-2">
+            Education Program:
+          </label>
+          <select
+            name="program"
+            value={currentEducation.program}
+            onChange={(e) => handleInputChange("education", e)}
+            className="w-full p-2 border rounded-md focus:outline-blue-500"
+            required
+          >
+            <option value="">Select</option>
+            <option value="Regular">Regular</option>
+            <option value="Distance">Distance</option>
+            <option value="Extension">Extension</option>
+          </select>
+          {errors.program && (
+            <p className="text-red-500 text-sm mt-1">{errors.program}</p>
+          )}
+        </div>
+
+        {/* Institution */}
+        <div>
+          <label className="block text-gray-700 font-semibold mb-2">
+            Institution Type:
+          </label>
+          <select
+            name="institution"
+            value={currentEducation.institution}
+            onChange={(e) => handleInputChange("education", e)}
+            className="w-full p-2 border rounded-md focus:outline-blue-500"
+            required
+          >
+            <option value="">Select</option>
+            <option value="Government">Government</option>
+            <option value="Private">Private</option>
+          </select>
+          {errors.institution && (
+            <p className="text-red-500 text-sm mt-1">{errors.institution}</p>
+          )}
+        </div>
+
         {/* CGPA */}
-        <div className="flex items-center w-full md:w-auto">
-          <label className="text-gray-700 font-semibold mr-2">CGPA:</label>
+        <div>
+          <label className="block text-gray-700 font-semibold mb-2">
+            CGPA:
+          </label>
           <input
             type="number"
             name="cgpa"
@@ -123,7 +177,8 @@ const Step2 = ({
             onChange={(e) => handleInputChange("education", e)}
             min={0}
             max={4.0}
-            className="p-2 border rounded-md focus:outline-blue-500 flex-grow md:flex-none"
+            step="0.01"
+            className="w-full p-2 border rounded-md focus:outline-blue-500"
             required
           />
           {errors.cgpa && (
@@ -131,10 +186,10 @@ const Step2 = ({
           )}
         </div>
 
-        {/* Age */}
-        <div className="flex items-center w-full md:w-auto">
-          <label className="text-gray-700 font-semibold mr-2">
-            Exit Exam(opt):
+        {/* Exit Exam */}
+        <div>
+          <label className="block text-gray-700 font-semibold mb-2">
+            Exit Exam (optional):
           </label>
           <input
             type="number"
@@ -142,23 +197,26 @@ const Step2 = ({
             value={currentEducation.exit_exam}
             onChange={(e) => handleInputChange("education", e)}
             min={0}
-            className="p-2 border rounded-md focus:outline-blue-500 flex-grow md:flex-none"
-            // required
+            step="0.01"
+            className="w-full p-2 border rounded-md focus:outline-blue-500"
           />
           {errors.exit_exam && (
             <p className="text-red-500 text-sm mt-1">{errors.exit_exam}</p>
           )}
         </div>
       </div>
-      <button
-        type="button"
-        onClick={() =>
-          addEntry("educations", currentEducation, setCurrentEducation)
-        }
-        className="mt-3 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-700"
-      >
-        Add Education
-      </button>
+
+      <div className="my-4">
+        <button
+          type="button"
+          onClick={() =>
+            addEntry("educations", currentEducation, setCurrentEducation)
+          }
+          className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-700"
+        >
+          Add Education
+        </button>
+      </div>
     </div>
   );
 };
