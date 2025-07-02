@@ -8,11 +8,15 @@ import SelectedApplicants from "./SelectedApplicants";
 const FilterApplicants = () => {
   const [jobs, setJobs] = useState([]);
   const [selectedJobId, setSelectedJobId] = useState(-1);
+  const [refreshKey, setRefreshKey] = useState(0);
   const [workPlace, setWorkPlace] = useState([]);
   const [selectedWorkPlace, setSelectedWorkPlace] = useState("");
   const [applicant, setApplicant] = useState([]);
 
   const [filteredApplicants, setFilteredApplicants] = useState([]);
+  const triggerRefresh = () => {
+    setRefreshKey((prev) => prev + 1);
+  };
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -88,10 +92,13 @@ const FilterApplicants = () => {
         {/* Left Section */}
         <div className="w-full lg:w-1/2 space-y-4">
           {/* Filter Form */}
-          <FilterForm selectedJobId={selectedJobId} workPlace={workPlace} />
+          <FilterForm
+            selectedJobId={selectedJobId}
+            workPlace={workPlace}
+            triggerRefresh={triggerRefresh}
+          />
 
           {/* Bottom: Table with 5 columns */}
-         
         </div>
 
         {/* Right Section */}
@@ -123,7 +130,10 @@ const FilterApplicants = () => {
       </div>
 
       {/* Selected Criteria */}
-      <SelectedApplicants selectedJobId={selectedJobId}/>
+      <SelectedApplicants
+        selectedJobId={selectedJobId}
+        refreshKey={refreshKey}
+      />
     </div>
   );
 };

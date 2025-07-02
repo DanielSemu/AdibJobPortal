@@ -6,7 +6,7 @@ import { showErrorToast, showSuccessToast } from "../../utils/toastUtils";
 import CriteriaCard from "./SelectedApplicant/CriteriaCard";
 import MessageModal from "./SelectedApplicant/MessageModal";
 
-const SelectedApplicants = ({ selectedJobId }) => {
+const SelectedApplicants = ({ selectedJobId,refreshKey }) => {
     const [criterias, setCriterias] = useState([]);
     const [expandedCriteriaId, setExpandedCriteriaId] = useState(null);
     const [applicantsByCriteria, setApplicantsByCriteria] = useState({});
@@ -20,12 +20,11 @@ const SelectedApplicants = ({ selectedJobId }) => {
     const [selectedCriteriaId, setSelectedCriteriaId] = useState(null);
     const [message, setMessage] = useState("");
 
-    console.log(selectedJobId);
     
 
     useEffect(() => {
         fetchCriterias();
-    }, [selectedJobId]);
+    }, [selectedJobId,refreshKey]);
 
     const fetchCriterias = async () => {
         try {

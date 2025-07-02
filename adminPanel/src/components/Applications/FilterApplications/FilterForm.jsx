@@ -6,8 +6,7 @@ import {
   confirmFilteredApplicants,
 } from "../../services/jobsService";
 
-const FilterForm = ({ selectedJobId, workPlace }) => {
-  const navigate = useNavigate();
+const FilterForm = ({ selectedJobId, workPlace, triggerRefresh }) => {
 
   const [showCriteria, setShowCriteria] = useState(false);
   const [filteredApplicants, setFilteredApplicants] = useState(0);
@@ -85,7 +84,7 @@ const FilterForm = ({ selectedJobId, workPlace }) => {
         emptyFiltered:
           "There is no applicant that satisfies the above criteria.",
       });
-
+      triggerRefresh();
       showSuccessToast("Applicants updated and criteria recorded!");
       // navigate("/selected_applicants");
     } catch (error) {
