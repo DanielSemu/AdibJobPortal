@@ -30,52 +30,51 @@ const FilterForm = ({ selectedJobId, workPlace }) => {
     setCriteria({ ...criteria, [name]: value });
   };
 
-  
+  const handleApplyFilter = async (e) => {
+    e.preventDefault();
 
-const handleApplyFilter = async (e) => {
-  e.preventDefault();
-setCriteria((prev) => ({
-    ...prev,
-    selectedJob: selectedJobId,
-  }));
-  // 🔒 Check if selectedLocation is empty
-  if (!selectedJobId) {
-    showErrorToast("Location Have to be Selected First")
-    return; // stop execution
-  }
-  if (!criteria.selectedJob) { 
-    showErrorToast("Job Have to be Selected First")
-    return; // stop execution
-  }
-//  console.log(criteria.selectedJob)
-//  console.log(selectedJobId);
-  try {
-    const response = await filterApplicants(criteria);
-    if (response.length === 0) {
-      setErrors({
-        ...errors,
-        emptyFiltered:
-          "There is no applicant that satisfies the above criteria.",
-      });
-      setFilteredApplicants(0);
-    } else {
-      const ids = response.map((app) => app.id);
-      setApplicants(ids);
-      setFilteredApplicants(response.length);
-      setErrors({});
-      showSuccessToast("Applicants filtered successfully!");
+    if (!selectedJobId) {
+      showErrorToast("Job has to be selected first");
+      return;
     }
-  } catch (error) {
-    console.error("Filter error:", error);
-  }
-};
+
+    const fullCriteria = {
+      ...criteria,
+      selectedJob: selectedJobId,
+    };
+
+    try {
+      const response = await filterApplicants(fullCriteria);
+      if (response.length === 0) {
+        setErrors({
+          ...errors,
+          emptyFiltered:
+            "There is no applicant that satisfies the above criteria.",
+        });
+        setFilteredApplicants(0);
+      } else {
+        const ids = response.map((app) => app.id);
+        setApplicants(ids);
+        setFilteredApplicants(response.length);
+        setErrors({});
+        showSuccessToast("Applicants filtered successfully!");
+      }
+    } catch (error) {
+      console.error("Filter error:", error);
+    }
+  };
 
   const handleConfirmApplicants = async () => {
     try {
       const confirmed = true;
+
+      const fullCriteria = {
+        ...criteria,
+        selectedJob: selectedJobId,
+      };
+
       await confirmFilteredApplicants(
-        selectedJobId,
-        criteria,
+        fullCriteria,
         confirmed,
         applicants
       );
@@ -84,11 +83,11 @@ setCriteria((prev) => ({
       setFilteredApplicants(0);
       setErrors({
         emptyFiltered:
-          "There Is no Applicant That Satisfies the Above Criteria",
+          "There is no applicant that satisfies the above criteria.",
       });
 
       showSuccessToast("Applicants updated and criteria recorded!");
-      navigate("/selected_applicants");
+      // navigate("/selected_applicants");
     } catch (error) {
       console.error("Confirmation error:", error);
     }

@@ -59,7 +59,7 @@ const FilterApplicants = () => {
         <select
           id="job-select"
           value={selectedJobId}
-          onChange={(e) => setSelectedJobId(e.target.value)}
+          onChange={(e) => setSelectedJobId(Number(e.target.value))}
           className="border-2 border-gray-300 rounded-md w-3/4 p-2 mb-4"
         >
           <option value="">-- Select a job --</option>
@@ -123,7 +123,7 @@ const FilterApplicants = () => {
       </div>
 
       {/* Selected Criteria */}
-      <SelectedApplicants/>
+      <SelectedApplicants selectedJobId={selectedJobId}/>
     </div>
   );
 };

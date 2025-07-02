@@ -3,16 +3,11 @@ import { getApplicantsByCriteria } from "../services/jobsService";
 import axiosInstance from "../../api/axiosInstance";
 import ConfirmModal from "../ui/ConfirmModal";
 import { showErrorToast, showSuccessToast } from "../../utils/toastUtils";
-import JobFilter from "./SelectedApplicant/JobFilter";
 import CriteriaCard from "./SelectedApplicant/CriteriaCard";
 import MessageModal from "./SelectedApplicant/MessageModal";
 
-const SelectedApplicants = () => {
+const SelectedApplicants = ({ selectedJobId }) => {
     const [criterias, setCriterias] = useState([]);
-    const [filteredCriterias, setFilteredCriterias] = useState([]);
-    const [jobs, setJobs] = useState([]);
-    const [selectedJob, setSelectedJob] = useState("all");
-
     const [expandedCriteriaId, setExpandedCriteriaId] = useState(null);
     const [applicantsByCriteria, setApplicantsByCriteria] = useState({});
     const [applicantsLoading, setApplicantsLoading] = useState(false);
@@ -25,24 +20,18 @@ const SelectedApplicants = () => {
     const [selectedCriteriaId, setSelectedCriteriaId] = useState(null);
     const [message, setMessage] = useState("");
 
+    console.log(selectedJobId);
+    
+
     useEffect(() => {
         fetchCriterias();
-    }, []);
+    }, [selectedJobId]);
 
     const fetchCriterias = async () => {
         try {
             const res = await axiosInstance.get("/applications/criterias/");
-            setCriterias(res.data);
-            setFilteredCriterias(res.data);
-
-            const uniqueJobs = [
-                ...new Map(
-                    res.data
-                        .filter((c) => c.job)
-                        .map((item) => [item.job, { id: item.job, title: item.job_name }])
-                ).values(),
-            ];
-            setJobs(uniqueJobs);
+            const filtered = res.data.filter(c => c.job === selectedJobId);
+            setCriterias(filtered);
         } catch (error) {
             console.error("Error fetching criterias:", error);
         } finally {
@@ -54,7 +43,7 @@ const SelectedApplicants = () => {
         setApplicantsLoading(true);
         try {
             const response = await getApplicantsByCriteria(criteriaId);
-            setApplicantsByCriteria((prev) => ({
+            setApplicantsByCriteria(prev => ({
                 ...prev,
                 [criteriaId]: response,
             }));
@@ -67,12 +56,6 @@ const SelectedApplicants = () => {
         }
     };
 
-    const handleJobFilter = (jobId) => {
-        setSelectedJob(jobId);
-        if (jobId === "all") setFilteredCriterias(criterias);
-        else setFilteredCriterias(criterias.filter((c) => c.job == jobId));
-    };
-
     const openMessageModal = (criteriaId) => {
         setSelectedCriteriaId(criteriaId);
         setShowModal(true);
@@ -80,7 +63,6 @@ const SelectedApplicants = () => {
 
     const sendMessageToBackend = async (messageType) => {
         const isTest = messageType === "test";
-
         try {
             const response = await axiosInstance.post("/applications/send-sms/", {
                 selectedCriteria: selectedCriteriaId,
@@ -133,10 +115,8 @@ const SelectedApplicants = () => {
         <div className="max-w-5xl mx-auto py-6 px-4 bg-white shadow-lg rounded-lg mt-10">
             <h2 className="text-2xl font-bold mb-4 text-center">Selected Applicant Criterias</h2>
 
-            <JobFilter jobs={jobs} selectedJob={selectedJob} onChange={handleJobFilter} />
-
             <div className="max-h-[100vh] overflow-auto grid grid-cols-1 gap-6">
-                {filteredCriterias.map((criteria) => (
+                {criterias.map((criteria) => (
                     <CriteriaCard
                         key={criteria.id}
                         criteria={criteria}

@@ -253,38 +253,46 @@ class FilterApplicantsView(APIView):
 
 class ConfirmFilteredApplicants(APIView):
     permission_classes = [IsAuthenticated, ViewJobRole]
-    
+
     def post(self, request):
         data = request.data
+
         confirm = data.get('confirm')
         applicant_ids = data.get('applicant_ids', [])
         criteria_data = data.get('criteria', {})
 
-        print(confirm, applicant_ids, criteria_data)
+        print("DEBUG:", confirm, applicant_ids, criteria_data)
 
-        if not confirm or not applicant_ids:
+        # Validate basic structure
+        if not confirm or not applicant_ids or not isinstance(criteria_data, dict):
             return Response({'error': 'Invalid request'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Create and save Criteria
-        criteria = Criteria.objects.create(
-            job_id=criteria_data.get('selectedJob'),
-            location=criteria_data.get('selectedLocation'),
-            min_experience_years=criteria_data.get('minExperienceYears'),
-            gender=criteria_data.get('gender'),
-            min_cgpa=criteria_data.get('minCGPA'),
-            min_exit_score=criteria_data.get('minExit'),
-            matched_applicants=len(applicant_ids),
-            timestamp=timezone.now()
-        )
+        try:
+            criteria = Criteria.objects.create(
+                job_id=criteria_data.get('selectedJob'),
+                location=criteria_data.get('selectedLocation'),
+                min_experience_years=criteria_data.get('minExperienceYears') or None,
+                gender=criteria_data.get('gender') or None,
+                min_cgpa=criteria_data.get('minCGPA') or None,
+                min_exit_score=criteria_data.get('minExit') or None,
+                matched_applicants=len(applicant_ids),
+                timestamp=timezone.now()
+            )
+        except Exception as e:
+            return Response({'error': f'Failed to create criteria: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        # Update applicants with status and selectedCriteria
-        updated_count = Applicant.objects.filter(id__in=applicant_ids).update(
-            status='Shortlisted',
-            selectedCriteria=criteria
-        )
+        # Update applicants
+        try:
+            updated_count = Applicant.objects.filter(id__in=applicant_ids).update(
+                status='Shortlisted',
+                selectedCriteria=criteria
+            )
+        except Exception as e:
+            return Response({'error': f'Failed to update applicants: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        return Response({'message': f'{updated_count} applicants updated and criteria saved.'}, status=status.HTTP_200_OK)
-    
+        return Response({
+            'message': f'{updated_count} applicants updated and criteria saved.'
+        }, status=status.HTTP_200_OK)
     # Revert Selected Applicants
     def put(self, request, id=None, *args, **kwargs):
         if not id:
