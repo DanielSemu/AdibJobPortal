@@ -58,11 +58,23 @@ class Applicant(models.Model):
 
 class Education(models.Model):
     # Educational Background
+    PROGRAM_CHOICES=[
+        ('Regular',"Regular"),
+        ('Distance',"Distance"),
+        ('Extension',"Extension")
+    ]
+    INSTITUTION_CHOICES=[
+        ('Government',"Government"),
+        ('Private',"Private")
+    ]
     applicant = models.ForeignKey(Applicant, on_delete=models.CASCADE, related_name='educations')
     education_level = models.CharField(max_length=100)
     field_of_study = models.CharField(max_length=100)
     education_organization = models.CharField(max_length=255)
     graduation_year = models.DateField()
+    program=models.CharField(max_length=50, choices=PROGRAM_CHOICES, default='Pending')
+    institution=models.CharField(max_length=50, choices=INSTITUTION_CHOICES, default='Pending')
+    
     cgpa = models.DecimalField(max_digits=4, decimal_places=2)  # Up to 99.99
     exit_exam = models.DecimalField(max_digits=4, decimal_places=2)
     user_for_application=models.BooleanField(default=False)

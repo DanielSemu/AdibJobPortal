@@ -205,12 +205,15 @@ class FilterApplicantsView(APIView):
         selected_job = data.get('selectedJob')
         selected_location = data.get('selectedLocation')
         min_experience_years = data.get('minExperienceYears')
+        max_experience_years = data.get('maxExperienceYears')
         gender = data.get('gender')
         min_cgpa = data.get('minCGPA')
         min_exit = data.get('minExit')
-        print(selected_job,selected_location,min_cgpa)
+        program = data.get('program')  # new
+        institution = data.get('institution')  # new
+        graduation_year = data.get('graduationYear')  # optional
 
-        applicants = Applicant.objects.filter(job__id=selected_job,status='Pending')
+        applicants = Applicant.objects.filter(job__id=selected_job, status='Pending')
 
         if selected_location:
             applicants = applicants.filter(selected_work_place=selected_location)
@@ -219,34 +222,49 @@ class FilterApplicantsView(APIView):
             applicants = applicants.filter(gender=gender)
 
         filtered_applicants = []
-
         for applicant in applicants:
-            # ✅ Get the selected education only
             selected_education = applicant.educations.filter(user_for_application=True).first()
             if not selected_education:
-                continue  # No selected education, skip this applicant
+                
+                continue
 
-            # Step 1: Filter by CGPA
+            # 1. Min CGPA
             if min_cgpa and float(selected_education.cgpa) < float(min_cgpa):
                 continue
 
-            # Step 2: Filter by Exit Exam
+            # 2. Min Exit Exam
             if min_exit and float(selected_education.exit_exam) < float(min_exit):
                 continue
 
-            # Step 3: Filter by experience
-            total_experience_years = 0
-            for experience in applicant.experiences.all():
-                if experience.from_date and experience.to_date:
-                    duration = (experience.to_date - experience.from_date).days / 365
-                    total_experience_years += duration
-
-            if min_experience_years and total_experience_years < float(min_experience_years):
+            # 3. Program
+            if program and selected_education.program.lower() != program.lower():
                 continue
 
-            # If all criteria pass, add applicant to list
+            # 4. Institution
+            if institution and selected_education.institution.lower() != institution.lower():
+                continue
+
+
+            # 5. Graduation Year
+            if graduation_year and str(selected_education.graduation_year)[:4] != str(graduation_year)[:4]:
+                continue
+
+            # 6. Experience check
+            total_experience_years = 0
+            for exp in applicant.experiences.all():
+                if exp.from_date and exp.to_date:
+                    duration = (exp.to_date - exp.from_date).days / 365
+                    total_experience_years += duration
+            if min_experience_years or max_experience_years:
+                min_years = float(min_experience_years) if min_experience_years else 0
+                max_years = float(max_experience_years) if max_experience_years else float('inf')
+                
+                if not (min_years <= total_experience_years <= max_years):
+                    continue
+
+
             filtered_applicants.append(applicant)
-        print(filtered_applicants)
+
         serializer = ApplicantSerializer(filtered_applicants, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

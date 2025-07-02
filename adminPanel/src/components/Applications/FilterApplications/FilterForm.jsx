@@ -13,16 +13,18 @@ const FilterForm = ({ selectedJobId, workPlace, triggerRefresh }) => {
   const [applicants, setApplicants] = useState([]);
 
   const [errors, setErrors] = useState({});
-  const [criteria, setCriteria] = useState({
-    selectedLocation: "",
-    minExperienceYears: "",
-    maxExperienceYears: "",
-    gender: "",
-    minCGPA: "",
-    minExit: "",
-    program: "",
-    institution: "",
-  });
+const [criteria, setCriteria] = useState({
+  selectedLocation: "",
+  minExperienceYears: "",
+  maxExperienceYears: "",
+  gender: "",
+  minCGPA: "",
+  minExit: "",
+  program: "",
+  institution: "",
+  graduationYear: "", // ✅ Add this
+});
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
