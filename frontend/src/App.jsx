@@ -12,6 +12,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import UserApplications from './components/Registration/UserApplications'
 import TermsConditions from './components/ApplyJob/TermsConditions'
+import ForgetPassword from './components/Registration/ForgetPassword'
 
 const App = () => {
   return (
@@ -34,6 +35,7 @@ const App = () => {
         <Route path='/' element={<HomePage/>}/>
         <Route path='/login' element={<Login/>}/>
         <Route path='/register' element={<Register/>}/>
+        <Route path='/forget_password' element={<ForgetPassword/>}/>
         <Route path='/applications' element={<UserApplications/>}/>
         <Route path='/terms_conditions' element={<TermsConditions/>}/>
         <Route path='/detail/:id' element={<JobDetail/>}/>

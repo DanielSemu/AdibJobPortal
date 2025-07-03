@@ -112,6 +112,7 @@ export const sendOTP = async (phone_number, otpCode, purpose) => {
     }
   };
 
+
   export const getMyApplications = async () => {
     try {
         const response = await axiosInstance.get("applications/user_applications/");
@@ -124,6 +125,42 @@ export const sendOTP = async (phone_number, otpCode, purpose) => {
         return [];
     }
 }
+
+export const checkUserExistence = async (email, phone) => {
+    console.log(email,phone);
+    
+  try {
+    const response = await axios.post(`${BASE_URL}/auth/applicant/check_user/`, {
+      email,
+      phone,
+    });
+    return response.data; // axios automatically parses JSON
+  } catch (error) {
+    return {
+      success: false,
+      message: error.response?.data?.message || "Server error",
+    };
+  }
+};
+
+
+export const resetPassword = async (email, phone, newPassword) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/auth/applicant/reset_password/`, {
+      email,
+      phone,
+      new_password: newPassword,
+    });
+
+    return response.data; // Return success or error from server
+  } catch (error) {
+    return {
+      success: false,
+      message: error.response?.data?.message || "Server error during password reset",
+    };
+  }
+};
+
 
   
 

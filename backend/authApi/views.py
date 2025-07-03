@@ -9,6 +9,8 @@ from rest_framework_simplejwt.tokens import RefreshToken,TokenError # type: igno
 from .models import ApplicantUser 
 from django.contrib.auth.hashers import check_password
 from .backends import ApplicantJWTAuthentication
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 
 from django.contrib.auth import get_user_model
 
@@ -301,7 +303,78 @@ class ApplicantProfileView(APIView):
             'gender': user.gender,
             'is_active': user.is_active,
         })
-        
+
+class CheckUserExists(APIView):
+    def post(self, request):
+        email = request.data.get("email")
+        phone = request.data.get("phone")
+        print(phone)
+        print(email)
+        if not email or not phone:
+            return Response({
+                "success": False,
+                "message": "Email and phone number are required."
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        user_exists = ApplicantUser.objects.filter(email=email, phone_number=phone).exists()
+        print(user_exists)
+
+        if user_exists:
+            return Response({
+                "success": True,
+                "message": "User found."
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response({
+                "success": False,
+                "message": "User not found with provided email and phone number."
+            }, status=status.HTTP_404_NOT_FOUND)
+            
+class ResetPasswordView(APIView):
+    def post(self, request):
+        email = request.data.get("email")
+        phone = request.data.get("phone")
+        new_password = request.data.get("new_password")
+
+        if not email or not phone or not new_password:
+            return Response({
+                "success": False,
+                "message": "Email, phone, and new password are required."
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = ApplicantUser.objects.get(email=email, phone_number=phone)
+
+            # Optional: Validate password strength using Django's built-in validators
+            try:
+                validate_password(new_password, user=user)
+            except ValidationError as ve:
+                return Response({
+                    "success": False,
+                    "message": ve.messages[0]
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            user.set_password(new_password)
+            user.save()
+
+            return Response({
+                "success": True,
+                "message": "Password reset successful."
+            }, status=status.HTTP_200_OK)
+
+        except ApplicantUser.DoesNotExist:
+            return Response({
+                "success": False,
+                "message": "User not found with provided email and phone number."
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        except Exception as e:
+            return Response({
+                "success": False,
+                "message": str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 class ApplicantLogoutView(APIView):
 
     def post(self, request):
