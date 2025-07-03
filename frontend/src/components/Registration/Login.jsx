@@ -21,30 +21,30 @@ const Login = () => {
   };
 
   // Handle form submission
-  const handleSubmit = async (e, type) => {
-    e.preventDefault(); // Prevent page reload
-    try {
-      const { email, password } = formData;
-      const response = await login(email, password);
-      if (response.status === 200 || response.statusText === "Ok") {
-        setAccessToken(response.data.access);
-        showSuccessToast("Login successfully")
-        setUserProfile(email)
-        navigate("/");
-      } else if (
-        response.status === 401 ||
-        response.statusText === "Unauthorized"
-      ) {
-        showErrorToast(response.data.detail);
-      } else {
-        showErrorToast("Unexpected Error Occurred!");
-      }
-    } catch (error) {
-      const message =
-        error.response?.data?.message || "An unexpected error occurred";
-      showErrorToast(message); // Fallback error notification
+const handleSubmit = async (e, type) => {
+  e.preventDefault(); // Prevent page reload
+  try {
+    const { email, password } = formData;
+    const response = await login(email, password);
+
+    if (response.status === 200 || response.statusText === "OK") {
+      setAccessToken(response.data.access);
+      showSuccessToast("Login successfully");
+      setUserProfile(email);
+      navigate("/");
+    } else {
+      showErrorToast(response.data.detail);
     }
-  };
+  } catch (error) {
+    const message =
+      error.response?.data?.detail || // Backend-defined message (like 'User not found.')
+      error.response?.data?.message || // In case your backend uses `message`
+      "An unexpected error occurred";
+
+    showErrorToast(message);
+  }
+};
+
   return (
     <section className="main-container bg-gray-50 ">
       <div className="flex flex-col items-center  px-6 py-8 mx-auto md:h-screen lg:py-0">

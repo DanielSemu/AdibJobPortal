@@ -70,6 +70,10 @@ class ApplicantUser(AbstractBaseUser):
     phone_number = models.CharField(max_length=15, blank=True)
     gender = models.CharField(max_length=1, choices=[('M','Male'),('F','Female'),('O','Other')], blank=True, null=True)
     is_active = models.BooleanField(default=True)
+    
+    # 👇 Add these two fields
+    failed_login_attempts = models.PositiveIntegerField(default=0)
+    locked_until = models.DateTimeField(null=True, blank=True)
 
     objects = ApplicantUserManager()  # <-- important!
 

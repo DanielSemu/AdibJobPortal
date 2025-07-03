@@ -80,7 +80,7 @@ const Navbar = () => {
           <img src={logo} className="h-8 md:h-10" alt="Addis Bank Logo" />
           <span
             onClick={() => window.scroll(0, 0)}
-            className="text-[25px] md:text-[35px] font-bold  text-[#ffd91c] cursor-pointer"
+            className="text-[25px] lg:text-[35px] font-bold  text-[#ffd91c] cursor-pointer"
           >
             Addis Bank Job Portal
           </span>
@@ -92,7 +92,7 @@ const Navbar = () => {
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={toggleDropdown}
-                className="text-primary bg-[#ffd91e] border-2 flex items-center border-transparent hover:bg-[#007dda] hover:text-[#ffd91e] hover:border-[#ffd91e] font-medium rounded-lg text-sm px-4 transition-all duration-300"
+                className="text-primary bg-[#ffd91e] border-2  flex items-center border-transparent hover:bg-[#007dda] hover:text-[#ffd91e] hover:border-[#ffd91e] font-medium rounded-lg text-sm px-4 py-1 mx-2 transition-all duration-300"
               >
                 {userProfile.email} <FaAngleDown />
               </button>

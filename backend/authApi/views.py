@@ -11,6 +11,8 @@ from django.contrib.auth.hashers import check_password
 from .backends import ApplicantJWTAuthentication
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from django.utils import timezone
+from datetime import timedelta
 
 from django.contrib.auth import get_user_model
 
@@ -205,15 +207,37 @@ class ApplicantTokenObtainPairView(APIView):
 
         try:
             user = ApplicantUser.objects.get(email=email)
-
-            if not user.is_active:
-                return Response({'detail': 'This user is inactive.'}, status=status.HTTP_403_FORBIDDEN)
-
-            if not check_password(password, user.password):
-                return Response({'detail': 'Invalid email or password.'}, status=status.HTTP_401_UNAUTHORIZED)
-
         except ApplicantUser.DoesNotExist:
             return Response({'detail': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        # 🔒 Check lock status
+        if user.locked_until and timezone.now() < user.locked_until:
+            remaining = user.locked_until - timezone.now()
+            return Response({
+                'detail': f'Account is locked. Try again after {int(remaining.total_seconds() // 60)} minutes.'
+            }, status=status.HTTP_403_FORBIDDEN)
+
+        if not user.is_active:
+            return Response({'detail': 'This user is inactive.'}, status=status.HTTP_403_FORBIDDEN)
+
+        if not check_password(password, user.password):
+            user.failed_login_attempts += 1
+
+            # Lock account after 5 failed attempts
+            if user.failed_login_attempts >= 5:
+                user.locked_until = timezone.now() + timedelta(minutes=15)  # Lock for 15 minutes
+                user.save()
+                return Response({
+                    'detail': 'Account locked due to too many failed login attempts. Try again later.'
+                }, status=status.HTTP_403_FORBIDDEN)
+
+            user.save()
+            return Response({'detail': 'Invalid emailX or password.'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        # ✅ Successful login: reset counters
+        user.failed_login_attempts = 0
+        user.locked_until = None
+        user.save()
 
         refresh = RefreshToken.for_user(user)
         access_token = str(refresh.access_token)
@@ -227,9 +251,9 @@ class ApplicantTokenObtainPairView(APIView):
             key='refreshToken',
             value=str(refresh),
             httponly=True,
-            secure=False,  # change to True in production (HTTPS only)
-            samesite='Lax',  # or 'Strict' if you want stricter CSRF protection
-            max_age=7 * 24 * 60 * 60,  # 7 days
+            secure=False,  # True in production (HTTPS only)
+            samesite='Lax',
+            max_age=7 * 24 * 60 * 60,
         )
 
         return response
