@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { checkUserExistence, sendOTP, resetPassword } from "../../api/auth";
 import { showErrorToast, showSuccessToast } from "../utils/toastUtils";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Link } from "react-router-dom";
+import {FaArrowLeft} from "react-icons/fa"
 
 const ForgetPassword = () => {
   const [email, setEmail] = useState("");
@@ -95,6 +96,7 @@ const ForgetPassword = () => {
   return (
     <section className="flex justify-center items-center h-screen bg-gray-100">
       <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-lg">
+        <Link to="/login"><FaArrowLeft/></Link>
         <h2 className="text-xl font-semibold text-center mb-4">
           Forgot Password
         </h2>

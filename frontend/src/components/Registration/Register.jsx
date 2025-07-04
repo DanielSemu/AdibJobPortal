@@ -295,10 +295,23 @@ const Register = () => {
             <input type="checkbox" className="w-4 h-4" required />
             <label className="text-sm text-gray-600">
               I accept the{" "}
-              <Link to="/terms_conditions" className="text-blue-500 hover:underline">
+              <Link
+                to="/terms_conditions"
+                className="text-blue-500 hover:underline"
+              >
                 Terms and Conditions
               </Link>
             </label>
+            <p>
+              Already Have an account?
+              <Link
+                to="/login"
+                className="text-blue-500 hover:underline"
+              >
+                {" "}
+                Sign in Here
+              </Link>
+            </p>
           </div>
 
           {/* Submit Button */}
