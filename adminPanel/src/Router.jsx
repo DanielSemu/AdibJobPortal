@@ -18,7 +18,7 @@ import Unauthorized from "./components/Registration/Unauthorized"; // Create thi
 import AcceptedApplicants from "./components/Applications/AcceptedApplicants";
 import ActiveJobs from "./components/Jobs/ActiveJobs";
 // import SendSMSForAccepted from "./components/Applications/SendSMSForAccepted";
-import SelectedApplicants from "./components/Applications/SelectedApplicants";
+// import SelectedApplicants from "./components/Applications/SelectedApplicants";
 import VerifyApplicants from "./components/Applications/VerifyApplicants";
 import RejectedApplications from "./components/Applications/RejectedApplications";
 
@@ -161,14 +161,14 @@ const Router = () => {
             }
           />
           {/* Filter Applicants - Only HR */}
-          <Route
+          {/* <Route
             path="/selected_applicants"
             element={
               <PrivateRoute >
                 <SelectedApplicants/>
               </PrivateRoute>
             }
-          />
+          /> */}
           {/* Filter Applicants - Only HR */}
           <Route
             path="/rejected_applicants"

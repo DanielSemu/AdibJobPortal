@@ -101,22 +101,31 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
+    # SQLite
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
+    #Postgresql
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'AddisJobPortal',           # Replace with your database name
+        'USER': 'postgres',           # e.g., 'postgres'
+        'PASSWORD': 'Daniel@123',   # Your PostgreSQL password
+        'HOST': 'localhost',              # Or IP address if hosted elsewhere
+        'PORT': '5432',                   # Default PostgreSQL port
     }
+    # MYSQL
     #  'default': {
-    #     'ENGINE': 'mssql',cap
+    #     'ENGINE': 'mssql',
     #     'NAME': 'ADIB_JobPortal',
     #     'USER': 'sa',
     #     'PASSWORD': 'Adib@Te5t',
-    #     'HOST': 'INAPP-DB-SRVR\\ADIBTESTDBSERVER',  # Named instance
-    #     'PORT': '',  # Must be empty for named instances
+    #     'HOST': 'INAPP-DB-SRVR\\ADIBTESTDBSERVER',
+    #     'PORT': '',  # Leave blank for named instance
     #     'OPTIONS': {
     #         'driver': 'ODBC Driver 17 for SQL Server',
-    #         # Remove extra_params or use valid encryption setting
-    #         'encrypt': 'optional',  # Lowercase, valid for some drivers
-    #         'trust_server_certificate': 'yes'  # If needed
+    #         'extra_params': 'TrustServerCertificate=yes;Encrypt=no',
     #     },
     # }
 }

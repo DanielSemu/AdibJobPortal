@@ -221,8 +221,8 @@ const Register = () => {
                 <input
                   type="radio"
                   name="gender"
-                  value="Male"
-                  checked={formData.gender === "Male"}
+                  value="M"
+                  checked={formData.gender === "M"}
                   onChange={handleChange}
                   className="h-4 w-4"
                   required
@@ -233,8 +233,8 @@ const Register = () => {
                 <input
                   type="radio"
                   name="gender"
-                  value="Female"
-                  checked={formData.gender === "Female"}
+                  value="F"
+                  checked={formData.gender === "F"}
                   onChange={handleChange}
                   className="h-4 w-4"
                   required
