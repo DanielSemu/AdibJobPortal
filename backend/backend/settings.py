@@ -102,19 +102,19 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 DATABASES = {
     # SQLite
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': BASE_DIR / 'db.sqlite3',
-    # }
-    #Postgresql
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'AddisJobPortal',           # Replace with your database name
-        'USER': 'postgres',           # e.g., 'postgres'
-        'PASSWORD': 'Daniel@123',   # Your PostgreSQL password
-        'HOST': 'localhost',              # Or IP address if hosted elsewhere
-        'PORT': '5432',                   # Default PostgreSQL port
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
+    #Postgresql
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': 'AddisJobPortal',           # Replace with your database name
+    #     'USER': 'postgres',           # e.g., 'postgres'
+    #     'PASSWORD': 'Daniel@123',   # Your PostgreSQL password
+    #     'HOST': 'localhost',              # Or IP address if hosted elsewhere
+    #     'PORT': '5432',                   # Default PostgreSQL port
+    # }
     # MYSQL
     #  'default': {
     #     'ENGINE': 'mssql',
