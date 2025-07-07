@@ -253,7 +253,7 @@ class ApplicantTokenObtainPairView(APIView):
             httponly=True,
             secure=False,  # True in production (HTTPS only)
             samesite='Lax',
-            max_age=7 * 24 * 60 * 60,
+            # max_age=7 * 24 * 60 * 60,
         )
 
         return response
