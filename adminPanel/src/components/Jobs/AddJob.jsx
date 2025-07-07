@@ -7,19 +7,23 @@ import { showSuccessToast } from "../../utils/toastUtils";
 const AddJob = () => {
   const [categories, setCategories] = useState([]);
   const [formData, setFormData] = useState({
-    title: "",
-    jobGrade: "",
-    company: "Addis Bank S.C",
-    category: "",
-    location: "",
-    job_type: "Full-time",
-    salary: "As per Companies Salary Scale",
-    description: "",
-    application_deadline: "",
-    post_date: "",
-    show_experience: true,
-    details: [],
-  });
+        vacancy_number: "",                    // New field
+        title: "",
+        job_grade: "",
+        company: "Addis Bank S.C",
+        category: "",                          // Should be a category ID (ForeignKey)
+        location: "",                          // Stored as TextField but may represent city or address
+        field_of_studies: [],                  // JSONField (list of strings)
+        job_type: "Full-time",                 // Choices: Full-time, Part-time, Contract
+        salary: "As per Companies Salary Scale",
+        description: "",
+        application_deadline: "",              // Date (YYYY-MM-DD)
+        post_date: "",                         // Optional date
+        show_experience: true,
+        status: "Draft",                       // Choices from JOB_STATUS_CHOICES
+        details: []                            // List of objects with `detail_type` and `description`
+});
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -86,6 +90,17 @@ const AddJob = () => {
         onSubmit={handleSubmit}
         className="grid grid-cols-1 md:grid-cols-2 gap-6"
       >
+       {/* Vacancy Number */}
+        <div>
+          <label className="block text-gray-700">Vacancy Number</label>
+          <input
+            type="text"
+            name="vacancy_number"
+            value={formData.vacancy_number}
+            onChange={handleChange}
+            className="w-full p-2 border rounded-lg"
+          />
+        </div>
         {/* Job Title */}
         <div>
           <label className="block text-gray-700">Job Title</label>
@@ -103,8 +118,8 @@ const AddJob = () => {
           <label className="block text-gray-700">Job Grade</label>
           <input
             type="text"
-            name="jobGrade"
-            value={formData.jobGrade}
+            name="job_grade"
+            value={formData.job_grade}
             onChange={handleChange}
             className="w-full p-2 border rounded-lg"
           />
@@ -130,11 +145,22 @@ const AddJob = () => {
 
         {/* Location */}
         <div>
-          <label className="block text-gray-700">Location</label>
+          <label className="block text-gray-700">Work Place</label>
           <input
             type="text"
             name="location"
             value={formData.location}
+            onChange={handleChange}
+            className="w-full p-2 border rounded-lg"
+          />
+        </div>
+        {/* Location */}
+        <div>
+          <label className="block text-gray-700">Field Of Studies</label>
+          <input
+            type="text"
+            name="field_of_studies"
+            value={formData.field_of_studies}
             onChange={handleChange}
             className="w-full p-2 border rounded-lg"
           />

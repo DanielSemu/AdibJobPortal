@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
-import { updateJob, getSingleJob, getCategories } from "../services/jobsService";
+import {
+  updateJob,
+  getSingleJob,
+  getCategories,
+} from "../services/jobsService";
 import { showErrorToast, showSuccessToast } from "../../utils/toastUtils";
 
 const EditJob = () => {
@@ -11,20 +15,22 @@ const EditJob = () => {
   const [categories, setCategories] = useState([]);
 
   const [formData, setFormData] = useState({
+    vacancy_number: "", // New field
     title: "",
     job_grade: "",
     company: "Addis Bank S.C",
-    category: "",
-    location: "",
-    job_type: "Full-time",
+    category: "", // Should be a category ID (ForeignKey)
+    location: "", // Stored as TextField but may represent city or address
+    field_of_studies: [], // JSONField (list of strings)
+    job_type: "Full-time", // Choices: Full-time, Part-time, Contract
     salary: "As per Companies Salary Scale",
     description: "",
-    application_deadline: "",
-    post_date: "",
-    show_experience: null,
-    details: [],
+    application_deadline: "", // Date (YYYY-MM-DD)
+    post_date: "", // Optional date
+    show_experience: true,
+    status: "Draft", // Choices from JOB_STATUS_CHOICES
+    details: [], // List of objects with `detail_type` and `description`
   });
-
   // Fetch job data to populate form
   useEffect(() => {
     const fetchData = async () => {
@@ -32,11 +38,13 @@ const EditJob = () => {
         const job = await getSingleJob(id);
 
         setFormData({
+          vacancy_number: job.vacancy_number || "",
           title: job.title || "",
           job_grade: job.job_grade || "",
           company: job.company || "Addis Bank S.C",
           category: job.category || "",
           location: job.location || "",
+          field_of_studies: job.field_of_studies || "",
           job_type: job.job_type || "Full-time",
           salary: job.salary || "As per Companies Salary Scale",
           description: job.description || "",
@@ -54,11 +62,11 @@ const EditJob = () => {
 
   // Fetch categories
   useEffect(() => {
-    const fetchCategory =async ()=>{
-      const res=await getCategories()
-      setCategories(res)
-    }
-    fetchCategory()
+    const fetchCategory = async () => {
+      const res = await getCategories();
+      setCategories(res);
+    };
+    fetchCategory();
   }, []);
 
   const handleChange = (e) => {
@@ -93,24 +101,33 @@ const EditJob = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      
-
       await updateJob(id, formData);
-      showSuccessToast("Job updated successfully!")
+      showSuccessToast("Job updated successfully!");
       navigate("/jobs");
     } catch (error) {
       console.error(error);
-      showErrorToast("Error updating job.")
+      showErrorToast("Error updating job.");
     }
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-10">
+    <div className="p-6 bg-white shadow-lg rounded-lg mt-10">
       <h2 className="text-2xl font-bold mb-4">Edit Job</h2>
       <form
         onSubmit={handleSubmit}
         className="grid grid-cols-1 md:grid-cols-2 gap-6"
       >
+        {/* Vacancy Number */}
+        <div>
+          <label className="block text-gray-700">Vacancy Number</label>
+          <input
+            type="text"
+            name="vacancy_number"
+            value={formData.vacancy_number}
+            onChange={handleChange}
+            className="w-full p-2 border rounded-lg"
+          />
+        </div>
         {/* Form Fields */}
         <div>
           <label className="block text-gray-700">Job Title</label>
@@ -152,11 +169,21 @@ const EditJob = () => {
         </div>
 
         <div>
-          <label className="block text-gray-700">Location</label>
+          <label className="block text-gray-700">Work Place</label>
           <input
             type="text"
             name="location"
             value={formData.location}
+            onChange={handleChange}
+            className="w-full p-2 border rounded-lg"
+          />
+        </div>
+        <div>
+          <label className="block text-gray-700">Field Of Studies</label>
+          <input
+            type="text"
+            name="field_of_studies"
+            value={formData.field_of_studies}
             onChange={handleChange}
             className="w-full p-2 border rounded-lg"
           />
@@ -216,7 +243,6 @@ const EditJob = () => {
           />
         </div>
 
-       
         <div className="flex items-center gap-4">
           <input
             type="checkbox"
@@ -230,7 +256,6 @@ const EditJob = () => {
           </label>
         </div>
         <div className="col-span-2">
-         
           {/* Job Details Table */}
           <div>
             <h3 className="text-2xl font-bold mb-4">Job Details</h3>

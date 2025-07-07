@@ -4,6 +4,7 @@ import {
   FaMapMarkerAlt,
   FaMoneyBillWave,
   FaRegCalendarTimes,
+  FaRegCalendarCheck,
 } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 import { getSingleJob } from "../services/jobsService";
@@ -55,11 +56,17 @@ const JobDetail = () => {
 
         {/* Job Details */}
         <div className="flex flex-wrap gap-4 mt-4 text-gray-700">
+          {detailedData.vacancy_number && (
+            <p className="flex items-center gap-2">
+              <FaBriefcase className="text-blue-500" /> <strong>Vacancy Number:</strong> {detailedData.vacancy_number}
+            </p>
+          )}          
           {detailedData.job_type && (
             <p className="flex items-center gap-2">
               <FaBriefcase className="text-blue-500" /> <strong>Job Type:</strong> {detailedData.job_type}
             </p>
-          )}          {detailedData.location && (
+          )}          
+          {detailedData.location && (
             <p className="flex items-center gap-2">
               <FaMapMarkerAlt className="text-red-500" /> <strong>Location:</strong> {detailedData.location}
             </p>
@@ -67,6 +74,11 @@ const JobDetail = () => {
           {detailedData.salary && (
             <p className="flex items-center gap-2">
               <FaMoneyBillWave className="text-green-500" /> <strong>Salary:</strong> {detailedData.salary}
+            </p>
+          )}
+          {detailedData.post_date && (
+            <p className="flex items-center gap-2">
+              <FaRegCalendarCheck className="text-green-500" /> <strong>Post Date:</strong> {detailedData.post_date}
             </p>
           )}
           {detailedData.application_deadline && (
