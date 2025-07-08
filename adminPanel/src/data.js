@@ -15,14 +15,14 @@
     "show_experience": true,
     "status": "Published",
     "details": [
-      {
-        "detail_type": "Responsibility",
-        "description": "Create clean, modern, and user-friendly designs for web and mobile platforms."
-      },
-      {
-        "detail_type": "Qualification",
-        "description": "Bachelor’s degree in Design, HCI, or related field."
-      }
+      { "detail_type": "Responsibility", "description": "Create user-friendly UI designs for web and mobile." },
+      { "detail_type": "Responsibility", "description": "Collaborate with product and dev teams to refine designs." },
+      { "detail_type": "Skill", "description": "Adobe XD, Figma, Sketch proficiency." },
+      { "detail_type": "Skill", "description": "Strong understanding of responsive design." },
+      { "detail_type": "Qualification", "description": "Bachelor’s in Design, HCI, or related." },
+      { "detail_type": "Qualification", "description": "Portfolio of UI/UX projects." },
+      { "detail_type": "Benefit", "description": "Flexible work hours and remote options." },
+      { "detail_type": "Benefit", "description": "Health insurance and performance bonuses." }
     ]
   },
   {
@@ -41,14 +41,13 @@
     "show_experience": true,
     "status": "Active",
     "details": [
-      {
-        "detail_type": "Responsibility",
-        "description": "Maintain and troubleshoot workstations and servers."
-      },
-      {
-        "detail_type": "Skill",
-        "description": "Strong knowledge of Windows Server and networking."
-      }
+      { "detail_type": "Responsibility", "description": "Install and maintain IT equipment." },
+      { "detail_type": "Responsibility", "description": "Provide technical assistance to staff." },
+      { "detail_type": "Skill", "description": "Strong knowledge of Windows Server and networking." },
+      { "detail_type": "Skill", "description": "Troubleshooting hardware and software issues." },
+      { "detail_type": "Qualification", "description": "Degree in IT or related field." },
+      { "detail_type": "Benefit", "description": "Company mobile allowance." },
+      { "detail_type": "Benefit", "description": "Pension and overtime pay." }
     ]
   },
   {
@@ -67,14 +66,12 @@
     "show_experience": true,
     "status": "Published",
     "details": [
-      {
-        "detail_type": "Qualification",
-        "description": "BA in Accounting or Finance from a recognized institution."
-      },
-      {
-        "detail_type": "Responsibility",
-        "description": "Prepare accurate financial reports monthly."
-      }
+      { "detail_type": "Responsibility", "description": "Prepare monthly financial statements." },
+      { "detail_type": "Responsibility", "description": "Support audit and compliance processes." },
+      { "detail_type": "Skill", "description": "Proficiency in ERP systems and Excel." },
+      { "detail_type": "Skill", "description": "Strong analytical and reporting skills." },
+      { "detail_type": "Qualification", "description": "BA in Accounting or Finance." },
+      { "detail_type": "Benefit", "description": "Yearly bonus and health coverage." }
     ]
   },
   {
@@ -93,14 +90,11 @@
     "show_experience": false,
     "status": "Draft",
     "details": [
-      {
-        "detail_type": "Responsibility",
-        "description": "Collect and compile information for internal documentation."
-      },
-      {
-        "detail_type": "Skill",
-        "description": "Excellent writing and critical thinking skills."
-      }
+      { "detail_type": "Responsibility", "description": "Gather and analyze internal reports." },
+      { "detail_type": "Responsibility", "description": "Research relevant banking topics." },
+      { "detail_type": "Skill", "description": "Research, analysis, and presentation skills." },
+      { "detail_type": "Qualification", "description": "Degree in Journalism or related field." },
+      { "detail_type": "Benefit", "description": "Flexible working hours." }
     ]
   },
   {
@@ -119,40 +113,11 @@
     "show_experience": true,
     "status": "Under Review",
     "details": [
-      {
-        "detail_type": "Responsibility",
-        "description": "Inspect financial documents for accuracy and compliance."
-      },
-      {
-        "detail_type": "Benefit",
-        "description": "Annual bonus, pension scheme, and fuel allowance."
-      }
-    ]
-  },
-  {
-    "vacancy_number": "ADB-006/25",
-    "title": "Training & Development Coordinator",
-    "job_grade": "X",
-    "company": "Addis Bank S.C",
-    "category": 2,
-    "location": "Bahir Dar, Ethiopia",
-    "field_of_studies": ["Education", "HR Development"],
-    "job_type": "Full-time",
-    "salary": "As per company policy",
-    "description": "Coordinate staff training and track learning programs.",
-    "application_deadline": "2025-08-22",
-    "post_date": "2025-07-10",
-    "show_experience": true,
-    "status": "Published",
-    "details": [
-      {
-        "detail_type": "Qualification",
-        "description": "Degree in Education or Human Resource Development."
-      },
-      {
-        "detail_type": "Responsibility",
-        "description": "Identify training needs and evaluate program effectiveness."
-      }
+      { "detail_type": "Responsibility", "description": "Conduct periodic audits of branches." },
+      { "detail_type": "Responsibility", "description": "Verify compliance with internal policies." },
+      { "detail_type": "Skill", "description": "Knowledge of auditing standards and tools." },
+      { "detail_type": "Qualification", "description": "Bachelor’s degree in Accounting or Auditing." },
+      { "detail_type": "Benefit", "description": "Fuel allowance and housing support." }
     ]
   }
 ]

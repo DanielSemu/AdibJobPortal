@@ -13,7 +13,6 @@ const FilterApplicants = () => {
   const [selectedWorkPlace, setSelectedWorkPlace] = useState("");
   const [applicant, setApplicant] = useState([]);
 
-  const [filteredApplicants, setFilteredApplicants] = useState([]);
   const triggerRefresh = () => {
     setRefreshKey((prev) => prev + 1);
   };
@@ -104,7 +103,7 @@ const FilterApplicants = () => {
         {/* Right Section */}
         <div className="w-full lg:w-1/2">
           <div className="w-full border-2  border-gray-300 rounded p-2 bg-gray-300 flex justify-between items-center">
-            Statistical Information's
+            Statistical Informations
             <select
               value={selectedWorkPlace}
               onChange={(e) => setSelectedWorkPlace(e.target.value)}
