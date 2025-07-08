@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { AiFillDashboard } from "react-icons/ai";
-import { FaUsers, FaRegFileAlt, FaInbox, FaSignOutAlt } from "react-icons/fa";
+import { FaUsers, FaRegFileAlt, FaSignOutAlt } from "react-icons/fa";
 import {
   MdOutlineWork,
   MdMenu,
@@ -212,7 +212,7 @@ const Sidebar = () => {
             )}
 
             {/* Inbox */}
-            <li>
+            {/* <li>
               <a
                 href="#"
                 className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
@@ -223,7 +223,7 @@ const Sidebar = () => {
                   3
                 </span>
               </a>
-            </li>
+            </li> */}
 
             {/* Users (only for admin) */}
             {userProfile.role === "admin" && (
@@ -256,6 +256,14 @@ const Sidebar = () => {
               </button>
               {openDropdown === "profile" && (
                 <ul className="py-2 space-y-2 pl-6">
+                  <li>
+                    <a
+                      href="#"
+                      className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
+                    >
+                      Role={userProfile.role}
+                    </a>
+                  </li>
                   <li>
                     <a
                       href="#"

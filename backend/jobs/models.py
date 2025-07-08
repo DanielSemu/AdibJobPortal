@@ -40,7 +40,7 @@ class Job(models.Model):
     title = models.CharField(max_length=255)
     job_grade = models.CharField(max_length=100, null=True, blank=True)
     company = models.CharField(max_length=255, default="Addis Bank S.C", blank=True)
-    category = models.ForeignKey('JobCategory', on_delete=models.CASCADE, related_name="jobs")
+    category = models.ForeignKey('JobCategory', on_delete=models.SET_NULL, null=True, related_name="jobs")
     
     # Changed to JSONField to support multiple locations
     location = models.TextField(blank=True)
