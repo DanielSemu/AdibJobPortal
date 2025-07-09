@@ -5,9 +5,19 @@ import { getAccessToken } from './api/tokenStorage';
 import Spinner from './components/ui/Spinner';
 
 const roleBasedRoutes = {
-  '/close_jobs': ['admin', 'hr_maker'],
-  '/jobs/add': ['admin', 'hr_maker'],
-  '/edit/:id': ['admin', 'hr_maker'],
+  '/close_jobs': ['hr_maker'],
+  '/jobs/add': ['hr_maker'],
+  '/edit/:id': ['hr_maker'],
+  '/': ['hr_maker','hr_checker','admin'],
+  '/active_jobs': ['hr_maker','hr_checker'],
+  '/edit/job_detail/:id': ['hr_maker','hr_checker'],
+  '/detail/:id': ['hr_maker','hr_checker'],
+  '/categories': ['hr_maker','hr_checker'],
+  '/accepted_applicants': ['hr_maker','hr_checker'],
+  '/verify_applicants': ['hr_maker','hr_checker'],
+  '/filter_applicants': ['hr_maker','hr_checker'],
+  '/rejected_applicants': ['hr_maker','hr_checker'],
+  '/authorize_document/:id/': ['hr_maker','hr_checker'],
 };
 
 const PrivateRoute = ({ children }) => {
