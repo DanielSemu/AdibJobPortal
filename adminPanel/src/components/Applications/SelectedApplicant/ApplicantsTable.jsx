@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useState } from "react";
 import { differenceInMonths, parseISO } from "date-fns";
 import RemoveModal from "./RemoveModal";

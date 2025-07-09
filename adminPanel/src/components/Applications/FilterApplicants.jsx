@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getApplicantsByJob, getJobs } from "../services/jobsService";
-import { showSuccessToast } from "../../utils/toastUtils";
+// import { showSuccessToast } from "../../utils/toastUtils";
 import FilterForm from "./FilterApplications/FilterForm";
 import ApplicantStats from "./FilterApplications/ApplicantStats";
 import SelectedApplicants from "./SelectedApplicants";
@@ -28,7 +28,7 @@ const FilterApplicants = () => {
 
   const handleOpenClick = async () => {
     if (selectedJobId) {
-      showSuccessToast(`Job ID ${selectedJobId} selected!`);
+      // showSuccessToast(`Job ID ${selectedJobId} selected!`);
 
       const selectedWork = jobs.find((res) => res.id == selectedJobId);
       if (selectedWork && selectedWork.location) {
@@ -42,8 +42,8 @@ const FilterApplicants = () => {
         setSelectedWorkPlace("");
       }
 
-      const applicant = await getApplicantsByJob(selectedJobId);
-      const app = applicant.filter((res) => res.status === "Pending");
+      const applicants = await getApplicantsByJob(selectedJobId);
+      const app = applicants.filter((res) => res.status === "Pending");
       setApplicant(app);
     } else {
       setWorkPlace([]);

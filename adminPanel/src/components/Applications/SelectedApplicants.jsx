@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import { getApplicantsByCriteria } from "../services/jobsService";
 import axiosInstance from "../../api/axiosInstance";
@@ -22,6 +23,7 @@ const SelectedApplicants = ({ selectedJobId, refreshKey }) => {
 
   useEffect(() => {
     fetchCriterias();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedJobId, refreshKey]);
 
   const fetchCriterias = async () => {
@@ -77,7 +79,7 @@ const SelectedApplicants = ({ selectedJobId, refreshKey }) => {
           ? `Test message sent. Total: ${count}`
           : `Message sent to ${count} applicant(s).`
       );
-
+      fetchCriterias()
       if (!isTest) {
         setShowModal(false);
         setMessage("");

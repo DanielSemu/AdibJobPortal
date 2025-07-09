@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 
+// eslint-disable-next-line react/prop-types
 const ApplicantStats = ({ applicant = [], selectedWorkPlace }) => {
+  
   const [stats, setStats] = useState({
     total: 0,
     gender: { male: 0, female: 0 },
@@ -66,6 +68,7 @@ const ApplicantStats = ({ applicant = [], selectedWorkPlace }) => {
 
   useEffect(() => {
     if (selectedWorkPlace) extractStats();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [applicant, selectedWorkPlace]);
 
   return (
