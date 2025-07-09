@@ -67,7 +67,7 @@ const FilterApplicants = () => {
         >
           <option value="">-- Select a job --</option>
           {jobs.map((job) => (
-            <option key={job._id} value={job.id}>
+            <option key={job.id} value={job.id}>
               {job.title}
             </option>
           ))}
