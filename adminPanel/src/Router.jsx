@@ -5,7 +5,7 @@ import Jobs from "./components/Jobs/Jobs";
 import JobDetail from "./components/Jobs/JobDetail";
 import EditJob from "./components/Jobs/EditJob";
 import AddJob from "./components/Jobs/AddJob";
-import UploadBulk from "./components/Jobs/UploadBulk";
+// import UploadBulk from "./components/Jobs/UploadBulk";
 import UploadJobDetail from "./components/Jobs/UploadJobDetail";
 import Categories from "./components/Categories/Categories";
 import FilterApplicants from "./components/Applications/FilterApplicants";
@@ -30,9 +30,9 @@ const Router = () => {
       <div className="main-container p-4 sm:ml-64 border-gray-200 rounded-lg dark:border-gray-700">
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="/unauthorized" element={ <PrivateRoute>
+          <Route path="/unauthorized" element={<PrivateRoute>
             <Unauthorized />
-            </PrivateRoute>} />
+          </PrivateRoute>} />
 
           {/* Dashboard - Allow all logged users */}
           <Route
@@ -58,11 +58,12 @@ const Router = () => {
           <Route
             path="/close_jobs"
             element={
-              <PrivateRoute >
+              <PrivateRoute roles={['admin', 'hr_maker']}>
                 <CloseJobs />
               </PrivateRoute>
             }
           />
+
           <Route
             path="/active_jobs"
             element={
@@ -76,21 +77,21 @@ const Router = () => {
           <Route
             path="/jobs/add"
             element={
-              <PrivateRoute >
+              <PrivateRoute roles={['admin', 'hr_maker']}>
                 <AddJob />
               </PrivateRoute>
             }
           />
 
           {/* Upload Jobs Bulk - Only HR */}
-          <Route
+          {/* <Route
             path="/jobs/add/bulk"
             element={
               <PrivateRoute >
                 <UploadBulk />
               </PrivateRoute>
             }
-          />
+          /> */}
 
           {/* Upload Job Detail - Only HR */}
           <Route
@@ -116,7 +117,7 @@ const Router = () => {
           <Route
             path="/edit/:id"
             element={
-              <PrivateRoute >
+              <PrivateRoute roles={['admin', 'hr_maker']}>
                 <EditJob />
               </PrivateRoute>
             }
@@ -133,7 +134,7 @@ const Router = () => {
           />
 
           {/* Applications - HR and Managers */}
-         
+
           <Route
             path="/accepted_applicants"
             element={
@@ -174,7 +175,7 @@ const Router = () => {
             path="/rejected_applicants"
             element={
               <PrivateRoute >
-                <RejectedApplications/>
+                <RejectedApplications />
               </PrivateRoute>
             }
           />

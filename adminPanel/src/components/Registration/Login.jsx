@@ -1,18 +1,17 @@
-import  { useState } from "react";
-import { login } from "../../api/auth";
-import { useNavigate } from "react-router-dom";
-import { showErrorToast, showSuccessToast } from "../../utils/toastUtils";
-import { setAccessToken } from "../../api/tokenStorage";
-import useAuth from "../../hooks/useAuth";
-import logo from "../../assets/logo47.png";
+import { useState } from 'react';
+import { login } from '../../api/auth';
+import { useNavigate } from 'react-router-dom';
+import { showErrorToast, showSuccessToast } from '../../utils/toastUtils';
+import useAuth from '../../hooks/useAuth';
+import logo from '../../assets/logo47.png';
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    username: "",
-    password: "",
+    username: '',
+    password: '',
   });
   const navigate = useNavigate();
-  const { setLoading,setUserProfile } = useAuth();
+  const { setUserProfile, setLoading } = useAuth();
 
   // Handle input changes
   const handleChange = (e) => {
@@ -21,30 +20,30 @@ const Login = () => {
 
   // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent page reload
+    e.preventDefault();
     try {
+      setLoading(true); // Set loading to true before API call
       const { username, password } = formData;
       const response = await login(username, password);
-      if (response.status === 200 || response.statusText === "Ok") {
-        setAccessToken(response.data.access);
-        setLoading(true)
-        showSuccessToast("Login successfully");
-        setUserProfile(username);
-        navigate("/");
-      } else if (
-        response.status === 401 ||
-        response.statusText === "Unauthorized"
-      ) {
-        showErrorToast(response.data.detail);
+
+      if (response.status === 200) {
+        // login function in auth.js already sets accessToken and fetches user profile
+        const userData = JSON.parse(localStorage.getItem('userProfile')); // Get profile set by auth.js
+        setUserProfile(userData); // Update AuthProvider state
+        showSuccessToast('Login successful!');
+        navigate('/'); // Navigate after state is updated
       } else {
-        showErrorToast("Unexpected Error Occurred!");
+        showErrorToast(response?.data?.message || 'Login failed. Please try again.');
       }
     } catch (error) {
-      const message =
-        error.response?.data?.message || "An unexpected error occurred";
-      showErrorToast(message); // Fallback error notification
+      console.error('Login error:', error);
+      const message = error.response?.data?.message || 'An unexpected error occurred';
+      showErrorToast(message);
+    } finally {
+      setLoading(false); // Always reset loading state
     }
   };
+
   return (
     <section className="bg-gray-50 min-h-screen flex items-center">
       <div className="flex flex-col md:flex-row w-full">
@@ -72,7 +71,7 @@ const Login = () => {
             <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">
               Sign in to your account
             </h1>
-            <form onSubmit={(e) => handleSubmit(e)} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label
                   htmlFor="username"

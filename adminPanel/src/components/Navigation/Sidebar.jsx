@@ -18,6 +18,7 @@ const Sidebar = () => {
   const [openDropdown, setOpenDropdown] = useState(null); // Track which dropdown is open
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { userProfile, setUserProfile } = useAuth();
+  
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -82,8 +83,7 @@ const Sidebar = () => {
             </li>
 
             {/* Vacancies Dropdown */}
-            {(userProfile.role === "hr_maker" ||
-              userProfile.role === "hr_checker") && (
+            {userProfile && (userProfile.role === "hr_maker" || userProfile.role === "hr_checker") && (
               <>
                 <li>
                   <button
@@ -226,7 +226,7 @@ const Sidebar = () => {
             </li> */}
 
             {/* Users (only for admin) */}
-            {userProfile.role === "admin" && (
+            {userProfile && (userProfile.role === "admin" ) && (
               <li>
                 <a
                   href="#"

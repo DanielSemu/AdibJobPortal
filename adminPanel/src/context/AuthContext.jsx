@@ -1,48 +1,64 @@
 /* eslint-disable react/prop-types */
 import { createContext, useState, useEffect } from 'react';
-import  { BASE_URL} from '../api/axiosInstance';
-import { setAccessToken } from '../api/tokenStorage';
-import axios from 'axios';
+import { setAccessToken, getAccessToken } from '../api/tokenStorage';
 import { profile } from '../api/auth';
-import { useLocation } from 'react-router-dom';
+import axios from 'axios';
+import { BASE_URL } from '../api/axiosInstance';
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [loading, setLoading] = useState(true);
-    const [userProfile,setUserProfile]=useState([])
-    const location =useLocation()
+  const [loading, setLoading] = useState(true);
+  const [userProfile, setUserProfile] = useState(null);
 
-    useEffect(() => {
-        const fetchUserProfile = async () => {
-              try {
-                const response = await profile();
-                
-                setUserProfile(response);
-              } catch (error) {
-                console.error("Error fetching user profile:", error);
-                setUserProfile(null);
-              }
-            };
-        const initializeAuth = async () => {
-            setLoading(true);
-            try {
-                const response = await axios.post(`${BASE_URL}/auth/token/refresh/`, {}, { withCredentials: true });
-                setAccessToken(response.data.access);
-            } catch (error) {
-                console.error("Error fetching :", error);
-                setAccessToken('');
-                setLoading(false);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchUserProfile()
-        initializeAuth();
-    }, [location.pathname]);  
-    return (
-        <AuthContext.Provider value={{loading,userProfile,setUserProfile,setLoading}}>
-            {children}
-        </AuthContext.Provider>
-    );
+  useEffect(() => {
+    const initializeAuth = async () => {
+      setLoading(true);
+    //   console.log('Starting auth initialization...');
+      const token = getAccessToken();
+
+      if (!token) {
+        console.log('No token found, skipping auth initialization.');
+        setLoading(false);
+        return;
+      }
+
+      try {
+        // console.log('Attempting to refresh token...');
+        const refreshResponse = await axios.post(
+          `${BASE_URL}/auth/token/refresh/`,
+          {},
+          { withCredentials: true, timeout: 5000 } // 5-second timeout
+        );
+        const newAccessToken = refreshResponse.data.access;
+        // console.log('Token refreshed successfully:', newAccessToken);
+        setAccessToken(newAccessToken);
+
+        // console.log('Fetching user profile...');
+        const userData = await profile();
+        // console.log('User profile fetched:', userData);
+        setUserProfile(userData);
+        localStorage.setItem('userProfile', JSON.stringify(userData));
+      } catch (error) {
+        console.error('Error during auth initialization:', error);
+        setUserProfile(null);
+        setAccessToken('');
+        localStorage.removeItem('userProfile');
+      } finally {
+        console.log('Auth initialization complete, setting loading to false.');
+        setLoading(false);
+      }
+    };
+
+    initializeAuth();
+  }, []);
+
+  return (
+    <AuthContext.Provider value={{ loading, userProfile, setUserProfile, setLoading }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
+
+export default AuthProvider;
