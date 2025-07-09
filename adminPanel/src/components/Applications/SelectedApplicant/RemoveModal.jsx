@@ -1,5 +1,5 @@
+/* eslint-disable react/prop-types */
 /* RemoveModal.jsx */
-import React from "react";
 
 const RemoveModal = ({ isOpen, onClose, onConfirm, remark, setRemark }) => {
     if (!isOpen) return null;

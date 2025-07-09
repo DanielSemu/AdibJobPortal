@@ -111,7 +111,7 @@ const Categories = () => {
       accessor: "actions",
       cell: (row) => (
         <div className="flex gap-3">
-          <button onClick={() => handleDetailView(row)} className="btn text-blue-600">
+          <button onClick={() => handleDetailView(row)} className="btn text-primary">
             <FiEye />
           </button>
           {userProfile.role === "hr_maker" && (

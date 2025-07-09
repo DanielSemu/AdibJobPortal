@@ -48,7 +48,7 @@ const ActiveJobs = () => {
 
   return (
     <div className="p-6 bg-white shadow-lg rounded-lg mt-10">
-      <h1 className="text-2xl font-bold text-blue-900 mb-6">Active Jobs</h1>
+      <h1 className="text-2xl font-bold text-primary mb-6">Active Jobs</h1>
       {activeJobs.length === 0 ? (
         <p className="text-center text-gray-600">No active jobs found.</p>
       ) : (
@@ -62,14 +62,14 @@ const ActiveJobs = () => {
                 key={job.id}
                 className="bg-white border rounded-lg p-6 shadow-sm hover:shadow-lg transition"
               >
-                <h2 className="text-xl font-semibold text-blue-700 mb-2">
+                <h2 className="text-xl font-semibold text-primary mb-2">
                   {job.title} Grade {job.job_grade}
                 </h2>
                 <p className="text-gray-700 mb-1">
                   <strong>Total Applicants:</strong> {total}
                 </p>
                 <div className="text-sm text-gray-600 mt-2">
-                  <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
+                  <span className="bg-blue-100 text-primary px-3 py-1 rounded-full">
                     Male: {count.Male}
                   </span>
                   <span className="bg-pink-100 text-pink-800 px-3 py-1 rounded-full">

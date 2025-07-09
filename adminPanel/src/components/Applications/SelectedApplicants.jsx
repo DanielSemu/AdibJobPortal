@@ -139,7 +139,7 @@ const SelectedApplicants = ({ selectedJobId, refreshKey }) => {
       </div>
       <div className="text-center font-semibold text-lg mt-4">
         Total Selected Applicants :{" "}
-        <span className="text-blue-600">{totalSelectedApplicants}</span>
+        <span className="text-primary">{totalSelectedApplicants}</span>
       </div>
 
       {showModal && (

@@ -75,7 +75,7 @@ const ApplicantStats = ({ applicant = [], selectedWorkPlace }) => {
     <div className="bg-gray-50 p-4 rounded-md shadow space-y-4 text-sm text-gray-800">
       <div className="font-semibold text-lg text-gray-700">
         Total Number Of Applicants: {" "}
-        <span className="font-bold text-blue-600">{stats.total}</span>
+        <span className="font-bold text-primary">{stats.total}</span>
       </div>
 
       <div className="grid sm:grid-cols-2 gap-2">

@@ -23,7 +23,7 @@ const CriteriaCard = ({
     return (
         <div className="border p-4 rounded-lg shadow-sm hover:shadow-md transition">
             <div className="flex justify-between items-center mb-2">
-                <h3 className="text-lg font-semibold text-blue-700">
+                <h3 className="text-lg font-semibold text-primary">
                     {criteria.job_name || "Job Removed"}
                 </h3>
                 <span className="text-sm text-gray-500">
@@ -57,7 +57,7 @@ const CriteriaCard = ({
                         </button>
                         <button
                             onClick={handleToggle}
-                            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                            className="bg-primary text-white px-4 py-2 rounded hover:bg-blue-600"
                         >
                             {isExpanded ? "Hide Applicants" : "View Applicants"}
                         </button>

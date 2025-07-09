@@ -78,7 +78,7 @@ const FilterApplicants = () => {
           disabled={!selectedJobId}
           className={`p-2 mb-4 rounded-md text-white ${
             selectedJobId
-              ? "bg-blue-600 hover:bg-blue-700"
+              ? "bg-primary hover:bg-blue-600"
               : "bg-gray-400 cursor-not-allowed"
           }`}
         >

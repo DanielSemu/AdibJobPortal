@@ -91,7 +91,7 @@ const AuthorizeDocument = () => {
 
   return (
     <div className="w-full px-4 md:px-10 py-8 bg-gray-100 min-h-screen">
-      <h2 className="text-3xl font-bold mb-8 text-blue-800 text-center">
+      <h2 className="text-3xl font-bold mb-8 text-primary text-center">
         Authorize Document
       </h2>
 
