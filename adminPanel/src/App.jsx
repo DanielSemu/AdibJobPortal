@@ -21,6 +21,8 @@ import RejectedApplications from './components/Applications/RejectedApplications
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Component } from 'react';
+import UsersList from './components/Users/UsersList';
+import CreateUser from './components/Users/CreateUser';
 
 // ErrorBoundary component
 class ErrorBoundary extends Component {
@@ -210,6 +212,26 @@ const App = () => {
               <PrivateRoute>
                 <ProtectedLayout>
                   <AuthorizeDocument />
+                </ProtectedLayout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/users"
+            element={
+              <PrivateRoute>
+                <ProtectedLayout>
+                  <UsersList />
+                </ProtectedLayout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/users/add"
+            element={
+              <PrivateRoute>
+                <ProtectedLayout>
+                  <CreateUser />
                 </ProtectedLayout>
               </PrivateRoute>
             }
