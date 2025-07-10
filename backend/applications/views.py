@@ -436,17 +436,6 @@ def generate_applicants_pdf(request):
     return HttpResponse("PDF generation failed", status=500)
 
 
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from django.http import HttpResponse
-from django.template.loader import get_template
-from xhtml2pdf import pisa
-import io
-from datetime import date
-
-from .models import Applicant, Job  # adjust imports if needed
-
 
 class ApplicantReportAPIView(APIView):
     permission_classes = [IsAuthenticated]

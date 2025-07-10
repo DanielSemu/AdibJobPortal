@@ -37,6 +37,8 @@ User = get_user_model()
 class CustomTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         username = request.data.get('username')
+        if username:
+            username = username.lower()
         password = request.data.get('password')
 
         if not username or not password:
