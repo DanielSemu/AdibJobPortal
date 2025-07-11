@@ -23,6 +23,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Component } from 'react';
 import UsersList from './components/Users/UsersList';
 import CreateUser from './components/Users/CreateUser';
+import useAuth from './hooks/useAuth';
+import AdminDashboard from './components/Dashboard/AdminDashboard';
 
 // ErrorBoundary component
 class ErrorBoundary extends Component {
@@ -52,8 +54,8 @@ const ProtectedLayout = ({ children }) => (
     </div>
   </>
 );
-
 const App = () => {
+  const { userProfile } = useAuth();
   return (
     <>
       <ToastContainer
@@ -80,7 +82,11 @@ const App = () => {
             element={
               <PrivateRoute>
                 <ProtectedLayout>
-                  <Home />
+                  {userProfile?.role === "admin" ? (
+                    <AdminDashboard />
+                  ) : userProfile?.role === "hr_maker" || userProfile?.role === "hr_checker" ? (
+                    <Home />
+                  ) : null}
                 </ProtectedLayout>
               </PrivateRoute>
             }
