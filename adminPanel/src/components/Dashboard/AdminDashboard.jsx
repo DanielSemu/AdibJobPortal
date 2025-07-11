@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Pie, Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js';
+import { getUsers } from '../services/userServices';
 
 // Register Chart.js components
 ChartJS.register(ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
@@ -15,8 +15,10 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('http://192.168.6.63:200/api/users');
-        setUsers(response.data);
+        const response = await getUsers();
+        console.log(response);
+        
+        setUsers(response.data.internal_users);
         setLoading(false);
       } catch (err) {
         setError('Failed to fetch user data');
@@ -29,7 +31,7 @@ const AdminDashboard = () => {
 
   // Calculate insights
   const totalUsers = users.length;
-  const activeUsers = users.filter(user => user.isActive).length;
+  const activeUsers = users.filter(user => user.is_active).length;
   const inactiveUsers = totalUsers - activeUsers;
   const roleDistribution = users.reduce((acc, user) => {
     acc[user.role] = (acc[user.role] || 0) + 1;
@@ -145,7 +147,7 @@ const AdminDashboard = () => {
             <table className="w-full">
               <thead className="bg-gray-100">
                 <tr>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Employee ID</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">No</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Full Name</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Department</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Role</th>
@@ -156,11 +158,11 @@ const AdminDashboard = () => {
               <tbody>
                 {users.map((user, index) => (
                   <tr
-                    key={user.employeeId}
+                    key={index}
                     className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
                   >
-                    <td className="px-6 py-4 text-sm text-gray-600">{user.employeeId}</td>
-                    <td className="px-6 py-4 text-sm text-gray-600">{user.fullName}</td>
+                    <td className="px-6 py-4 text-sm text-gray-600">{index + 1}</td>
+                    <td className="px-6 py-4 text-sm text-gray-600">{user.full_name}</td>
                     <td className="px-6 py-4 text-sm text-gray-600">{user.department}</td>
                     <td className="px-6 py-4 text-sm text-gray-600">
                       <span
@@ -178,14 +180,14 @@ const AdminDashboard = () => {
                     <td className="px-6 py-4 text-sm text-gray-600">
                       <span
                         className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
-                          user.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                          user.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                         }`}
                       >
-                        {user.isActive ? 'Active' : 'Inactive'}
+                        {user.is_active ? 'Active' : 'Inactive'}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-600">
-                      {user.lastLogin ? new Date(user.lastLogin).toLocaleString() : 'Never'}
+                      {user.last_login ? new Date(user.last_login).toLocaleString() : 'Never'}
                     </td>
                   </tr>
                 ))}

@@ -1,10 +1,15 @@
 import { useState } from 'react';
-import axios from 'axios';
+import { CheckUser, createUser } from '../services/userServices';
 
 const CreateUser = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [userData, setUserData] = useState(null);
   const [selectedRole, setSelectedRole] = useState('');
+  const [department, setDepartment] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [email, setEmail] = useState('');
+  const [birthdate, setBirthdate] = useState('');
+  const [gender, setGender] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
@@ -14,22 +19,32 @@ const CreateUser = () => {
     setSuccess('');
 
     try {
-      const response = await axios.get(`http://192.168.6.63:2000/api/Ldap/users/by-username/${searchQuery}`);
+      const response = await CheckUser(searchQuery);
       const data = response.data;
 
       if (data && data.username) {
         setUserData({
-          employeeId: data.username,
-          department: data.department || 'Not provided', // Fallback for missing department
-          fullName: data.displayName
+          username: data.username,
+          fullName: data.displayName || 'Not provided',
+          department: data.department || 'Not provided',
+          email: data.email || '',
+          phoneNumber: data.phone_number || '',
+          birthdate: data.birthdate || '',
+          gender: data.gender || ''
         });
+        setDepartment(data.department || '');
+        setEmail(data.email || '');
+        setPhoneNumber(data.phone_number || '');
+        setBirthdate(data.birthdate || '');
+        setGender(data.gender || '');
       } else {
         setError('User not found');
         setUserData(null);
       }
     } catch (err) {
-      setError('Error searching for user');
+      setError(err.message || 'Error searching for user');
       console.error(err);
+      setUserData(null);
     }
   };
 
@@ -38,42 +53,42 @@ const CreateUser = () => {
     setError('');
     setSuccess('');
 
-    if (!userData || !selectedRole) {
-      setError('Please complete all fields');
+    if (!userData || !selectedRole || !phoneNumber) {
+      setError('Please complete all required fields: username, full name, phone number, and role');
       return;
     }
 
     try {
-      const response = await fetch('http://192.168.6.63:200/api/users', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          employeeId: userData.employeeId,
-          department: userData.department,
-          fullName: userData.fullName,
-          role: selectedRole
-        })
-      });
+      const payload = {
+        username: userData.username,
+        full_name: userData.fullName,
+        phone_number: phoneNumber,
+        department: department || undefined,
+        email: email || undefined,
+        birthdate: birthdate || undefined,
+        gender: gender || undefined,
+        role: selectedRole
+      };
 
-      if (response.ok) {
-        setSuccess('User created successfully');
-        setUserData(null);
-        setSearchQuery('');
-        setSelectedRole('');
-      } else {
-        setError('Failed to create user');
-      }
+      const response = await createUser(payload);
+      setSuccess(response.message || 'User created successfully');
+      setUserData(null);
+      setSearchQuery('');
+      setSelectedRole('');
+      setDepartment('');
+      setPhoneNumber('');
+      setEmail('');
+      setBirthdate('');
+      setGender('');
     } catch (err) {
-      setError('Error creating user');
+      setError(err || 'Error creating user');
       console.error(err);
     }
   };
 
   return (
     <div className="max-w-2xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800">Create User</h2>
+      <h2 className="text-2xl font-bold mb-6 text-gray-800">Create Internal User</h2>
 
       {/* Search Form */}
       <div className="mb-6">
@@ -82,7 +97,7 @@ const CreateUser = () => {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search user..."
+            placeholder="Search user by username..."
             className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <button
@@ -98,10 +113,10 @@ const CreateUser = () => {
       {userData && (
         <form onSubmit={handleCreateUser} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Employee ID</label>
+            <label className="block text-sm font-medium text-gray-700">Username</label>
             <input
               type="text"
-              value={userData.employeeId}
+              value={userData.username}
               readOnly
               className="mt-1 p-2 w-full border border-gray-300 rounded-md bg-gray-100"
             />
@@ -121,17 +136,62 @@ const CreateUser = () => {
             <label className="block text-sm font-medium text-gray-700">Department</label>
             <input
               type="text"
-              value={userData.department}
-              readOnly
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md bg-gray-100"
+              value={department}
+              onChange={(e) => setDepartment(e.target.value)}
+              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Role</label>
+            <label className="block text-sm font-medium text-gray-700">Phone Number *</label>
+            <input
+              type="text"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              required
+              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Birthdate</label>
+            <input
+              type="date"
+              value={birthdate}
+              onChange={(e) => setBirthdate(e.target.value)}
+              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Gender</label>
+            <select
+              value={gender}
+              onChange={(e) => setGender(e.target.value)}
+              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Select gender</option>
+              <option value="M">Male</option>
+              <option value="F">Female</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Role *</label>
             <select
               value={selectedRole}
               onChange={(e) => setSelectedRole(e.target.value)}
+              required
               className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Select a role</option>

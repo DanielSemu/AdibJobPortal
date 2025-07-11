@@ -101,23 +101,30 @@ class InternalUserView(APIView):
     """Manage internal users (username-based): register, list, and update applicant roles."""
     permission_classes = [IsAuthenticated,IsAdminRole]  # Restricted to authenticated users
 
+
     def post(self, request):
         """Register a new internal user."""
         data = request.data
         username = data.get('username')
         full_name = data.get('full_name')
-        password = data.get('password')
-        birthdate = data.get('birthdate')
         phone_number = data.get('phone_number')
+        birthdate = data.get('birthdate')
         gender = data.get('gender')
         role = data.get('role')
         email = data.get('email')
-
+        department = data.get('department')
         # Validate required fields
-        if not all([username, full_name,phone_number]):
+        if not all([username, full_name, phone_number]):
             return Response(
                 {"error": "Username, full_name, and phone number are required"},
                 status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Check if user already exists
+        if User.objects.filter(username=username).exists():
+            return Response(
+                {"error": "User already registered"},
+                status=status.HTTP_409_CONFLICT
             )
 
         # Validate role
@@ -136,6 +143,7 @@ class InternalUserView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+        
         try:
             # Prepare extra fields
             extra_fields = {
@@ -143,11 +151,12 @@ class InternalUserView(APIView):
                 'phone_number': phone_number,
                 'gender': gender,
                 'role': role or 'user',
-                'email': email
+                'email': email,
+                'department': department
             }
             extra_fields = {k: v for k, v in extra_fields.items() if v is not None}
 
-            # Create user
+            # Create user 
             user = User.objects.create_user(
                 username=username,
                 full_name=full_name,
@@ -158,6 +167,7 @@ class InternalUserView(APIView):
             response_data = {
                 'username': user.username,
                 'full_name': user.full_name,
+                'department': getattr(user, 'department', 'Not provided'),
                 'role': user.role,
                 'is_active': user.is_active,
                 'email': user.email,
@@ -175,19 +185,19 @@ class InternalUserView(APIView):
                 {"error": str(e)},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        except Exception:
+        except Exception as e:
             return Response(
-                {"error": "An error occurred during registration"},
+                {"error": f"An error occurred during registration: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-
+            
     def get(self, request):
         """Retrieve a list of all internal and applicant users."""
         try:
             # Fetch internal users
             internal_users = User.objects.all().values(
-                'username', 'full_name', 'role', 'is_active', 'email',
-                'birthdate', 'phone_number', 'gender'
+                'username', 'full_name','department', 'role', 'is_active', 'email',
+                'birthdate', 'phone_number', 'gender','last_login',
             )
             # # Fetch applicant users
             # applicant_users = ApplicantUser.objects.all().values(
