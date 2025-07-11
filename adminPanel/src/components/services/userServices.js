@@ -29,3 +29,8 @@ export const CheckUser = async (searchQuery) => {
         throw error.response?.data?.message || 'Failed to create user';
     }
 }
+
+
+export const updateUser = async () => {
+};
+
