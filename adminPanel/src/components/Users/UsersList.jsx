@@ -121,7 +121,7 @@ const UsersList = () => {
 
   return (
     <div className="max-w-7xl mx-auto py-6 bg-white shadow-lg rounded-lg mt-10">
-      <div className="flex justify-between items-center px-6 mb-4">
+      <div className="flex justify-between items-center px-6">
         <h2 className="text-2xl font-bold text-gray-800">Users</h2>
         <Link
           to="/users/add"
@@ -131,7 +131,7 @@ const UsersList = () => {
         </Link>
       </div>
 
-      <ReusableTable columns={columns} records={users} title="Users" />
+      <ReusableTable columns={columns} records={users}  />
 
       {/* View Details Modal */}
       <Modal
