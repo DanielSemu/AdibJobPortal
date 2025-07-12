@@ -89,15 +89,7 @@ const UsersList = () => {
         </div>
       )
     },
-    {
-      header: "Last Login",
-      accessor: "last_login",
-      cell: (row) => (
-        <div>
-          {row.last_login ? new Date(row.last_login).toLocaleString() : 'Never'}
-        </div>
-      )
-    },
+    
     {
       header: "Actions",
       accessor: "actions",
