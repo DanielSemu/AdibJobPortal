@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import ReusableTable from "../ui/ReausableTable";
-import { FiEye, FiEdit, FiPlus } from "react-icons/fi";
+import { FiEye, FiEdit, FiPlus, FiTrash2 } from "react-icons/fi";
 import {
   getCategories,
   updateCategory,
   createCategory,
+  deleteCategory
 } from "../services/jobsService";
 import useAuth from "../../hooks/useAuth";
+import ConfirmModal from "../ui/ConfirmModal";
 
 // Same options as your Django model
 const ICON_OPTIONS = [
@@ -25,6 +27,7 @@ const Categories = () => {
   const [editedIcon, setEditedIcon] = useState("");
   const [newCategoryName, setNewCategoryName] = useState("");
   const [newIcon, setNewIcon] = useState("");
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const { userProfile } = useAuth();
 
@@ -42,6 +45,23 @@ const Categories = () => {
     setEditedName(row.name);
     setEditedIcon(row.iconName || "");
     setModalType("edit");
+  };
+  const handleDelete = (row) => {
+    setSelectedCategory(row);
+    setIsDeleteModalOpen(true);
+  };
+  const confirmDelete = async () => {
+    if (selectedCategory) {
+      await deleteCategory(selectedCategory.id);
+      fetchCategories();
+    }
+    setIsDeleteModalOpen(false);
+    setSelectedCategory(null);
+  };
+
+  const cancelDelete = () => {
+    setIsDeleteModalOpen(false);
+    setSelectedCategory(null);
   };
 
   const handleDetailView = (row) => {
@@ -90,13 +110,18 @@ const Categories = () => {
       header: "Actions",
       accessor: "actions",
       cell: (row) => (
-        <div className="flex gap-2">
-          <button onClick={() => handleDetailView(row)} className="btn">
+        <div className="flex gap-3">
+          <button onClick={() => handleDetailView(row)} className="btn text-primary">
             <FiEye />
           </button>
           {userProfile.role === "hr_maker" && (
-            <button onClick={() => handleEdit(row)} className="btn">
+            <button onClick={() => handleEdit(row)} className="btn text-yellow-600">
               <FiEdit />
+            </button>
+          )}
+          {userProfile.role === "hr_maker" && (
+            <button onClick={() => handleDelete(row)} className="btn text-red-600">
+              <FiTrash2 />
             </button>
           )}
         </div>
@@ -228,6 +253,12 @@ const Categories = () => {
                 </form>
               </div>
             )}
+            <ConfirmModal
+              isOpen={isDeleteModalOpen}
+              message={`Are you sure you want to delete a Category "${selectedCategory?.name}"?`}
+              onConfirm={confirmDelete}
+              onCancel={cancelDelete}
+            />
           </div>
         </div>
       )}

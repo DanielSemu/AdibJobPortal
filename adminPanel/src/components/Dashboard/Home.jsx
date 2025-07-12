@@ -153,7 +153,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-4 sm:px-6 lg:px-8">
-      <h1 className="text-3xl font-bold text-center text-blue-800 mb-10">
+      <h1 className="text-3xl font-bold text-center text-primary mb-10">
         Vacancy Management Dashboard
       </h1>
 
@@ -177,7 +177,7 @@ export default function Home() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
         {/* Bar Chart */}
         <div className="bg-white p-6 rounded-xl shadow">
-          <h2 className="text-xl font-semibold mb-4 text-blue-700">
+          <h2 className="text-xl font-semibold mb-4 text-primary">
             Applicants Per Active Vacancy
           </h2>
           <ResponsiveContainer width="100%" height={350}>
@@ -197,7 +197,7 @@ export default function Home() {
 
         {/* Pie Chart */}
         <div className="bg-white p-6 rounded-xl shadow">
-          <h2 className="text-xl font-semibold mb-4 text-blue-700">
+          <h2 className="text-xl font-semibold mb-4 text-primary">
             Application Status Breakdown
           </h2>
           <ResponsiveContainer width="100%" height={300}>

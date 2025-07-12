@@ -1,139 +1,148 @@
 import axios from 'axios';
 import axiosInstance, { BASE_URL } from './axiosInstance';
-import {  setAccessToken } from './tokenStorage';
-
+import { setAccessToken } from './tokenStorage';
 
 let isRefreshing = false;
-let refreshSubscribers = [];  // Queue of requests that are waiting for a refreshed token
+let refreshSubscribers = [];
+
 
 export const registerUser = async (formData) => {
-    try {
-        const { full_name, email, birthdate, phone_number, password } = formData;
-        const response = await axios.post(`${BASE_URL}/auth/register/`, {
-            full_name, email, birthdate, phone_number, password
-        });
-        return response.data;  // Return success response data
-    } catch (error) {
-        if (error.response) {
-            // Return error message and status code to the caller
-            return {
-                success: false,
-                status: error.response.status,
-                message: error.response.data.error || 'Registration failed. Please try again.'
-            };
-        } else if (error.request) {
-            return {
-                success: false,
-                status: null,
-                message: 'No response from server. Please check your network connection.'
-            };
-        } else {
-            return {
-                success: false,
-                status: null,
-                message: 'An unexpected error occurred.'
-            };
-        }
+  try {
+    const { full_name, email, birthdate, phone_number, password } = formData;
+    const response = await axios.post(
+      `${BASE_URL}/auth/register/`,
+      { full_name, email, birthdate, phone_number, password },
+      { timeout: 5000 }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Registration error:', error);
+    if (error.response) {
+      return {
+        success: false,
+        status: error.response.status,
+        message: error.response.data.error || 'Registration failed. Please try again.',
+      };
+    } else if (error.request) {
+      return {
+        success: false,
+        status: null,
+        message: 'No response from server. Please check your network connection.',
+      };
+    } else {
+      return {
+        success: false,
+        status: null,
+        message: 'An unexpected error occurred.',
+      };
     }
+  }
 };
 
 export const login = async (username, password) => {
-    try {
-        
-        const response = await axios.post(
-            `${BASE_URL}/auth/token/`, 
-            { username, password }, 
-            {
-                withCredentials: true, // Ensures cookies are sent with the request
-            }
-        );
-        console.log(response.data);
-        
-        const { access } = response.data;  // Destructure access token from the response
-        setAccessToken(access)
-        
-        return response;  
-    } catch (error) {
-        return error.response
-    }
+  try {
+    // console.log('Attempting login...');
+    const response = await axios.post(
+      `${BASE_URL}/auth/token/`,
+      { username, password },
+      { withCredentials: true, timeout: 5000 }
+    );
+    const { access } = response.data;
+    // console.log('Login successful, access token:', access);
+    setAccessToken(access);
+
+    // console.log('Fetching user profile after login...');
+    const userData = await profile();
+    // console.log('User profile fetched after login:', userData);
+    localStorage.setItem('userProfile', JSON.stringify(userData));
+
+    return response;
+  } catch (error) {
+    console.error('Login error:', error);
+    return error.response || { success: false, message: 'Login failed. Please try again.' };
+  }
 };
 
 export const profile = async () => {
-    const response = await axiosInstance.get('/auth/profile/');
+  try {
+    // console.log('Fetching profile...');
+    const response = await axiosInstance.get('/auth/profile/', { timeout: 5000 });
     return response.data;
+  } catch (error) {
+    console.error('Profile fetch error:', error);
+    throw error; // Let the caller handle the error
+  }
 };
 
 export const refreshToken = async () => {
-    if (isRefreshing) {
-        return new Promise((resolve, reject) => {
-            refreshSubscribers.push({ resolve, reject });
-        });
-    }
+  if (isRefreshing) {
+    return new Promise((resolve, reject) => {
+      refreshSubscribers.push({ resolve, reject });
+    });
+  }
 
-    isRefreshing = true;
-    try {
-        const response = await axios.post(`${BASE_URL}/auth/token/refresh/`, {}, { withCredentials: true });
-        const newAccessToken = response.data.access;
-        setAccessToken(newAccessToken);
+  isRefreshing = true;
+  try {
+    // console.log('Refreshing token...');
+    const response = await axios.post(
+      `${BASE_URL}/auth/token/refresh/`,
+      {},
+      { withCredentials: true, timeout: 5000 }
+    );
+    const newAccessToken = response.data.access;
+    // console.log('Token refresh successful:', newAccessToken);
+    setAccessToken(newAccessToken);
 
-        refreshSubscribers.forEach(({ resolve }) => resolve(newAccessToken));
-        refreshSubscribers = [];
+    refreshSubscribers.forEach(({ resolve }) => resolve(newAccessToken));
+    refreshSubscribers = [];
 
-        return newAccessToken;
-    } catch (error) {
-        refreshSubscribers.forEach(({ reject }) => reject(error));
-        refreshSubscribers = [];
-        throw error;
-    } finally {
-        isRefreshing = false;
-    }
+    return newAccessToken;
+  } catch (error) {
+    console.error('Token refresh error:', error);
+    refreshSubscribers.forEach(({ reject }) => reject(error));
+    refreshSubscribers = [];
+    throw error;
+  } finally {
+    isRefreshing = false;
+  }
 };
 
 export const sendOTP = async (phone_number, otpCode, purpose) => {
-    
-    let message = ''; // Use let instead of const so we can reassign it
-    
-    if (purpose === "application") {
-        message = `Your Verification Code is: ${otpCode}`;
-    } else {
-        message = `Your OTP code is: ${otpCode}`;
-    }
+  let message = purpose === 'application' ? `Your Verification Code is: ${otpCode}` : `Your OTP code is: ${otpCode}`;
+  const encodedMessage = encodeURIComponent(message);
+  const url = `http://192.168.6.27:9501/api?action=sendmessage&username=Test&password=Adib@123&recipient=${phone_number}&messagetype=SMS:TEXT&messagedata=${encodedMessage}`;
 
-  
-    const encodedMessage = encodeURIComponent(message);
+  try {
+    const response = await axios.get(url, { timeout: 5000 });
+    console.log('OTP sent:', response);
+    return { success: true };
+  } catch (error) {
+    console.error('Error sending OTP:', error);
+    return { success: false, message: 'Failed to send OTP. Please try again.' };
+  }
+};
 
-    const url = `http://192.168.6.27:9501/api?action=sendmessage&username=Test&password=Adib@123&recipient=${phone_number}&messagetype=SMS:TEXT&messagedata=${encodedMessage}`;
-  
-    try {
-      const response = await axios.get(url);
-      console.log(response);
-        return { success: true };
-    } catch (error) {
-      console.error("Error sending OTP:", error);
-      return { success: true };
-    }
-  };
+export const getMyApplications = async () => {
+  try {
+    const response = await axiosInstance.get('/api/my_applications/', { timeout: 5000 });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching applications:', error);
+    return [];
+  }
+};
 
-  export const getMyApplications = async () => {
-    try {
-        const response = await axiosInstance.get("/api/my_applications/");
-        return response.data;  // Assuming response.data contains the list of applications
-    } catch (error) {
-        // Log the full error to get better debugging information
-        console.error("Error fetching applications:", error);
-        // Return an empty array or null in case of error to avoid breaking the app
-        return [];
-    }
-}
-
-  
-
-export const logout =async ()=>{
-    try {
-        const response=await axiosInstance.post('/auth/logout/')
-        setAccessToken(null)
-        return response
-    } catch (error) {
-        console.error("Logout error", error)    
-    }
-}
+export const logout = async () => {
+  try {
+    // console.log('Logging out...');
+    const response = await axiosInstance.post('/auth/logout/');
+    setAccessToken('');
+    localStorage.removeItem('userProfile');
+    // console.log('Logout successful');
+    return response;
+  } catch (error) {
+    console.error('Logout error:', error);
+    setAccessToken('');
+    localStorage.removeItem('userProfile');
+  }
+};

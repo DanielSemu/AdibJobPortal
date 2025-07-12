@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 
+// eslint-disable-next-line react/prop-types
 const ApplicantStats = ({ applicant = [], selectedWorkPlace }) => {
+  
   const [stats, setStats] = useState({
     total: 0,
     gender: { male: 0, female: 0 },
@@ -66,13 +68,14 @@ const ApplicantStats = ({ applicant = [], selectedWorkPlace }) => {
 
   useEffect(() => {
     if (selectedWorkPlace) extractStats();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [applicant, selectedWorkPlace]);
 
   return (
     <div className="bg-gray-50 p-4 rounded-md shadow space-y-4 text-sm text-gray-800">
       <div className="font-semibold text-lg text-gray-700">
         Total Number Of Applicants: {" "}
-        <span className="font-bold text-blue-600">{stats.total}</span>
+        <span className="font-bold text-primary">{stats.total}</span>
       </div>
 
       <div className="grid sm:grid-cols-2 gap-2">

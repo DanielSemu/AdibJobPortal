@@ -2,16 +2,22 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   getSingleApplicant,
+  removeApplicant,
   updateApplicantStatus,
 } from "../services/jobsService";
 import { BASE_URL } from "../../api/axiosInstance";
 import ConfirmModal from "../ui/ConfirmModal";
+import { showErrorToast,showSuccessToast } from "../../utils/toastUtils";
+import RemoveModal from "./SelectedApplicant/RemoveModal";
+
 
 const AuthorizeDocument = () => {
   const { id } = useParams();
   const [applicant, setApplicant] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
   const [pendingStatus, setPendingStatus] = useState(null);
+  const [remark, setRemark] = useState("");
 
   const navigate = useNavigate();
 
@@ -39,7 +45,7 @@ const AuthorizeDocument = () => {
     if (!pendingStatus) return;
     try {
       await updateApplicantStatus(id, pendingStatus);
-      navigate("/accepted_applicants");
+      navigate("/verify_applicants");
     } catch (error) {
       console.error("Failed to update status", error);
     } finally {
@@ -52,15 +58,40 @@ const AuthorizeDocument = () => {
     setPendingStatus(status);
     setIsModalOpen(true);
   };
+  const openRejectModal=()=>{
+    setIsRemoveModalOpen(true)
+  }
 
   const handleCancel = () => {
     setIsModalOpen(false);
     setPendingStatus(null);
+    setIsRemoveModalOpen(false)
   };
+
+  const handleConfirmRemove = async () => {
+      if (remark !== "") {
+        try {
+          await removeApplicant(id, remark);
+  
+          // ✅ Update local applicant list
+          navigate('/verify_applicants')
+  
+          showSuccessToast("Applicant removed successfully");
+          setIsRemoveModalOpen(false);
+          setRemark("");
+        } catch (error) {
+          console.error("Removal failed", error);
+          showErrorToast("Failed to remove applicant");
+        }
+      } else {
+        showErrorToast("You Must add a remark to remove an applicant");
+      }
+    };
+  
 
   return (
     <div className="w-full px-4 md:px-10 py-8 bg-gray-100 min-h-screen">
-      <h2 className="text-3xl font-bold mb-8 text-blue-800 text-center">
+      <h2 className="text-3xl font-bold mb-8 text-primary text-center">
         Authorize Document
       </h2>
 
@@ -209,7 +240,7 @@ const AuthorizeDocument = () => {
               Authorize
             </button>
             <button
-              onClick={() => openConfirmModal("Rejected")}
+              onClick={() => openRejectModal()}
               className="bg-red-600 text-white px-8 py-3 rounded-lg hover:bg-red-700 transition"
             >
               Reject
@@ -220,6 +251,14 @@ const AuthorizeDocument = () => {
             message={`Are you sure you want to ${pendingStatus?.toLowerCase()} this applicant?`}
             onConfirm={handleConfirm}
             onCancel={handleCancel}
+          />
+          
+          <RemoveModal
+            isOpen={isRemoveModalOpen}
+            onClose={() => setIsRemoveModalOpen(false)}
+            onConfirm={handleConfirmRemove}
+            remark={remark}
+            setRemark={setRemark}
           />
         </div>
       ) : (

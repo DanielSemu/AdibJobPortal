@@ -57,6 +57,10 @@ export const createCategory = async (categoryData) => {
   const response= await axiosInstance.post('/jobs/categories/',categoryData);
   return response.data
 }
+export const deleteCategory = async (id)=>{
+  const response= await axiosInstance.delete(`/jobs/categories/${id}/`);
+  return response.data
+}
 
 export const getApplications = async () => {
   const response = await axiosInstance.get('/applications/admin_applicants/');

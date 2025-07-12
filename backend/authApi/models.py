@@ -29,6 +29,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=150, unique=True)  # <- NEW
     email = models.EmailField(unique=False, null=True, blank=True)  # <- optional now
     full_name = models.CharField(max_length=255)
+    department = models.CharField(max_length=255, null=True, blank=True)
     birthdate = models.DateField(null=True, blank=True)
     phone_number = models.CharField(max_length=15)
 

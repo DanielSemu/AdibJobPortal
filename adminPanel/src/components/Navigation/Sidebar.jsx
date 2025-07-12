@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { AiFillDashboard } from "react-icons/ai";
-import { FaUsers, FaRegFileAlt, FaInbox, FaSignOutAlt } from "react-icons/fa";
+import { FaUsers, FaRegFileAlt, FaSignOutAlt } from "react-icons/fa";
 import {
   MdOutlineWork,
   MdMenu,
@@ -18,6 +18,7 @@ const Sidebar = () => {
   const [openDropdown, setOpenDropdown] = useState(null); // Track which dropdown is open
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { userProfile, setUserProfile } = useAuth();
+  
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -82,8 +83,7 @@ const Sidebar = () => {
             </li>
 
             {/* Vacancies Dropdown */}
-            {(userProfile.role === "hr_maker" ||
-              userProfile.role === "hr_checker") && (
+            {userProfile && (userProfile.role === "hr_maker" || userProfile.role === "hr_checker") && (
               <>
                 <li>
                   <button
@@ -212,7 +212,7 @@ const Sidebar = () => {
             )}
 
             {/* Inbox */}
-            <li>
+            {/* <li>
               <a
                 href="#"
                 className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
@@ -223,18 +223,18 @@ const Sidebar = () => {
                   3
                 </span>
               </a>
-            </li>
+            </li> */}
 
             {/* Users (only for admin) */}
-            {userProfile.role === "admin" && (
+            {userProfile && (userProfile.role === "admin" ) && (
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/users"
                   className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
                 >
                   <FaUsers className="w-5 h-5 text-gray-500" />
                   <span className="ms-3">Users</span>
-                </a>
+                </Link>
               </li>
             )}
 
@@ -256,6 +256,14 @@ const Sidebar = () => {
               </button>
               {openDropdown === "profile" && (
                 <ul className="py-2 space-y-2 pl-6">
+                  <li>
+                    <a
+                      href="#"
+                      className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
+                    >
+                      Role={userProfile.role}
+                    </a>
+                  </li>
                   <li>
                     <a
                       href="#"

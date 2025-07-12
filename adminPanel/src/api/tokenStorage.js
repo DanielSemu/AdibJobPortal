@@ -1,8 +1,9 @@
+export const getAccessToken = () => localStorage.getItem('accessToken') || '';
 
-let accessToken=''
-
-export const getAccessToken =()=>accessToken
-
-export const setAccessToken =token=>{
-    accessToken=token
-}
+export const setAccessToken = (token) => {
+  if (token) {
+    localStorage.setItem('accessToken', token);
+  } else {
+    localStorage.removeItem('accessToken');
+  }
+};

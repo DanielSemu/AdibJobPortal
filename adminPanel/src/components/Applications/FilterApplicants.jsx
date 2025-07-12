@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getApplicantsByJob, getJobs } from "../services/jobsService";
-import { showSuccessToast } from "../../utils/toastUtils";
+// import { showSuccessToast } from "../../utils/toastUtils";
 import FilterForm from "./FilterApplications/FilterForm";
 import ApplicantStats from "./FilterApplications/ApplicantStats";
 import SelectedApplicants from "./SelectedApplicants";
@@ -13,7 +13,6 @@ const FilterApplicants = () => {
   const [selectedWorkPlace, setSelectedWorkPlace] = useState("");
   const [applicant, setApplicant] = useState([]);
 
-  const [filteredApplicants, setFilteredApplicants] = useState([]);
   const triggerRefresh = () => {
     setRefreshKey((prev) => prev + 1);
   };
@@ -29,7 +28,7 @@ const FilterApplicants = () => {
 
   const handleOpenClick = async () => {
     if (selectedJobId) {
-      showSuccessToast(`Job ID ${selectedJobId} selected!`);
+      // showSuccessToast(`Job ID ${selectedJobId} selected!`);
 
       const selectedWork = jobs.find((res) => res.id == selectedJobId);
       if (selectedWork && selectedWork.location) {
@@ -43,8 +42,8 @@ const FilterApplicants = () => {
         setSelectedWorkPlace("");
       }
 
-      const applicant = await getApplicantsByJob(selectedJobId);
-      const app = applicant.filter((res) => res.status === "Pending");
+      const applicants = await getApplicantsByJob(selectedJobId);
+      const app = applicants.filter((res) => res.status === "Pending");
       setApplicant(app);
     } else {
       setWorkPlace([]);
@@ -68,7 +67,7 @@ const FilterApplicants = () => {
         >
           <option value="">-- Select a job --</option>
           {jobs.map((job) => (
-            <option key={job._id} value={job.id}>
+            <option key={job.id} value={job.id}>
               {job.title}
             </option>
           ))}
@@ -79,7 +78,7 @@ const FilterApplicants = () => {
           disabled={!selectedJobId}
           className={`p-2 mb-4 rounded-md text-white ${
             selectedJobId
-              ? "bg-blue-600 hover:bg-blue-700"
+              ? "bg-primary hover:bg-blue-600"
               : "bg-gray-400 cursor-not-allowed"
           }`}
         >
@@ -104,7 +103,7 @@ const FilterApplicants = () => {
         {/* Right Section */}
         <div className="w-full lg:w-1/2">
           <div className="w-full border-2  border-gray-300 rounded p-2 bg-gray-300 flex justify-between items-center">
-            Statistical Information's
+            Statistical Informations
             <select
               value={selectedWorkPlace}
               onChange={(e) => setSelectedWorkPlace(e.target.value)}

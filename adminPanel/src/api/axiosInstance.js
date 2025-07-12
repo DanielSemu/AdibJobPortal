@@ -1,61 +1,54 @@
 import axios from 'axios';
 import { getAccessToken, setAccessToken } from './tokenStorage';
 import { refreshToken } from './auth';
-// export const BASE_URL = 'http://localhost:8000';
-// export const BASE_URL = 'http://192.168.75.222:8000';
-export const BASE_URL = 'http://192.168.2.32:8000';
 
-
-
-export const refreshAxiosInstance = axios.create({
-    baseURL: BASE_URL,
-});
+export const BASE_URL = import.meta.env.VITE_API_URL || 'http://192.168.2.32:8000';
 
 const axiosInstance = axios.create({
-    baseURL: BASE_URL,
-    withCredentials: true, 
-});
-export const loginAxiosInstance = axios.create({
-    baseURL: BASE_URL,
-    withCredentials: true, // Ensures cookies are sent with each request
+  baseURL: BASE_URL,
+  withCredentials: true,
+  timeout: 5000, // 5-second timeout for all requests
 });
 
-// Request interceptor to include the access token in headers
 axiosInstance.interceptors.request.use(
-    (config) => {
-        const token = getAccessToken();
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-    },
-    (error) => Promise.reject(error)
+  (config) => {
+    const token = getAccessToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    console.error('Request interceptor error:', error);
+    return Promise.reject(error);
+  }
 );
 
-// Response interceptor to handle 401 error and refresh token
 axiosInstance.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-        const originalRequest = error.config;
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
 
-        if (error.response?.status === 401 && !originalRequest._retry) {
-            originalRequest._retry = true;
-            try {
-                const newAccessToken = await refreshToken();
-                if (newAccessToken) {
-                    setAccessToken(newAccessToken);
-                    originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-                    return axiosInstance(originalRequest); // Retry original request
-                }
-            } catch (refreshError) {
-                console.error('Token refresh failed:', refreshError);
-                // alert("sfds")
-                // window.location.href = '/login'; // Redirect to login page
-            }
-        }
-
-        return Promise.reject(error);
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      try {
+        // console.log('Attempting to refresh token due to 401 error...');
+        const newAccessToken = await refreshToken();
+        setAccessToken(newAccessToken);
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        return axiosInstance(originalRequest);
+      } catch (refreshError) {
+        console.error('Token refresh failed:', refreshError);
+        setAccessToken('');
+        localStorage.removeItem('userProfile');
+        window.location.href = '/login';
+        return Promise.reject(refreshError);
+      }
     }
+
+    console.error('Response interceptor error:', error);
+    return Promise.reject(error);
+  }
 );
 
 export default axiosInstance;

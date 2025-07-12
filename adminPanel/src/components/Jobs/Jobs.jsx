@@ -53,6 +53,7 @@ const Jobs = () => {
 
   const allowedRoles = ["hr_checker"];
   const columns = [
+    { header: "Vacancy No", accessor: "vacancy_number" },
     { header: "Job Title", accessor: "title" },
     { header: "Location", accessor: "location" },
     { header: "Type", accessor: "job_type" },

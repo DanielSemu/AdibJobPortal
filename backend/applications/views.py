@@ -436,6 +436,7 @@ def generate_applicants_pdf(request):
     return HttpResponse("PDF generation failed", status=500)
 
 
+
 class ApplicantReportAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -445,9 +446,9 @@ class ApplicantReportAPIView(APIView):
 
         # Filter applicants based on status and job_id
         if job_param:
-            applicants = Applicant.objects.filter(status=status_param, job_id=job_param)
+            applicants = Applicant.objects.filter(status=status_param, job_id=job_param).prefetch_related('experiences')
         else:
-            applicants = Applicant.objects.filter(status=status_param)
+            applicants = Applicant.objects.filter(status=status_param).prefetch_related('experiences')
 
         # Fetch the job if job_param is provided
         job = None
@@ -456,6 +457,27 @@ class ApplicantReportAPIView(APIView):
                 job = Job.objects.get(id=job_param)
             except Job.DoesNotExist:
                 return Response({"error": "Job not found."}, status=404)
+
+        # Add calculated experience fields to each applicant
+        for applicant in applicants:
+            banking_exp = 0
+            non_banking_exp = 0
+
+            for exp in applicant.experiences.all():
+                from_date = exp.from_date
+                to_date = exp.to_date or date.today()
+
+                duration_days = (to_date - from_date).days
+                years = round(duration_days / 365.25, 2)
+
+                if exp.banking_experience:
+                    banking_exp += years
+                else:
+                    non_banking_exp += years
+
+            applicant.total_banking_experience = round(banking_exp, 2)
+            applicant.total_non_banking_experience = round(non_banking_exp, 2)
+            applicant.total_experience = round(banking_exp + non_banking_exp, 2)
 
         # Render HTML using template
         template = get_template("report.html")
@@ -472,7 +494,8 @@ class ApplicantReportAPIView(APIView):
             return HttpResponse(result.getvalue(), content_type='application/pdf')
 
         return Response({"error": "PDF generation failed"}, status=500)
-
+    
+    
 class ExportEmployeeDataView(APIView):
     permission_classes = [IsAuthenticated]
 

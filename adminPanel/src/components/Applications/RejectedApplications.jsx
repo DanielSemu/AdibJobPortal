@@ -56,7 +56,7 @@ const RejectedApplications = () => {
       cell: (row) => (
         <button
           onClick={() => handleView(row)}
-          className="text-blue-600 hover:text-blue-800"
+          className="text-primary hover:text-blue-600"
         >
           <FaEye />
         </button>

@@ -16,7 +16,7 @@ const MessageModal = ({ message, setMessage, onClose, onSend, onTest }) => (
                 <button className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600" onClick={onTest}>
                     Test
                 </button>
-                <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" onClick={onSend}>
+                <button className="bg-primary text-white px-4 py-2 rounded hover:bg-blue-600" onClick={onSend}>
                     Send
                 </button>
             </div>
