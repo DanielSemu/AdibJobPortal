@@ -220,15 +220,17 @@ class InternalUserView(APIView):
             )
 
     def put(self, request):
-        """Update the role of an applicant user."""
+        """Update the role, department, and active status of an applicant user."""
         data = request.data
         username = data.get('username')
         new_role = data.get('role')
+        department = data.get("department")
+        is_active = data.get("status")  # Expected to be True/False or equivalent
 
         # Validate required fields
         if not username or not new_role:
             return Response(
-                {"error": "Username and role are required"},
+                {"error": "Username and role are required."},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -241,35 +243,46 @@ class InternalUserView(APIView):
             )
 
         try:
-            # Find applicant user by email
+            # Find user by username
             user = User.objects.get(username=username)
+
+            # Update fields
             user.role = new_role
+            if department is not None:
+                user.department = department
+            if is_active is not None:
+                user.is_active = bool(is_active)
+
             user.save()
 
-            # Prepare response data
+            # Prepare response
             response_data = {
                 'email': user.email,
                 'full_name': user.full_name,
                 'role': user.role,
                 'is_active': user.is_active,
+                'department': getattr(user, 'department', None),
                 'birthdate': user.birthdate,
                 'phone_number': user.phone_number,
-                'gender': user.gender
+                'gender': user.gender,
             }
+
             return Response(
-                {"message": "User role updated successfully", "data": response_data},
+                {"message": "User updated successfully", "data": response_data},
                 status=status.HTTP_200_OK
             )
+
         except User.DoesNotExist:
             return Response(
-                {"error": "User with this username not found"},
+                {"error": "User with this username not found."},
                 status=status.HTTP_404_NOT_FOUND
             )
         except Exception as e:
             return Response(
-                {"error": f"An error occurred while updating role: {str(e)}"},
+                {"error": f"An error occurred: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
 
 class InternalUserProfileView(APIView):
     """Retrieve profile details for internal users."""

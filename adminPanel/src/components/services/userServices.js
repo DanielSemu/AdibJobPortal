@@ -31,6 +31,12 @@ export const CheckUser = async (searchQuery) => {
 }
 
 
-export const updateUser = async () => {
-};
 
+export const updateUser = async (userData) => {
+  try {
+    const response = await axiosInstance.put('/auth/user/', userData); // Adjust endpoint as needed
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { error: 'Something went wrong' };
+  }
+};
