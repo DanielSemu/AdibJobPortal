@@ -13,6 +13,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { logout } from "../../api/auth";
 import useAuth from "../../hooks/useAuth";
 import logo from "../../assets/logo47.png";
+import { FiUser } from "react-icons/fi";
 
 const Sidebar = () => {
   const [openDropdown, setOpenDropdown] = useState(null); // Track which dropdown is open
@@ -257,21 +258,16 @@ const Sidebar = () => {
               {openDropdown === "profile" && (
                 <ul className="py-2 space-y-2 pl-6">
                   <li>
+
                     <a
                       href="#"
-                      className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
+                      className="flex items-center p-2 gap-2 text-gray-900 rounded-lg hover:bg-gray-100"
                     >
+                      <FiUser/>
                       Role={userProfile.role}
                     </a>
                   </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
-                    >
-                      Profile
-                    </a>
-                  </li>
+                 
                   <li>
                     <button
                       onClick={handleLogout}

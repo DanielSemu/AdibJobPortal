@@ -149,10 +149,10 @@ const AdminDashboard = () => {
                 <tr>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">No</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Full Name</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Username</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Department</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Role</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Status</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Last Login</th>
                 </tr>
               </thead>
               <tbody>
@@ -163,6 +163,7 @@ const AdminDashboard = () => {
                   >
                     <td className="px-6 py-4 text-sm text-gray-600">{index + 1}</td>
                     <td className="px-6 py-4 text-sm text-gray-600">{user.full_name}</td>
+                    <td className="px-6 py-4 text-sm text-gray-600">{user.username}</td>
                     <td className="px-6 py-4 text-sm text-gray-600">{user.department}</td>
                     <td className="px-6 py-4 text-sm text-gray-600">
                       <span
@@ -186,9 +187,7 @@ const AdminDashboard = () => {
                         {user.is_active ? 'Active' : 'Inactive'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-600">
-                      {user.last_login ? new Date(user.last_login).toLocaleString() : 'Never'}
-                    </td>
+                    
                   </tr>
                 ))}
               </tbody>

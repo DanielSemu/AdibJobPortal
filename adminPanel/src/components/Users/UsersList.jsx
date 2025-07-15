@@ -43,32 +43,33 @@ const UsersList = () => {
     setIsEditModalOpen(true);
   };
 
-  const handleEditSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setSuccess('');
+ const handleEditSubmit = async (e) => {
+  e.preventDefault();
+  setError('');
+  setSuccess('');
 
-    if (!editForm.role) {
-      setError('Role is required');
-      return;
-    }
+  if (!editForm.role) {
+    setError('Role is required');
+    return;
+  }
 
-    try {
-      const payload = {
-        username: selectedUser.username,
-        department: editForm.department || undefined,
-        is_active: editForm.is_active,
-        role: editForm.role
-      };
-      await updateUser(payload);
-      setSuccess('User updated successfully');
-      setIsEditModalOpen(false);
-      fetchUsers(); // Refresh user list
-    } catch (err) {
-      setError(err || 'Failed to update user');
-      console.error(err);
-    }
-  };
+  try {
+    const payload = {
+      username: selectedUser.username,
+      department: editForm.department || undefined,
+      status: editForm.is_active, // Use 'status' instead of 'is_active'
+      role: editForm.role
+    };
+
+    await updateUser(payload);
+    setSuccess('User updated successfully');
+    setIsEditModalOpen(false);
+    fetchUsers(); // Refresh the list
+  } catch (err) {
+    setError(err?.response?.data?.error || 'Failed to update user');
+    console.error(err);
+  }
+};
 
   const columns = [
     { header: "Full Name", accessor: "full_name" },
@@ -88,15 +89,7 @@ const UsersList = () => {
         </div>
       )
     },
-    {
-      header: "Last Login",
-      accessor: "last_login",
-      cell: (row) => (
-        <div>
-          {row.last_login ? new Date(row.last_login).toLocaleString() : 'Never'}
-        </div>
-      )
-    },
+    
     {
       header: "Actions",
       accessor: "actions",
