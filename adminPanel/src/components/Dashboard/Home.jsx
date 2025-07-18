@@ -190,7 +190,7 @@ export default function Home() {
               />
               <YAxis />
               <Tooltip />
-              <Bar dataKey="applicants" fill="#3b82f6" />
+              <Bar dataKey="applicants" fill="#007ddb" />
             </BarChart>
           </ResponsiveContainer>
         </div>
