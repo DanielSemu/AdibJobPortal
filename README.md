@@ -33,6 +33,7 @@ Welcome to the official repository of the **Job Portal for Addis Bank S.C.** –
 ---
 
 ## 📂 Project Structure
+```bash 
 AddisBankJobPortal/
 ├── backend/ # Django backend
 │ ├── manage.py
@@ -45,7 +46,7 @@ AddisBankJobPortal/
 │ ├── src/
 │ └── ...
 ├── README.md # This file
-
+```
 
 
 ---
