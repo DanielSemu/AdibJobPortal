@@ -24,20 +24,26 @@ Welcome to the official repository of the **Job Portal for Addis Bank S.C.** –
 
 | Layer       | Technology             |
 |-------------|------------------------|
-| Frontend    | React (Vite or CRA)    |
-| Admin Panel | React (Vite or CRA)    |
+| Frontend    | React (Vite)           |
+| Admin Panel | React (Vite)           |
 | Backend     | Django + Django REST Framework |
 | Database    | PostgreSQL / SQLite    |
-| Others      | Axios, CSS3, HTML5     |
+| Others      | Axios, tailwindcss, HTML5     |
 
 ---
 
 ## 📂 Project Structure
 ```bash 
-AddisBankJobPortal/
+AdibJobPortal/
 ├── backend/ # Django backend
+│ ├── applications
+│ ├── authApi/
+│ ├── backend/
+│ ├── jobs/
+│ ├── media/
+│ ├── resumes/
+│ ├── templates/
 │ ├── manage.py
-│ ├── jobportal/
 │ └── ...
 ├── frontend/ # User-facing React app
 │ ├── src/
@@ -56,8 +62,8 @@ AddisBankJobPortal/
 ### 📦 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/addis-bank-job-portal.git
-cd addis-bank-job-portal
+git clone https://github.com/DanielSemu/AdibJobPortal.git
+cd AdibJobPortal
 
 ```
 ## 🐍 2. Setup Django Backend
