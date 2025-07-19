@@ -116,7 +116,7 @@ Daniel Semu - GitHub | LinkedIn
 This project is licensed under the MIT License.
 
 ## 📬 Contact
-If you have questions or feedback, please reach out at your-email@example.com or open an issue in the repository.
+If you have questions or feedback, please reach out at danielsemu06@gmail.com or open an issue in the repository.
 
 ```bash
 
