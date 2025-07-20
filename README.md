@@ -110,7 +110,7 @@ Set up environment variables in each frontend folder:
 REACT_APP_API_BASE_URL=http://127.0.0.1:8000/api/
 ```
 ## 👥 Author
-Daniel Semu - GitHub | LinkedIn
+Daniel Semu - GitHub | LinkedIn | website
 
 
 ## 📄 License
