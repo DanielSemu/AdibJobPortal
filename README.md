@@ -15,6 +15,7 @@ Welcome to the official repository of the **Job Portal for Addis Bank S.C.** –
 - 📄 Submit and track job applications
 - 🗂️ Admin dashboard to manage jobs and applicants
 - 🔍 Filter, search, and view applicant details
+- 🔍 Download Accepted Applicants Profile
 - 📧 Email notifications (optional)
 - 🔐 Secure authentication and authorization
 
@@ -116,7 +117,7 @@ Set up environment variables in each frontend folder:
 REACT_APP_API_BASE_URL=http://127.0.0.1:8000/api/
 ```
 ## 👥 Author
-Daniel Semu - GitHub | LinkedIn
+Daniel Semu - GitHub | LinkedIn | website
 
 
 ## 📄 License
