@@ -15,6 +15,7 @@ Welcome to the official repository of the **Job Portal for Addis Bank S.C.** –
 - 📄 Submit and track job applications
 - 🗂️ Admin dashboard to manage jobs and applicants
 - 🔍 Filter, search, and view applicant details
+- 🔍 Download Accepted Applicants Profile
 - 📧 Email notifications (optional)
 - 🔐 Secure authentication and authorization
 
