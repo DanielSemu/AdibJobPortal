@@ -5,7 +5,7 @@ Welcome to the official repository of the **Job Portal for Addis Bank S.C.** –
 - A public-facing job portal for applicants
 - A secure admin panel for HR staff
 - A RESTful backend API for data management
-
+dep
 ---
 
 ## 🚀 Features
