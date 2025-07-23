@@ -6,6 +6,8 @@ from rest_framework import status
 from django.contrib.auth.hashers import make_password, check_password
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
+
+from backend import settings
 from .models import ApplicantUser
 from .backends import ApplicantJWTAuthentication
 from .permissions import IsAdminRole
@@ -23,7 +25,6 @@ User = get_user_model()
 # ==========================
 
 def validate_with_ldap(username, password):
-    """Validate user credentials against an LDAP server."""
     try:
         url = 'http://192.168.6.63:2000/api/Ldap/users/validate'
         payload = {'username': username, 'password': password}
@@ -37,66 +38,46 @@ def validate_with_ldap(username, password):
 # ==========================
 
 class InternalTokenObtainPairView(TokenObtainPairView):
-    """Handle JWT token generation for internal users (username-based)."""
     def post(self, request, *args, **kwargs):
         username = request.data.get('username', '').lower()
         password = request.data.get('password')
 
         if not username or not password:
-            return Response(
-                {'detail': 'Username and password are required.'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({'detail': 'Username and password required.'}, status=400)
 
-        # Check if user exists locally
         try:
             user = User.objects.get(username=username)
             if not user.is_active:
-                return Response(
-                    {'detail': 'This user is inactive.'},
-                    status=status.HTTP_403_FORBIDDEN
-                )
+                return Response({'detail': 'Inactive user.'}, status=403)
         except User.DoesNotExist:
-            return Response(
-                {'detail': 'User is not registered in this system.'},
-                status=status.HTTP_403_FORBIDDEN
-            )
+            return Response({'detail': 'User not registered in system.'}, status=403)
 
-        # Validate credentials via LDAP
         if not validate_with_ldap(username, password):
-            return Response(
-                {'detail': 'Invalid username or password.'},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
+            return Response({'detail': 'Invalid credentials.'}, status=401)
 
-        # Generate JWT tokens
         refresh = RefreshToken.for_user(user)
-        response = Response({'access': str(refresh.access_token)})
+        access_token = str(refresh.access_token)
+
+        response = Response({'access': access_token})
         response.set_cookie(
             key='refresh_token',
             value=str(refresh),
             httponly=True,
-            secure=False,  # Set to True in production
-            samesite='Lax'
+            secure=not settings.DEBUG,
+            samesite='None' if not settings.DEBUG else 'Lax',
+            path='/api/token/refresh/'
         )
         return response
 
+
 class InternalTokenRefreshView(TokenRefreshView):
-    """Refresh JWT access token for internal users."""
     def post(self, request, *args, **kwargs):
         refresh_token = request.COOKIES.get('refresh_token')
         if not refresh_token:
-            return Response(
-                {'error': 'No refresh token found'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({'error': 'No refresh token cookie found.'}, status=400)
 
         request.data['refresh'] = refresh_token
-        response = super().post(request, *args, **kwargs)
-        if response.status_code == 200:
-            return Response({'access': response.data['access']})
-        return response
-
+        return super().post(request, *args, **kwargs)
 class InternalUserView(APIView):
     """Manage internal users (username-based): register, list, and update applicant roles."""
     permission_classes = [IsAuthenticated,IsAdminRole]  # Restricted to authenticated users
