@@ -23,7 +23,6 @@ User = get_user_model()
 # ==========================
 # Utility Functions
 # ==========================
-
 def validate_with_ldap(username, password):
     try:
         url = 'http://192.168.6.63:2000/api/Ldap/users/validate'
@@ -33,27 +32,23 @@ def validate_with_ldap(username, password):
     except Exception:
         return False
 
-# ==========================
-# Internal User Views
-# ==========================
-
 class InternalTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         username = request.data.get('username', '').lower()
         password = request.data.get('password')
 
         if not username or not password:
-            return Response({'detail': 'Username and password required.'}, status=400)
+            return Response({'detail': 'Username and password required.'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             user = User.objects.get(username=username)
             if not user.is_active:
-                return Response({'detail': 'Inactive user.'}, status=403)
+                return Response({'detail': 'Inactive user.'}, status=status.HTTP_403_FORBIDDEN)
         except User.DoesNotExist:
-            return Response({'detail': 'User not registered in system.'}, status=403)
+            return Response({'detail': 'User not registered in system.'}, status=status.HTTP_403_FORBIDDEN)
 
         if not validate_with_ldap(username, password):
-            return Response({'detail': 'Invalid credentials.'}, status=401)
+            return Response({'detail': 'Invalid credentials.'}, status=status.HTTP_401_UNAUTHORIZED)
 
         refresh = RefreshToken.for_user(user)
         access_token = str(refresh.access_token)
@@ -63,21 +58,35 @@ class InternalTokenObtainPairView(TokenObtainPairView):
             key='refresh_token',
             value=str(refresh),
             httponly=True,
-            secure=not settings.DEBUG,
-            samesite='None' if not settings.DEBUG else 'Lax',
-            path='/api/token/refresh/'
+            secure=not settings.DEBUG,  # True in production (HTTPS)
+            samesite='None',  # Always None for cross-origin
+            path='/',  # Make cookie available for all API endpoints
         )
         return response
-
 
 class InternalTokenRefreshView(TokenRefreshView):
     def post(self, request, *args, **kwargs):
         refresh_token = request.COOKIES.get('refresh_token')
         if not refresh_token:
-            return Response({'error': 'No refresh token cookie found.'}, status=400)
+            return Response({'error': 'No refresh token cookie found.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        request.data['refresh'] = refresh_token
-        return super().post(request, *args, **kwargs)
+        try:
+            refresh = RefreshToken(refresh_token)
+            access_token = str(refresh.access_token)
+            response = Response({'access': access_token})
+            if settings.SIMPLE_JWT['ROTATE_REFRESH_TOKENS']:
+                refresh = RefreshToken.for_user(refresh.user)
+                response.set_cookie(
+                    key='refresh_token',
+                    value=str(refresh),
+                    httponly=True,
+                    secure=not settings.DEBUG,
+                    samesite='None',
+                    path='/',
+                )
+            return response
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 class InternalUserView(APIView):
     """Manage internal users (username-based): register, list, and update applicant roles."""
     permission_classes = [IsAuthenticated,IsAdminRole]  # Restricted to authenticated users
