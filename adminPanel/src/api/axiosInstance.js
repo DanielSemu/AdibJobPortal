@@ -2,7 +2,7 @@ import axios from 'axios';
 import { getAccessToken, setAccessToken } from './tokenStorage';
 import { refreshToken } from './auth';
 
-export const BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+export const BASE_URL = import.meta.env.VITE_API_URL || 'https://192.168.2.56';
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
